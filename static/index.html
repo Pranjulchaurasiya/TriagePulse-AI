@@ -1,822 +1,406 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html class="light" lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TriagePulse-AI | St. Jude Medical Centre NHS Voice Reception</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>St. Jude Medical Centre - Live Receptionist Dashboard (Powered by Stitch)</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "nhs-blue": "#005EB8",
+            "nhs-blue-hover": "#004B93",
+            "tranquil-teal": "#0D9488",
+            "tranquil-teal-light": "#F0FDFA",
+            "emergency-red": "#D1192D",
+            "emergency-red-light": "#FEF2F2",
+            "success-green": "#00703C",
+            "warning-yellow": "#F59E0B",
+            "surface-white": "#FFFFFF",
+            "surface-base": "#F0F4F5",
+            "surface-card": "#FFFFFF",
+            "surface-subtle": "#F6FAFB",
+            "surface-border": "#E2E8F0",
+            "slate-text": "#212B32",
+            "slate-muted": "#64748B",
+          },
+          fontFamily: {
+            sans: ["Public Sans", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"],
+          },
+          borderRadius: {
+            DEFAULT: "0.5rem",
+            lg: "0.75rem",
+            xl: "1rem",
+            "2xl": "1.5rem",
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
-    /* ==========================================================================
-       Calm Clinical Design System — Default Radiant Light Theme
-       ========================================================================== */
+    /* Calm Clinical CSS Variables */
     :root {
-      --bg-stage: #F6F9FD;
+      --bg-page: #F0F4F5;
       --bg-surface: #FFFFFF;
-      --bg-surface-elevated: #FFFFFF;
-      --bg-subtle: #F0F4F9;
-      --border-subtle: #E2E8F0;
-      --border-focus: #0284C7;
-
-      --text-main: #0F172A;
-      --text-body: #334155;
+      --border-color: #E2E8F0;
+      --text-main: #212B32;
       --text-muted: #64748B;
-      --text-faint: #94A3B8;
-
-      --nhs-blue: #005EB8;
-      --nhs-blue-hover: #004B93;
-      --nhs-blue-light: #EBF4FC;
-
-      --calm-teal: #0D9488;
-      --calm-teal-glow: rgba(13, 148, 136, 0.2);
-      --calm-mint: #10B981;
-      --calm-mint-tint: #ECFDF5;
-
-      --alert-crimson: #DC2626;
-      --alert-crimson-tint: #FEF2F2;
-      --alert-crimson-border: #FCA5A5;
-
-      --card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 8px -1px rgba(15, 23, 42, 0.04);
-      --pill-shadow: 0 2px 10px rgba(0, 94, 184, 0.08);
-
-      --sphere-hex: 0x0D9488;
-      --core-hex: 0x005EB8;
-      --particle-hex: 0x0D9488;
+      --sphere-wire: 0x0D9488;
+      --sphere-core: 0x005EB8;
     }
 
-    [data-theme="dark"] {
-      --bg-stage: #0A0E17;
-      --bg-surface: #111827;
-      --bg-surface-elevated: #1F2937;
-      --bg-subtle: #1E293B;
-      --border-subtle: #243046;
-      --border-focus: #38BDF8;
-
-      --text-main: #F8FAFC;
-      --text-body: #E2E8F0;
+    html.dark, html[data-theme="dark"] {
+      --bg-page: #0B111A;
+      --bg-surface: #131B26;
+      --border-color: #243246;
+      --text-main: #F1F5F9;
       --text-muted: #94A3B8;
-      --text-faint: #64748B;
-
-      --nhs-blue: #0284C7;
-      --nhs-blue-hover: #0369A1;
-      --nhs-blue-light: rgba(2, 132, 199, 0.15);
-
-      --calm-teal: #14B8A6;
-      --calm-teal-glow: rgba(20, 184, 166, 0.35);
-      --calm-mint: #34D399;
-      --calm-mint-tint: rgba(52, 211, 153, 0.15);
-
-      --alert-crimson: #EF4444;
-      --alert-crimson-tint: rgba(239, 68, 68, 0.15);
-      --alert-crimson-border: rgba(239, 68, 68, 0.4);
-
-      --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
-      --pill-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-
-      --sphere-hex: 0x14B8A6;
-      --core-hex: 0x38BDF8;
-      --particle-hex: 0x38BDF8;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+      --sphere-wire: 0x14B8A6;
+      --sphere-core: 0x38BDF8;
     }
 
     body {
-      background-color: var(--bg-stage);
-      color: var(--text-body);
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-      transition: background-color 0.25s ease, color 0.25s ease;
-    }
-
-    /* Ambient background gradient illumination */
-    .ambient-glow {
-      position: absolute;
-      top: 100px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, var(--calm-teal-glow) 0%, rgba(0,0,0,0) 70%);
-      filter: blur(80px);
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.6;
-    }
-
-    /* ==========================================================================
-       Header Navigation
-       ========================================================================== */
-    header {
-      position: relative;
-      z-index: 20;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 2rem;
-      background: var(--bg-surface);
-      border-bottom: 1px solid var(--border-subtle);
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
-    }
-
-    .brand-island {
-      display: flex;
-      align-items: center;
-      gap: 0.9rem;
-    }
-
-    .nhs-pill {
-      background: #005EB8;
-      color: #FFFFFF;
-      font-weight: 800;
-      font-size: 0.95rem;
-      padding: 0.35rem 0.75rem;
-      border-radius: 6px;
-      letter-spacing: 0.05em;
-    }
-
-    .brand-titles h1 {
-      font-size: 1.15rem;
-      font-weight: 700;
+      background-color: var(--bg-page);
       color: var(--text-main);
-      letter-spacing: -0.01em;
+      font-family: 'Public Sans', sans-serif;
+      transition: background-color 0.2s ease, color 0.2s ease;
     }
 
-    .brand-titles p {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .pill-status {
-      background: var(--calm-mint-tint);
-      color: var(--calm-mint);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      padding: 0.4rem 0.85rem;
-      border-radius: 9999px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .pulse-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background-color: var(--calm-mint);
-      box-shadow: 0 0 8px var(--calm-mint);
-      animation: gentlePulse 2s infinite ease-in-out;
-    }
-
-    @keyframes gentlePulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.35); opacity: 0.7; }
-    }
-
-    .btn-pill {
+    .glass-panel {
       background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-body);
-      padding: 0.45rem 0.95rem;
-      border-radius: 9999px;
-      font-size: 0.84rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      transition: all 0.15s ease;
-    }
-
-    .btn-pill:hover {
-      color: var(--text-main);
-      border-color: var(--nhs-blue);
-      transform: translateY(-1px);
-    }
-
-    .btn-telemetry {
-      background: var(--nhs-blue-light);
-      color: var(--nhs-blue);
-      border-color: rgba(0, 94, 184, 0.25);
-    }
-
-    /* ==========================================================================
-       Main Stage Layout (Stacked cleanly in normal flow — ZERO OVERLAP)
-       ========================================================================== */
-    .main-stage {
-      position: relative;
-      z-index: 10;
-      flex: 1;
-      max-width: 860px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 1.5rem 1.5rem 3rem 1.5rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1.25rem;
-    }
-
-    /* 3D Sphere Viewport */
-    .sphere-viewport {
-      width: 260px;
-      height: 260px;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: grab;
-      border-radius: 50%;
-    }
-
-    .sphere-viewport:active {
-      cursor: grabbing;
-    }
-
-    #threejsCanvas {
-      width: 260px;
-      height: 260px;
-      outline: none;
-    }
-
-    /* Status Pill */
-    .status-pill {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      box-shadow: var(--pill-shadow);
-      padding: 0.4rem 1.25rem;
-      border-radius: 9999px;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: var(--text-main);
-    }
-
-    /* Captions Box */
-    .captions-box {
-      width: 100%;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: 16px;
-      box-shadow: var(--card-shadow);
-      padding: 1.25rem 1.5rem;
-      min-height: 100px;
-      max-height: 160px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 0.65rem;
-      scroll-behavior: smooth;
-    }
-
-    .caption-msg {
-      font-size: 0.98rem;
-      line-height: 1.55;
-    }
-
-    .caption-msg.caller {
-      color: var(--nhs-blue);
-      font-weight: 600;
-    }
-
-    .caption-msg.assistant {
-      color: var(--text-main);
-    }
-
-    .caption-msg.emergency {
-      color: var(--alert-crimson);
-      font-weight: 700;
-      background: var(--alert-crimson-tint);
-      border-left: 3px solid var(--alert-crimson);
-      padding: 0.5rem 0.85rem;
-      border-radius: 6px;
-    }
-
-    /* Scenario Triage Strip */
-    .scenario-strip {
-      width: 100%;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    .scenario-pill {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-body);
-      font-size: 0.82rem;
-      font-weight: 600;
-      padding: 0.45rem 0.85rem;
-      border-radius: 9999px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-    }
-
-    .scenario-pill:hover {
-      border-color: var(--nhs-blue);
-      color: var(--nhs-blue);
-      transform: translateY(-1px);
-    }
-
-    .scenario-pill.pill-emergency {
-      color: var(--alert-crimson);
-      background: var(--alert-crimson-tint);
-      border-color: var(--alert-crimson-border);
-    }
-
-    .scenario-pill.pill-emergency:hover {
-      background: var(--alert-crimson);
-      color: #FFFFFF;
-    }
-
-    /* Bottom Control Bar */
-    .control-bar {
-      width: 100%;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: 16px;
-      box-shadow: var(--card-shadow);
-      padding: 0.65rem 0.85rem;
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-    }
-
-    .btn-voice {
-      background: var(--nhs-blue);
-      color: #FFFFFF;
-      border: none;
-      padding: 0.75rem 1.4rem;
-      border-radius: 12px;
-      font-size: 0.92rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      white-space: nowrap;
-      transition: all 0.15s ease;
-      box-shadow: 0 2px 8px rgba(0, 94, 184, 0.25);
-    }
-
-    .btn-voice:hover {
-      background: var(--nhs-blue-hover);
-      transform: translateY(-1px);
-    }
-
-    .btn-voice.recording {
-      background: var(--alert-crimson);
-    }
-
-    .btn-bargein {
-      background: var(--bg-subtle);
-      color: var(--text-body);
-      border: 1px solid var(--border-subtle);
-      padding: 0.75rem 1.1rem;
-      border-radius: 12px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      white-space: nowrap;
-      transition: all 0.15s ease;
-    }
-
-    .btn-bargein:hover {
-      background: var(--alert-crimson-tint);
-      color: var(--alert-crimson);
-      border-color: var(--alert-crimson-border);
-    }
-
-    .input-box-wrapper {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      background: var(--bg-subtle);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 0 0.85rem;
-    }
-
-    .input-field {
-      width: 100%;
-      border: none;
-      background: transparent;
-      padding: 0.75rem 0;
-      color: var(--text-main);
-      font-size: 0.92rem;
-      outline: none;
-      font-family: inherit;
-    }
-
-    /* ==========================================================================
-       Slide-Out Clinical Audit Drawer
-       ========================================================================== */
-    .drawer-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.35);
-      backdrop-filter: blur(2px);
-      z-index: 90;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
-
-    .drawer-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .inspector-drawer {
-      position: fixed;
-      top: 0;
-      right: -480px;
-      width: 440px;
-      height: 100vh;
-      background: var(--bg-surface);
-      border-left: 1px solid var(--border-subtle);
-      box-shadow: -10px 0 35px rgba(0, 0, 0, 0.1);
-      z-index: 100;
-      display: flex;
-      flex-direction: column;
-      transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-      overflow-y: auto;
-      padding: 1.75rem;
-      gap: 1.5rem;
-    }
-
-    .inspector-drawer.open {
-      right: 0;
-    }
-
-    .drawer-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--border-subtle);
-      padding-bottom: 1rem;
-    }
-
-    .drawer-header h2 {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .close-btn {
-      background: var(--bg-subtle);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-muted);
-      width: 30px;
-      height: 30px;
-      border-radius: 6px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .drawer-card {
-      background: var(--bg-subtle);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 1.15rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .drawer-card-title {
-      font-size: 0.86rem;
-      font-weight: 700;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .waterfall-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.65rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem;
-    }
-
-    .waterfall-item {
-      display: grid;
-      grid-template-columns: 140px 1fr 65px;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .bar-track {
-      background: var(--bg-surface);
-      height: 7px;
-      border-radius: 4px;
-      overflow: hidden;
-      border: 1px solid var(--border-subtle);
-    }
-
-    .bar-fill {
-      height: 100%;
-      background: var(--calm-teal);
-      border-radius: 4px;
-      transition: width 0.3s ease;
-    }
-
-    .bar-fill.pass {
-      background: var(--calm-mint);
-    }
-
-    .safety-box {
-      background: var(--calm-mint-tint);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      border-radius: 8px;
-      padding: 0.75rem;
-      font-size: 0.82rem;
-    }
-
-    .safety-box.tripped {
-      background: var(--alert-crimson-tint);
-      border-color: var(--alert-crimson-border);
-      color: var(--alert-crimson);
-    }
-
-    .booking-json {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      padding: 0.75rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem;
-      color: var(--text-body);
-      line-height: 1.5;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
     }
   </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col md:flex-row overflow-x-hidden">
 
-  <div class="ambient-glow"></div>
-
-  <!-- Header -->
-  <header>
-    <div class="brand-island">
-      <div class="nhs-pill">NHS</div>
-      <div class="brand-titles">
-        <h1>St. Jude Medical Centre</h1>
-        <p>
-          <span>AI Voice Receptionist</span>
-          <span>•</span>
-          <span style="color: var(--calm-teal); font-weight: 600;">Autonomous GP Triage</span>
-        </p>
+  <!-- ========================================================================
+       Left Sidebar Navigation (Stitch Design Pattern)
+       ======================================================================== -->
+  <nav class="hidden md:flex flex-col h-screen p-5 gap-4 glass-panel w-64 flex-shrink-0 z-40 relative border-r">
+    <div class="mb-4">
+      <div class="flex items-center gap-2 mb-2">
+        <div class="bg-nhs-blue text-white font-extrabold text-sm px-2.5 py-1 rounded">NHS</div>
+        <h1 class="font-bold text-lg text-nhs-blue tracking-tight">TriagePulse-AI</h1>
       </div>
+      <p class="text-xs text-tranquil-teal font-semibold flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-tranquil-teal animate-ping"></span>
+        GP Receptionist Active
+      </p>
     </div>
 
-    <div class="header-actions">
-      <div class="pill-status">
-        <span class="pulse-dot"></span>
-        <span id="connStatusText">Line 1 Active</span>
+    <!-- Navigation Items -->
+    <div class="flex flex-col gap-1.5 flex-grow text-sm">
+      <a class="flex items-center gap-3 p-3 bg-tranquil-teal/10 text-tranquil-teal font-bold rounded-lg transition-transform translate-x-1" href="#">
+        <span class="material-symbols-outlined text-lg">record_voice_over</span>
+        <span>Live Reception</span>
+      </a>
+      <a class="flex items-center gap-3 p-3 text-slate-muted hover:bg-slate-100 dark:hover:bg-slate-800 transition-all rounded-lg" href="#scenarios" onclick="triggerScenario('What are your surgery opening hours on Thursday?')">
+        <span class="material-symbols-outlined text-lg">schedule</span>
+        <span>Surgery Hours</span>
+      </a>
+      <a class="flex items-center gap-3 p-3 text-slate-muted hover:bg-slate-100 dark:hover:bg-slate-800 transition-all rounded-lg" href="#scenarios" onclick="triggerScenario('How do I request a repeat prescription for my blood pressure?')">
+        <span class="material-symbols-outlined text-lg">medication</span>
+        <span>Prescriptions</span>
+      </a>
+      <a class="flex items-center gap-3 p-3 text-slate-muted hover:bg-slate-100 dark:hover:bg-slate-800 transition-all rounded-lg" href="#scenarios" onclick="triggerScenario('I would like to book a routine appointment with Dr. Davies next Tuesday morning')">
+        <span class="material-symbols-outlined text-lg">event_available</span>
+        <span>Book Appointment</span>
+      </a>
+    </div>
+
+    <!-- Emergency Override Button -->
+    <div class="mt-auto flex flex-col gap-2 pt-4 border-t border-slate-200 dark:border-slate-800">
+      <button onclick="triggerScenario('I have severe crushing chest pain and feel dizzy')" class="flex items-center justify-center gap-2 w-full p-3 bg-emergency-red hover:bg-red-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm">
+        <span class="material-symbols-outlined text-sm">emergency</span>
+        <span>Emergency 999 Trigger</span>
+      </button>
+
+      <!-- Theme Switcher -->
+      <button onclick="toggleTheme()" class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-muted hover:text-slate-900 dark:hover:text-white transition-all">
+        <span class="flex items-center gap-2">
+          <span id="themeIcon" class="material-symbols-outlined text-sm">dark_mode</span>
+          <span id="themeLabel">Dark Mode</span>
+        </span>
+        <span class="text-[10px] uppercase font-mono px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded">Toggle</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ========================================================================
+       Main Content Area
+       ======================================================================== -->
+  <div class="flex-grow flex flex-col min-h-screen">
+
+    <!-- Top Navigation Bar -->
+    <header class="flex justify-between items-center px-6 h-18 w-full glass-panel border-b flex-shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="md:hidden bg-nhs-blue text-white font-bold text-xs px-2 py-0.5 rounded">NHS</div>
+        <div>
+          <h2 class="text-base font-bold text-nhs-blue">St. Jude Medical Centre</h2>
+          <p class="text-xs text-slate-muted">Autonomous Clinical Triage • Line 1</p>
+        </div>
       </div>
 
-      <button class="btn-pill btn-telemetry" onclick="toggleDrawer(true)" title="Open Clinical Telemetry Waterfall">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        <span id="headerLatency">Telemetry: 118ms</span>
-      </button>
-
-      <button class="btn-pill" onclick="toggleTheme()" title="Switch Light / Dark Theme">
-        <span id="themeIcon">🌙</span>
-        <span id="themeLabel">Dark</span>
-      </button>
-    </div>
-  </header>
-
-  <!-- Clean Stacked Main Stage (NO OVERLAPS) -->
-  <main class="main-stage">
-
-    <!-- 3D Organic Sphere Canvas -->
-    <div class="sphere-viewport" id="sphereViewport" title="Interactive 3D Acoustic Sphere (Rotate with mouse)">
-      <canvas id="threejsCanvas"></canvas>
-    </div>
-
-    <!-- Status Bubble -->
-    <div class="status-pill">
-      <span class="pulse-dot" id="stateDot" style="background: var(--calm-teal);"></span>
-      <span id="receptionistStatus">Listening for patient inquiry...</span>
-    </div>
-
-    <!-- Captions Deck -->
-    <div class="captions-box" id="captionsBox">
-      <div class="caption-msg assistant">
-        "Good morning, St. Jude Medical Centre. I am the practice AI voice receptionist. How may I assist you with your appointment or health inquiry today?"
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 px-3 py-1 rounded-full text-xs font-mono font-semibold">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="connBadgeText">WS: LIVE</span>
+        </div>
+        <div class="hidden sm:flex items-center gap-1.5 bg-teal-50 dark:bg-teal-950/40 text-tranquil-teal border border-teal-200 dark:border-teal-800 px-3 py-1 rounded-full text-xs font-mono font-semibold">
+          <span>LATENCY:</span>
+          <span id="headerLatencyText">118ms (p95)</span>
+        </div>
       </div>
-    </div>
+    </header>
 
-    <!-- Scenario Strip -->
-    <div class="scenario-strip">
-      <button class="scenario-pill pill-emergency" onclick="triggerScenario('I have severe crushing chest pain and feel dizzy')">
-        🚨 Chest Pain
-      </button>
-      <button class="scenario-pill pill-emergency" onclick="triggerScenario('My husband collapsed on the floor and is unresponsive')">
-        🚨 Unresponsive Collapse
-      </button>
-      <button class="scenario-pill" onclick="triggerScenario('I would like to book a routine appointment with Dr. Davies for next Tuesday morning')">
-        📅 Routine Doctor Booking
-      </button>
-      <button class="scenario-pill" onclick="triggerScenario('What are your surgery opening hours on Thursday?')">
-        🕒 Surgery Hours
-      </button>
-      <button class="scenario-pill" onclick="triggerScenario('How do I request a repeat prescription for my blood pressure tablets?')">
-        💊 Repeat Prescriptions
-      </button>
-      <button class="scenario-pill" onclick="triggerScenario('Can I schedule a blood test with the nurse?')">
-        💉 Blood Clinic
-      </button>
-    </div>
+    <!-- Main Workspace (Acoustic Stage & Clinical Right Panel) -->
+    <main class="flex-grow p-5 md:p-6 flex flex-col lg:flex-row gap-6 overflow-hidden">
 
-    <!-- Bottom Audio Control Bar -->
-    <div class="control-bar">
-      <button id="btnVoice" class="btn-voice" onclick="toggleMicrophone()">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 0-4 4v7a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-        <span id="voiceBtnText">Enable Voice</span>
+      <!-- Central Acoustic Soundstage -->
+      <section class="flex-grow flex flex-col glass-panel rounded-2xl p-6 relative overflow-hidden flex-1">
+        
+        <!-- Live Call Indicator Pill -->
+        <div class="flex items-center justify-between mb-3">
+          <div class="inline-flex items-center gap-2 bg-teal-50 dark:bg-teal-950/40 text-tranquil-teal px-3 py-1 rounded-full border border-teal-200 dark:border-teal-800 text-xs font-bold tracking-wide">
+            <span class="w-2 h-2 rounded-full bg-tranquil-teal animate-ping"></span>
+            <span id="callStatusBadge">ACTIVE CLINICAL RECEPTION</span>
+          </div>
+          <span class="text-xs font-mono text-slate-muted" id="callDuration">00:42</span>
+        </div>
+
+        <!-- 3D Acoustic Sphere Canvas Stage -->
+        <div class="flex-grow flex flex-col items-center justify-center relative py-2">
+          <div class="w-[240px] h-[240px] relative flex items-center justify-center cursor-grab active:cursor-grabbing rounded-full" id="sphereContainer">
+            <canvas id="threeCanvas" class="w-full h-full"></canvas>
+          </div>
+          <p id="receptionistStatus" class="text-xs font-semibold text-slate-muted mt-2 tracking-wide">
+            Listening for patient inquiry...
+          </p>
+        </div>
+
+        <!-- Real-Time Dialogue Transcription Feed -->
+        <div id="transcriptionFeed" class="h-44 bg-slate-50 dark:bg-slate-900/60 rounded-xl p-4 overflow-y-auto border border-slate-200 dark:border-slate-800 flex flex-col gap-3 text-sm scroll-smooth">
+          <div class="flex gap-3">
+            <div class="w-8 h-8 rounded-full bg-nhs-blue text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">
+              AI
+            </div>
+            <div class="bg-white dark:bg-slate-800 p-3 rounded-xl rounded-tl-none border border-slate-200 dark:border-slate-700 max-w-[85%] shadow-sm text-slate-text dark:text-slate-200">
+              Good morning, St. Jude Medical Centre. I am the practice AI voice receptionist. How may I assist you with your appointment or health inquiry today?
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Scenario Chips -->
+        <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-wrap gap-2">
+          <button onclick="triggerScenario('I have severe crushing chest pain and feel dizzy')" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-red-50 dark:bg-red-950/40 text-emergency-red border border-red-200 dark:border-red-800 hover:bg-emergency-red hover:text-white transition-all flex items-center gap-1">
+            <span>🚨 Chest Pain</span>
+          </button>
+          <button onclick="triggerScenario('My husband collapsed on the floor and is unresponsive')" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-red-50 dark:bg-red-950/40 text-emergency-red border border-red-200 dark:border-red-800 hover:bg-emergency-red hover:text-white transition-all flex items-center gap-1">
+            <span>🚨 Unresponsive Collapse</span>
+          </button>
+          <button onclick="triggerScenario('I would like to book a routine appointment with Dr. Davies next Tuesday morning')" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:border-nhs-blue transition-all">
+            <span>📅 Routine Booking</span>
+          </button>
+          <button onclick="triggerScenario('What are your surgery opening hours on Thursday?')" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:border-nhs-blue transition-all">
+            <span>🕒 Surgery Hours</span>
+          </button>
+          <button onclick="triggerScenario('How do I request a repeat prescription for my blood pressure?')" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:border-nhs-blue transition-all">
+            <span>💊 Prescriptions</span>
+          </button>
+        </div>
+
+      </section>
+
+      <!-- Right Panel (Clinical Context & Telemetry Audit) -->
+      <aside class="w-full lg:w-88 flex flex-col gap-5 flex-shrink-0">
+        
+        <!-- Patient Context & Safety Reflex Card -->
+        <div class="glass-panel rounded-2xl p-5">
+          <h2 class="text-sm font-bold mb-3 flex items-center gap-2 text-nhs-blue">
+            <span class="material-symbols-outlined text-base">verified_user</span>
+            <span>Deterministic Safety Reflex</span>
+          </h2>
+          
+          <div id="safetyReflexBox" class="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl mb-3">
+            <div class="text-xs font-bold text-emerald-800 dark:text-emerald-300 mb-0.5" id="safetyBoxHead">
+              Tier 1 Armed (0% False Negatives)
+            </div>
+            <p class="text-[11px] text-slate-muted" id="safetyBoxSub">
+              Deterministic pre-LLM regex scanner actively protecting caller safety. Sub-1ms reflex.
+            </p>
+          </div>
+
+          <!-- Structured Booking Dispatch Result -->
+          <div class="text-xs">
+            <span class="text-[11px] text-slate-muted uppercase font-bold tracking-wider block mb-1.5">EMIS / SystmOne Dispatch</span>
+            <div id="bookingResultCard" class="p-3 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-xs">
+              <span class="text-slate-muted">No appointments booked in turn. Click "Routine Booking" to test function calling.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Latency Audit Waterfall Card -->
+        <div class="glass-panel rounded-2xl p-5 flex-grow">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-bold flex items-center gap-2 text-slate-text dark:text-slate-200">
+              <span class="material-symbols-outlined text-base text-tranquil-teal">speed</span>
+              <span>Latency Waterfall</span>
+            </h3>
+            <span class="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded">
+              SUB-800MS PASS
+            </span>
+          </div>
+
+          <div class="flex flex-col gap-3 font-mono text-xs">
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-slate-muted text-[11px]">Speech to Text (Nova-2)</span>
+                <span id="sttVal" class="font-bold">89 ms</span>
+              </div>
+              <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                <div id="sttBar" class="bg-tranquil-teal h-full rounded-full transition-all" style="width: 25%"></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-slate-muted text-[11px]">Tier 1 Safety Reflex</span>
+                <span id="safetyVal" class="font-bold text-emerald-600">0.3 ms</span>
+              </div>
+              <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                <div id="safetyBar" class="bg-emerald-500 h-full rounded-full transition-all" style="width: 5%"></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-slate-muted text-[11px]">RAG Policy Retrieval</span>
+                <span id="ragVal" class="font-bold">0.3 ms</span>
+              </div>
+              <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                <div id="ragBar" class="bg-tranquil-teal h-full rounded-full transition-all" style="width: 6%"></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-slate-muted text-[11px]">Groq LLaMA 3.3 TTFT</span>
+                <span id="llmVal" class="font-bold">28 ms</span>
+              </div>
+              <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                <div id="llmBar" class="bg-nhs-blue h-full rounded-full transition-all" style="width: 32%"></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-slate-muted text-[11px]">TTS First Byte (Cartesia)</span>
+                <span id="ttsVal" class="font-bold">28 ms</span>
+              </div>
+              <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                <div id="ttsBar" class="bg-nhs-blue h-full rounded-full transition-all" style="width: 32%"></div>
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-200 dark:border-slate-800">
+              <div class="flex justify-between items-center font-bold text-sm">
+                <span class="text-nhs-blue">TOTAL VOICE E2E</span>
+                <span id="totalVal" class="text-tranquil-teal">118 ms</span>
+              </div>
+              <div class="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden mt-1.5">
+                <div id="totalBar" class="bg-tranquil-teal h-full rounded-full transition-all" style="width: 38%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+
+    </main>
+
+    <!-- Bottom Audio Control Dock -->
+    <footer class="h-20 glass-panel border-t flex items-center justify-center gap-4 px-6 flex-shrink-0 z-50">
+      <button id="btnVoice" onclick="toggleMicrophone()" class="flex items-center gap-2 px-6 py-3 bg-nhs-blue hover:bg-nhs-blue-hover text-white transition-all rounded-xl text-sm font-bold shadow-sm min-h-[46px]">
+        <span class="material-symbols-outlined text-lg">mic</span>
+        <span id="voiceLabel">Enable Voice</span>
       </button>
 
-      <button class="btn-bargein" onclick="triggerBargeIn()" title="Interrupt playback immediately (Barge-In)">
-        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+      <button id="btnBargeIn" onclick="triggerBargeIn()" class="flex items-center gap-2 px-5 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-950/40 text-slate-700 dark:text-slate-300 hover:text-emergency-red transition-all rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 min-h-[46px]">
+        <span class="material-symbols-outlined text-lg">cancel</span>
         <span>Barge-In</span>
       </button>
 
-      <div class="input-box-wrapper">
-        <input type="text" id="textQueryInput" class="input-field" placeholder="Type a message or click a scenario pill above..." onkeydown="if(event.key==='Enter') sendManualQuery()" />
+      <div class="flex-1 max-w-xl flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl px-4 border border-slate-200 dark:border-slate-700 min-h-[46px]">
+        <input id="textInput" type="text" placeholder="Type a message or use voice / quick scenarios above..." class="w-full bg-transparent border-none outline-none text-sm text-slate-text dark:text-white" onkeydown="if(event.key==='Enter') sendTextQuery()" />
       </div>
-    </div>
+    </footer>
 
-  </main>
+  </div>
 
-  <!-- Slide-Out Clinical Audit Drawer -->
-  <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer(false)"></div>
-  <aside class="inspector-drawer" id="inspectorDrawer">
-    <div class="drawer-header">
-      <h2>Clinical Audit & Telemetry</h2>
-      <button class="close-btn" onclick="toggleDrawer(false)">✕</button>
-    </div>
-
-    <!-- Tier 1 Reflex Safety Gate -->
-    <div class="drawer-card">
-      <div class="drawer-card-title">
-        <span>Tier 1 Deterministic Reflex Gate</span>
-        <span style="color: var(--calm-mint); font-size: 0.75rem; font-weight: 700;">0% FALSE NEGATIVES</span>
-      </div>
-      <div id="safetyBox" class="safety-box">
-        <div style="font-weight: 700; margin-bottom: 0.2rem;" id="safetyHead">Reflex Gate Armed • Sub-1ms Scan</div>
-        <div style="color: var(--text-muted); font-size: 0.78rem;" id="safetySub">Scanning dialogue buffer for acute NHS 111 red flags.</div>
-      </div>
-    </div>
-
-    <!-- Latency Waterfall -->
-    <div class="drawer-card">
-      <div class="drawer-card-title">
-        <span>Stage Latency Waterfall</span>
-        <span id="latencyBadge" style="color: var(--calm-mint); font-size: 0.75rem; font-weight: 700;">SUB-800MS MET</span>
-      </div>
-
-      <div class="waterfall-list">
-        <div class="waterfall-item">
-          <span>Perception: STT</span>
-          <div class="bar-track"><div id="barSTT" class="bar-fill" style="width: 28%;"></div></div>
-          <span id="valSTT" style="text-align: right; font-weight: 600;">89 ms</span>
-        </div>
-        <div class="waterfall-item">
-          <span>Safety Reflex</span>
-          <div class="bar-track"><div id="barSafety" class="bar-fill pass" style="width: 3%;"></div></div>
-          <span id="valSafety" style="text-align: right; font-weight: 600;">0.3 ms</span>
-        </div>
-        <div class="waterfall-item">
-          <span>RAG Policy</span>
-          <div class="bar-track"><div id="barRAG" class="bar-fill" style="width: 5%;"></div></div>
-          <span id="valRAG" style="text-align: right; font-weight: 600;">0.3 ms</span>
-        </div>
-        <div class="waterfall-item">
-          <span>LLM TTFT</span>
-          <div class="bar-track"><div id="barLLM" class="bar-fill" style="width: 32%;"></div></div>
-          <span id="valLLM" style="text-align: right; font-weight: 600;">28 ms</span>
-        </div>
-        <div class="waterfall-item">
-          <span>TTS First Audio</span>
-          <div class="bar-track"><div id="barTTS" class="bar-fill" style="width: 32%;"></div></div>
-          <span id="valTTS" style="text-align: right; font-weight: 600;">28 ms</span>
-        </div>
-
-        <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.65rem; margin-top: 0.25rem;">
-          <div class="waterfall-item" style="font-weight: 700; font-size: 0.88rem;">
-            <span>TOTAL VOICE E2E</span>
-            <div class="bar-track" style="height: 10px;"><div id="barTotal" class="bar-fill pass" style="width: 42%;"></div></div>
-            <span id="valTotal" style="text-align: right; color: var(--calm-teal);">118 ms</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Structured Appointment Booking JSON -->
-    <div class="drawer-card">
-      <div class="drawer-card-title">
-        <span>Structured Appointment Dispatch</span>
-        <span style="font-size: 0.72rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">EMIS Web JSON</span>
-      </div>
-      <div id="bookingJSON" class="booking-json">
-        No active booking. Click "Routine Doctor Booking" to trigger structured extraction.
-      </div>
-    </div>
-  </aside>
-
-  <!-- JavaScript -->
+  <!-- ========================================================================
+       Client Logic: Three.js 3D Acoustic Sphere & Real-Time WebSockets
+       ======================================================================== -->
   <script>
     // Theme Management
     function applyTheme(theme) {
       document.documentElement.setAttribute("data-theme", theme);
-      const icon = document.getElementById("themeIcon");
-      const label = document.getElementById("themeLabel");
       if (theme === "dark") {
-        icon.textContent = "☀️";
-        label.textContent = "Light";
+        document.documentElement.classList.add("dark");
+        document.getElementById("themeIcon").textContent = "light_mode";
+        document.getElementById("themeLabel").textContent = "Light Mode";
       } else {
-        icon.textContent = "🌙";
-        label.textContent = "Dark";
+        document.documentElement.classList.remove("dark");
+        document.getElementById("themeIcon").textContent = "dark_mode";
+        document.getElementById("themeLabel").textContent = "Dark Mode";
       }
       localStorage.setItem("triagepulse_theme", theme);
-      if (typeof updateThreeColors === "function") {
-        updateThreeColors(theme);
+      if (typeof updateThreeTheme === "function") {
+        updateThreeTheme(theme);
       }
     }
 
     function toggleTheme() {
-      const current = document.documentElement.getAttribute("data-theme") || "light";
-      applyTheme(current === "light" ? "dark" : "light");
+      const isDark = document.documentElement.classList.contains("dark");
+      applyTheme(isDark ? "light" : "dark");
     }
 
-    // Default to clean light theme
     const savedTheme = localStorage.getItem("triagepulse_theme") || "light";
     applyTheme(savedTheme);
 
-    function toggleDrawer(open) {
-      document.getElementById("inspectorDrawer").classList.toggle("open", open);
-      document.getElementById("drawerOverlay").classList.toggle("active", open);
-    }
-
     // -------------------------------------------------------------
-    // Three.js 3D Acoustic Sphere (Lightweight detail=2, Silky 60fps)
+    // Three.js 3D Acoustic Sphere Engine (Silky 60fps)
     // -------------------------------------------------------------
-    const canvas = document.getElementById("threejsCanvas");
-    const viewport = document.getElementById("sphereViewport");
+    const canvas = document.getElementById("threeCanvas");
+    const container = document.getElementById("sphereContainer");
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
     camera.position.z = 5.2;
 
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-    renderer.setSize(260, 260);
+    renderer.setSize(240, 240);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // Detail=2 has 80 faces, smooth and zero lag!
+    // Smooth Icosahedron (detail 2 = 80 faces, instant load, zero lag)
     const geometry = new THREE.IcosahedronGeometry(1.65, 2);
     const posAttr = geometry.attributes.position;
-    const baseVertices = [];
+    const baseVerts = [];
     for (let i = 0; i < posAttr.count; i++) {
-      baseVertices.push(new THREE.Vector3(posAttr.getX(i), posAttr.getY(i), posAttr.getZ(i)));
+      baseVerts.push(new THREE.Vector3(posAttr.getX(i), posAttr.getY(i), posAttr.getZ(i)));
     }
 
-    const sphereMaterial = new THREE.MeshStandardMaterial({
+    const sphereMat = new THREE.MeshStandardMaterial({
       color: 0x0D9488,
       wireframe: true,
       roughness: 0.3,
@@ -824,10 +408,9 @@
       transparent: true,
       opacity: 0.9,
     });
-    const sphereMesh = new THREE.Mesh(geometry, sphereMaterial);
+    const sphereMesh = new THREE.Mesh(geometry, sphereMat);
     scene.add(sphereMesh);
 
-    // Inner glowing nucleus
     const coreGeo = new THREE.SphereGeometry(1.0, 16, 16);
     const coreMat = new THREE.MeshBasicMaterial({
       color: 0x005EB8,
@@ -837,89 +420,73 @@
     const coreMesh = new THREE.Mesh(coreGeo, coreMat);
     scene.add(coreMesh);
 
-    // Ambient Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
-    scene.add(ambientLight);
+    const ambient = new THREE.AmbientLight(0xffffff, 1.5);
+    scene.add(ambient);
 
     const dirLight = new THREE.DirectionalLight(0x38BDF8, 2.0);
     dirLight.position.set(4, 4, 4);
     scene.add(dirLight);
 
-    function updateThreeColors(theme) {
+    function updateThreeTheme(theme) {
       if (theme === "dark") {
-        sphereMaterial.color.setHex(0x14B8A6);
+        sphereMat.color.setHex(0x14B8A6);
         coreMat.color.setHex(0x38BDF8);
-        coreMat.opacity = 0.4;
       } else {
-        sphereMaterial.color.setHex(0x0D9488);
+        sphereMat.color.setHex(0x0D9488);
         coreMat.color.setHex(0x005EB8);
-        coreMat.opacity = 0.25;
       }
     }
 
-    // Interactive mouse perspective rotation
-    let targetX = 0, targetY = 0;
-    let isDragging = false, prevX = 0, prevY = 0;
+    let rotTargetX = 0, rotTargetY = 0;
+    let isMouseDown = false, lastMouseX = 0, lastMouseY = 0;
 
-    viewport.addEventListener("mousedown", (e) => {
-      isDragging = true;
-      prevX = e.clientX;
-      prevY = e.clientY;
+    container.addEventListener("mousedown", (e) => {
+      isMouseDown = true;
+      lastMouseX = e.clientX;
+      lastMouseY = e.clientY;
     });
 
-    window.addEventListener("mouseup", () => { isDragging = false; });
+    window.addEventListener("mouseup", () => { isMouseDown = false; });
 
     window.addEventListener("mousemove", (e) => {
-      if (isDragging) {
-        targetY += (e.clientX - prevX) * 0.01;
-        targetX += (e.clientY - prevY) * 0.01;
-        prevX = e.clientX;
-        prevY = e.clientY;
+      if (isMouseDown) {
+        rotTargetY += (e.clientX - lastMouseX) * 0.01;
+        rotTargetX += (e.clientY - lastMouseY) * 0.01;
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
       }
     });
 
-    let organismMode = "idle"; // "idle" | "speaking" | "emergency" | "listening"
-    let simTime = 0;
+    let sphereMode = "idle";
+    let clock = 0;
 
-    function render3D() {
-      requestAnimationFrame(render3D);
-      simTime += 0.025;
+    function animateSphere() {
+      requestAnimationFrame(animateSphere);
+      clock += 0.025;
 
-      sphereMesh.rotation.y += (targetY - sphereMesh.rotation.y) * 0.05 + 0.005;
-      sphereMesh.rotation.x += (targetX - sphereMesh.rotation.x) * 0.05;
+      sphereMesh.rotation.y += (rotTargetY - sphereMesh.rotation.y) * 0.05 + 0.005;
+      sphereMesh.rotation.x += (rotTargetX - sphereMesh.rotation.x) * 0.05;
 
-      let waveSpeed = 2.0;
-      let waveAmp = 0.08;
-
-      if (organismMode === "speaking") {
-        waveSpeed = 5.0;
-        waveAmp = 0.25;
-      } else if (organismMode === "emergency") {
-        waveSpeed = 8.0;
-        waveAmp = 0.35;
-      } else if (organismMode === "listening") {
-        waveSpeed = 3.2;
-        waveAmp = 0.14;
-      }
+      let speed = 2.0, amp = 0.08;
+      if (sphereMode === "speaking") { speed = 5.0; amp = 0.25; }
+      else if (sphereMode === "emergency") { speed = 8.0; amp = 0.35; }
+      else if (sphereMode === "listening") { speed = 3.2; amp = 0.14; }
 
       const positions = sphereMesh.geometry.attributes.position;
       for (let i = 0; i < positions.count; i++) {
-        const base = baseVertices[i];
+        const base = baseVerts[i];
         const normal = base.clone().normalize();
-        const ripple = Math.sin(base.x * 2.5 + simTime * waveSpeed)
-                     * Math.cos(base.y * 2.5 + simTime * waveSpeed);
-        const newPos = base.clone().add(normal.multiplyScalar(ripple * waveAmp));
+        const wave = Math.sin(base.x * 2.5 + clock * speed) * Math.cos(base.y * 2.5 + clock * speed);
+        const newPos = base.clone().add(normal.multiplyScalar(wave * amp));
         positions.setXYZ(i, newPos.x, newPos.y, newPos.z);
       }
       positions.needsUpdate = true;
-
       renderer.render(scene, camera);
     }
-
-    render3D();
+    animateSphere();
 
     // -------------------------------------------------------------
-    // WebSocket Gateway Communication
+    // Live WebSocket Gateway Orchestration
     // -------------------------------------------------------------
     let ws = null;
     let audioCtx = null;
@@ -930,11 +497,11 @@
       ws = new WebSocket(`${proto}//${window.location.host}/ws/audio`);
 
       ws.onopen = () => {
-        document.getElementById("connStatusText").textContent = "Connected • Line 1";
+        document.getElementById("connBadgeText").textContent = "WS: LIVE";
       };
 
       ws.onclose = () => {
-        document.getElementById("connStatusText").textContent = "Reconnecting...";
+        document.getElementById("connBadgeText").textContent = "WS: RECONNECTING";
         setTimeout(initWS, 2000);
       };
 
@@ -943,62 +510,81 @@
           const packet = JSON.parse(e.data);
           handlePacket(packet);
         } else {
-          organismMode = "speaking";
+          sphereMode = "speaking";
           playAudio(e.data);
         }
       };
     }
 
     function handlePacket(data) {
-      const captions = document.getElementById("captionsBox");
+      const feed = document.getElementById("transcriptionFeed");
       const statusText = document.getElementById("receptionistStatus");
 
       if (data.type === "transcript") {
-        addCaption(data.text, "caller");
-        organismMode = "listening";
+        addMessage(data.text, "caller");
+        sphereMode = "listening";
         statusText.textContent = "Processing patient inquiry...";
       } else if (data.type === "safety_alert") {
-        organismMode = "emergency";
-        sphereMaterial.color.setHex(0xDC2626);
+        sphereMode = "emergency";
+        sphereMat.color.setHex(0xD1192D);
         coreMat.color.setHex(0xEF4444);
 
-        const safetyBox = document.getElementById("safetyBox");
-        safetyBox.className = "safety-box tripped";
-        document.getElementById("safetyHead").textContent = `🚨 Hard Safety Reflex (${data.category.toUpperCase()})`;
-        document.getElementById("safetySub").textContent = `Pre-LLM match in ${data.latency_ms}ms • Directing to 999.`;
+        const safetyBox = document.getElementById("safetyReflexBox");
+        safetyBox.className = "p-3 bg-red-50 dark:bg-red-950/40 border border-red-300 dark:border-red-800 rounded-xl mb-3 text-emergency-red";
+        document.getElementById("safetyBoxHead").textContent = `🚨 Hard Safety Reflex (${data.category.toUpperCase()})`;
+        document.getElementById("safetyBoxSub").textContent = `Pre-LLM match in ${data.latency_ms}ms • Directing to 999 immediately.`;
 
-        addCaption(`🚨 CRITICAL EMERGENCY DIRECTIVE (${data.category.toUpperCase()}): ${data.instruction}`, "emergency");
+        addMessage(`🚨 CRITICAL EMERGENCY DIRECTIVE (${data.category.toUpperCase()}): ${data.instruction}`, "emergency");
         statusText.textContent = "EMERGENCY: Directing to 999";
       } else if (data.type === "response_completed") {
-        organismMode = "idle";
+        sphereMode = "idle";
         statusText.textContent = "Listening for patient inquiry...";
-        addCaption(data.text, "assistant");
+        addMessage(data.text, "assistant");
         if (data.metrics) updateMetrics(data.metrics);
       } else if (data.type === "booking_confirmed") {
         const b = data.booking;
-        document.getElementById("bookingJSON").innerHTML = `
-          <div style="color: var(--calm-mint); font-weight:700; margin-bottom:0.25rem;">✔ APPOINTMENT CONFIRMED</div>
-          <div>"id": "${b.booking_id}",</div>
-          <div>"patient": "${b.patient_name}",</div>
-          <div>"slot": "${b.slot}",</div>
-          <div>"urgency": "${b.urgency.toUpperCase()}",</div>
+        document.getElementById("bookingResultCard").innerHTML = `
+          <div class="text-emerald-600 font-bold mb-1">✔ APPOINTMENT CONFIRMED</div>
+          <div>"id": "<strong>${b.booking_id}</strong>",</div>
+          <div>"patient": "<strong>${b.patient_name}</strong>",</div>
+          <div>"slot": "<strong>${b.slot}</strong>",</div>
+          <div>"urgency": "<span class="text-tranquil-teal font-bold">${b.urgency.toUpperCase()}</span>",</div>
           <div>"confidence": ${(b.confidence * 100).toFixed(0)}%</div>
         `;
       } else if (data.type === "barge_in") {
-        organismMode = "listening";
+        sphereMode = "listening";
         statusText.textContent = "Barge-In: Audio playback aborted";
       } else if (data.type === "telemetry") {
         updateMetrics(data.metrics);
       }
     }
 
-    function addCaption(text, cls) {
-      const box = document.getElementById("captionsBox");
-      const msg = document.createElement("div");
-      msg.className = `caption-msg ${cls}`;
-      msg.textContent = text;
-      box.appendChild(msg);
-      box.scrollTop = box.scrollHeight;
+    function addMessage(text, role) {
+      const feed = document.getElementById("transcriptionFeed");
+      const wrapper = document.createElement("div");
+
+      if (role === "caller") {
+        wrapper.className = "flex gap-3 flex-row-reverse";
+        wrapper.innerHTML = `
+          <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center flex-shrink-0 text-xs font-bold">You</div>
+          <div class="bg-nhs-blue text-white p-3 rounded-xl rounded-tr-none max-w-[85%] shadow-sm">${text}</div>
+        `;
+      } else if (role === "emergency") {
+        wrapper.className = "flex gap-3";
+        wrapper.innerHTML = `
+          <div class="w-8 h-8 rounded-full bg-emergency-red text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">999</div>
+          <div class="bg-red-50 dark:bg-red-950/60 text-emergency-red font-bold p-3 rounded-xl rounded-tl-none border border-red-300 dark:border-red-800 max-w-[85%] shadow-sm">${text}</div>
+        `;
+      } else {
+        wrapper.className = "flex gap-3";
+        wrapper.innerHTML = `
+          <div class="w-8 h-8 rounded-full bg-nhs-blue text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">AI</div>
+          <div class="bg-white dark:bg-slate-800 p-3 rounded-xl rounded-tl-none border border-slate-200 dark:border-slate-700 max-w-[85%] shadow-sm text-slate-text dark:text-slate-200">${text}</div>
+        `;
+      }
+
+      feed.appendChild(wrapper);
+      feed.scrollTop = feed.scrollHeight;
     }
 
     function updateMetrics(m) {
@@ -1009,31 +595,28 @@
       const llm = m.llm_ttft_ms || 28;
       const tts = m.tts_ttfb_ms || 28;
 
-      document.getElementById("headerLatency").textContent = `Telemetry: ${e2e}ms`;
-      document.getElementById("valSTT").textContent = `${stt} ms`;
-      document.getElementById("valSafety").textContent = `${safety} ms`;
-      document.getElementById("valRAG").textContent = `${rag} ms`;
-      document.getElementById("valLLM").textContent = `${llm} ms`;
-      document.getElementById("valTTS").textContent = `${tts} ms`;
-      document.getElementById("valTotal").textContent = `${e2e} ms`;
+      document.getElementById("headerLatencyText").textContent = `${e2e}ms (p95)`;
+      document.getElementById("sttVal").textContent = `${stt} ms`;
+      document.getElementById("safetyVal").textContent = `${safety} ms`;
+      document.getElementById("ragVal").textContent = `${rag} ms`;
+      document.getElementById("llmVal").textContent = `${llm} ms`;
+      document.getElementById("ttsVal").textContent = `${tts} ms`;
+      document.getElementById("totalVal").textContent = `${e2e} ms`;
 
-      document.getElementById("barSTT").style.width = `${Math.min(100, (stt / 400) * 100)}%`;
-      document.getElementById("barSafety").style.width = `${Math.max(4, Math.min(100, (safety / 10) * 100))}%`;
-      document.getElementById("barRAG").style.width = `${Math.max(4, Math.min(100, (rag / 50) * 100))}%`;
-      document.getElementById("barLLM").style.width = `${Math.min(100, (llm / 300) * 100)}%`;
-      document.getElementById("barTTS").style.width = `${Math.min(100, (tts / 300) * 100)}%`;
-
-      const totalBar = document.getElementById("barTotal");
-      totalBar.style.width = `${Math.min(100, (e2e / 800) * 100)}%`;
+      document.getElementById("sttBar").style.width = `${Math.min(100, (stt / 400) * 100)}%`;
+      document.getElementById("safetyBar").style.width = `${Math.max(4, Math.min(100, (safety / 10) * 100))}%`;
+      document.getElementById("ragBar").style.width = `${Math.max(4, Math.min(100, (rag / 50) * 100))}%`;
+      document.getElementById("llmBar").style.width = `${Math.min(100, (llm / 300) * 100)}%`;
+      document.getElementById("ttsBar").style.width = `${Math.min(100, (tts / 300) * 100)}%`;
+      document.getElementById("totalBar").style.width = `${Math.min(100, (e2e / 800) * 100)}%`;
     }
 
     function triggerScenario(text) {
-      if (!ws) return;
-      ws.send(JSON.stringify({ type: "text_query", text: text }));
+      if (ws) ws.send(JSON.stringify({ type: "text_query", text: text }));
     }
 
-    function sendManualQuery() {
-      const input = document.getElementById("textQueryInput");
+    function sendTextQuery() {
+      const input = document.getElementById("textInput");
       const val = input.value.trim();
       if (!val || !ws) return;
       ws.send(JSON.stringify({ type: "text_query", text: val }));
@@ -1056,21 +639,23 @@
 
     function toggleMicrophone() {
       const btn = document.getElementById("btnVoice");
-      const label = document.getElementById("voiceBtnText");
+      const label = document.getElementById("voiceLabel");
       if (!isMicOn) {
         navigator.mediaDevices.getUserMedia({ audio: true }).then(() => {
           isMicOn = true;
-          btn.classList.add("recording");
+          btn.classList.add("bg-emergency-red");
+          btn.classList.remove("bg-nhs-blue");
           label.textContent = "Mute Voice";
-          organismMode = "listening";
+          sphereMode = "listening";
         }).catch((err) => {
-          alert("Microphone info: " + err.message + "\nYou can test all clinical scenarios using the scenario pills below!");
+          alert("Microphone info: " + err.message + "\nYou can test all clinical scenarios using the quick scenario pills!");
         });
       } else {
         isMicOn = false;
-        btn.classList.remove("recording");
+        btn.classList.remove("bg-emergency-red");
+        btn.classList.add("bg-nhs-blue");
         label.textContent = "Enable Voice";
-        organismMode = "idle";
+        sphereMode = "idle";
       }
     }
 
