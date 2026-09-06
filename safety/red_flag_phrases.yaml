@@ -1,0 +1,106 @@
+# Clinical Red-Flag Trigger Taxonomy
+# Grounded in NHS 111 & Emergency Medicine Protocol
+# Any match immediately triggers hard interrupt (bypass LLM)
+
+emergency_instruction: "This sounds like a medical emergency. Please hang up immediately and call 999 or attend your nearest A&E department."
+
+categories:
+  cardiac:
+    description: "Acute Coronary Syndrome, Myocardial Infarction, Severe Chest Distress"
+    patterns:
+      - "chest pain"
+      - "pain in (my |his |her )?chest"
+      - "chest pressure"
+      - "pressure in (my |his |her )?chest"
+      - "chest tightness"
+      - "tightness in (my |his |her )?chest"
+      - "heavy chest"
+      - "elephant on (my |his |her )?chest"
+      - "heart attack"
+      - "crushing pain"
+      - "pain (is )?(radiating|shooting|spreading) to (my |his |her )?(left arm|jaw|neck|back)"
+      - "(radiating|shooting|spreading) to (my |his |her )?(left arm|jaw|neck)"
+      - "severe heart palpitations"
+
+  respiratory:
+    description: "Acute Respiratory Failure, Severe Dyspnea, Choking, Airway Compromise"
+    patterns:
+      - "can't breathe"
+      - "cannot breathe"
+      - "cant breathe"
+      - "struggling to breathe"
+      - "fighting for breath"
+      - "gasping for (air|breath)"
+      - "choking"
+      - "lips turning blue"
+      - "blue lips"
+      - "severe asthma attack"
+      - "inhaler (isn't|is not) working"
+      - "throat closing( up)?"
+      - "suffocating"
+
+  stroke_neurological:
+    description: "FAST criteria (Face, Arms, Speech, Time), Acute Neurological Deficit"
+    patterns:
+      - "face (is )?droop(ing|ed)?"
+      - "facial droop"
+      - "slurred speech"
+      - "slurring (my |his |her )?words"
+      - "can't speak"
+      - "cannot speak"
+      - "sudden weakness"
+      - "arm weakness"
+      - "numbness on one side"
+      - "can't move (my |his |her )?(arm|leg)"
+      - "sudden paralysis"
+      - "having a stroke"
+      - "seizure"
+      - "fitting"
+      - "convulsing"
+
+  hemorrhage_trauma:
+    description: "Severe Bleeding, Arterial Bleed, Internal Hemorrhage"
+    patterns:
+      - "coughing( up)? blood"
+      - "vomiting blood"
+      - "throwing up blood"
+      - "severe bleeding"
+      - "bleeding profusely"
+      - "blood spurting"
+      - "bleeding won't stop"
+      - "bleeding will not stop"
+      - "stabbed"
+      - "gunshot"
+      - "arterial bleed"
+
+  unresponsive_collapse:
+    description: "Syncope, Loss of Consciousness, Severe Altered Mental State"
+    patterns:
+      - "passed out"
+      - "collapsed"
+      - "unconscious"
+      - "unresponsive"
+      - "not waking up"
+      - "won't wake up"
+      - "blacked out"
+      - "loss of consciousness"
+
+  anaphylaxis:
+    description: "Acute Systemic Allergic Reaction, Airway Edema"
+    patterns:
+      - "anaphylaxis"
+      - "anaphylactic shock"
+      - "tongue is swollen"
+      - "swollen tongue"
+      - "throat is swollen"
+      - "severe allergic reaction"
+
+  psychiatric_crisis:
+    description: "Acute Suicidal Ideation, Severe Self-Harm, Acute Intoxication/Overdose"
+    patterns:
+      - "kill myself"
+      - "want to end my life"
+      - "commit suicide"
+      - "taken an overdose"
+      - "swallowed (all|a lot of) pills"
+      - "cut my wrists"
