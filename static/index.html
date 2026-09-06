@@ -1,934 +1,1415 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>EMMA &mdash; NHS AI Voice Receptionist</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-/* ─────────────────────────────────────────────────────
-   EMMA · NHS GP AI Voice Receptionist
-   Structural inspiration:
-     Bland AI  — dark hero, large display type, phone UI
-     Vapi      — dark canvas, pipeline telemetry
-     Hume AI   — full-viewport animated canvas behind content
-   NO SIDEBARS. NO GRID DASHBOARD. FULL-VIEWPORT HERO.
-───────────────────────────────────────────────────── */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EMMA &mdash; NHS Clinical AI Voice Receptionist | TriagePulse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════════════════════════
+       EMMA · NHS Clinical AI Voice Receptionist
+       Clinical Enterprise Architecture: Corti.ai + Hume + NHS Digital
+       ═══════════════════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-:root{
-  /* Bland AI palette */
-  --ink:    #101010;
-  --ink2:   #191919;
-  --ink3:   #222222;
-  --border: rgba(255,255,255,.07);
-  --border2:rgba(255,255,255,.12);
-  /* accent — Vapi neon mint */
-  --accent: #00F5A0;
-  --accent2:#00C4FF;
-  --accent3:#7C6DFA;
-  --danger: #E8473F;
-  --warn:   #F0A500;
-  /* type */
-  --t1: #EFEFEF;
-  --t2: #707070;
-  --t3: #3A3A3A;
-  --mono:"JetBrains Mono",monospace;
-  --sans:"Inter",system-ui,sans-serif;
-}
+    :root {
+      /* NHS & Medical Palette */
+      --nhs-blue: #005EB8;
+      --nhs-dark-blue: #003087;
+      --nhs-bright-blue: #0072CE;
+      --nhs-cyan: #00A3E0;
+      
+      /* Executive Clinical Dark Slate (Corti / Modern Enterprise) */
+      --bg-base: #090D16;
+      --bg-surface: #0E1524;
+      --bg-elevated: #151F33;
+      --bg-glass: rgba(14, 21, 36, 0.75);
+      
+      /* Clinical Triage Urgency Tiers */
+      --triage-emergency: #EF4444;  /* Red: 999 Immediate Transfer */
+      --triage-urgent: #F59E0B;     /* Amber: Same-Day GP */
+      --triage-routine: #10B981;    /* Green: Routine / Self-care */
+      --triage-info: #38BDF8;
+      
+      /* Typography & Borders */
+      --text-primary: #F8FAFC;
+      --text-secondary: #94A3B8;
+      --text-muted: #64748B;
+      --border-subtle: rgba(255, 255, 255, 0.07);
+      --border-medium: rgba(255, 255, 255, 0.12);
+      --border-accent: rgba(0, 163, 224, 0.3);
+      
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
 
-html,body{
-  height:100%; min-height:100%;
-  background:var(--ink);
-  color:var(--t1);
-  font-family:var(--sans);
-  overflow:hidden;
-}
+    html, body {
+      height: 100%;
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
 
-/* ── full-viewport canvas behind everything (Hume / Bland DNA) ── */
-#bg-canvas{
-  position:fixed; inset:0; z-index:0;
-  width:100%; height:100%;
-}
+    /* Ambient Clinical Glows (Soft NHS Sapphire & Medical Azure) */
+    .clinical-ambient {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .ambient-glow-1 {
+      position: absolute;
+      top: -15%;
+      left: 20%;
+      width: 65vw;
+      height: 55vh;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 94, 184, 0.15) 0%, rgba(0, 163, 224, 0.05) 50%, transparent 80%);
+      filter: blur(100px);
+    }
+    .ambient-glow-2 {
+      position: absolute;
+      bottom: -10%;
+      right: 15%;
+      width: 50vw;
+      height: 45vh;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, rgba(0, 48, 135, 0.08) 60%, transparent 80%);
+      filter: blur(90px);
+    }
 
-/* ── floating nav (Bland AI / Retell style) ── */
-#nav{
-  position:fixed; top:0; left:0; right:0; z-index:100;
-  display:flex; align-items:center; justify-content:space-between;
-  padding:0 32px; height:56px;
-  background:rgba(16,16,16,.82);
-  border-bottom:1px solid var(--border);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-}
-.nav-brand{
-  display:flex; align-items:center; gap:10px;
-}
-.nav-logo{
-  font-family:var(--mono);
-  font-size:12px; font-weight:600; letter-spacing:.14em;
-  color:var(--t1); text-transform:uppercase;
-}
-.nav-logo span{ color:var(--accent); }
-.nav-pill{
-  font-family:var(--mono); font-size:9px; letter-spacing:.1em;
-  padding:3px 10px; border-radius:100px;
-  border:1px solid; font-weight:500;
-}
-.pill-green{ color:var(--accent); border-color:rgba(0,245,160,.25); background:rgba(0,245,160,.06); }
-.pill-blue { color:var(--accent2);border-color:rgba(0,196,255,.25); background:rgba(0,196,255,.06); }
-.pill-amber{ color:var(--warn);   border-color:rgba(240,165,0,.25);  background:rgba(240,165,0,.06); }
-.nav-meta{
-  display:flex; gap:20px; align-items:center;
-}
-.nav-stat{
-  font-family:var(--mono); font-size:10px; color:var(--t2);
-  display:flex; gap:5px; align-items:center; letter-spacing:.05em;
-}
-.nav-stat-val{ color:var(--accent); font-weight:600; }
-.nav-stat-val.danger{ color:var(--danger); }
-.lbar{ display:flex; gap:2px; align-items:flex-end; height:16px; }
-.lb{ width:3px; border-radius:2px; background:var(--accent); opacity:.2; transition:height .5s,opacity .5s; }
-.lb.on{ opacity:.9; }
+    /* Primary Layout Grid */
+    #app-container {
+      position: relative;
+      z-index: 1;
+      height: 100vh;
+      display: grid;
+      grid-template-rows: 64px 1fr 76px;
+      grid-template-columns: 360px 1fr 380px;
+    }
 
-/* ── HERO — full viewport, centered (Hume/Bland DNA) ── */
-#hero{
-  position:fixed; inset:0; z-index:1;
-  display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
-  pointer-events:none;
-}
+    /* ═══════════ HEADER ═══════════ */
+    #clinical-header {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      background: rgba(9, 13, 22, 0.85);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
 
-/* identity text — centered over blob (Bland AI large display type) */
-.hero-label{
-  position:absolute;
-  /* vertically centred on viewport, below blob center */
-  top:50%; left:50%;
-  transform:translate(-50%, calc(-50% + 0px));
-  text-align:center;
-  pointer-events:none; z-index:10;
-}
-.hero-name{
-  font-family:var(--mono); font-size:11px; font-weight:600;
-  letter-spacing:.35em; color:var(--accent); text-transform:uppercase;
-  text-shadow:0 0 28px rgba(0,245,160,.5);
-  margin-bottom:6px;
-}
-.hero-tagline{
-  font-size:13px; font-weight:400; letter-spacing:.02em;
-  color:var(--t2); line-height:1.5;
-}
-.hero-state{
-  font-family:var(--mono); font-size:9px; letter-spacing:.22em;
-  color:var(--t2); text-transform:uppercase; margin-top:8px;
-}
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
 
-/* ── PIPELINE — horizontal, centered near bottom (Vapi DNA) ── */
-#pipeline{
-  position:fixed; bottom:112px; left:50%;
-  transform:translateX(-50%);
-  z-index:20;
-  display:flex; align-items:center; gap:0;
-  background:rgba(16,16,16,.78);
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:12px 20px;
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  white-space:nowrap;
-}
-.pipe-node{
-  display:flex; flex-direction:column; align-items:center; gap:4px;
-  padding:6px 16px;
-}
-.pipe-dot{
-  width:28px; height:28px; border-radius:6px;
-  border:1px solid rgba(255,255,255,.08);
-  background:var(--ink2);
-  display:flex; align-items:center; justify-content:center;
-  transition:all .3s;
-  position:relative;
-}
-.pipe-dot svg{
-  width:14px; height:14px;
-  stroke:var(--t3); fill:none;
-  stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round;
-  transition:stroke .3s;
-}
-.pipe-dot::after{
-  content:""; position:absolute; inset:-1px; border-radius:7px;
-  border:1px solid transparent;
-  transition:border-color .3s,box-shadow .3s;
-}
-.pipe-lbl{
-  font-family:var(--mono); font-size:8px; letter-spacing:.12em;
-  color:var(--t3); text-transform:uppercase; font-weight:500;
-}
-.pipe-lat{
-  font-family:var(--mono); font-size:8px; font-weight:600;
-  color:var(--t3); transition:color .3s; min-height:11px;
-}
-.pipe-conn{
-  width:20px; height:1px;
-  background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,.12),rgba(255,255,255,.06));
-  position:relative; flex-shrink:0;
-}
-.pipe-conn::after{
-  content:""; position:absolute; top:0; left:0;
-  width:0; height:1px;
-  background:var(--accent);
-  box-shadow:0 0 6px var(--accent);
-  transition:width .4s ease;
-}
-.pipe-node.active .pipe-dot{ background:rgba(0,245,160,.07); }
-.pipe-node.active .pipe-dot::after{ border-color:var(--accent); box-shadow:0 0 12px rgba(0,245,160,.25); }
-.pipe-node.active .pipe-dot svg{ stroke:var(--accent); }
-.pipe-node.active .pipe-lbl{ color:var(--accent); }
-.pipe-node.active .pipe-lat{ color:var(--accent); }
-.pipe-node.danger .pipe-dot::after{ border-color:var(--danger); box-shadow:0 0 12px rgba(232,71,63,.3); }
-.pipe-node.danger .pipe-dot svg{ stroke:var(--danger); }
-.pipe-node.danger .pipe-lbl{ color:var(--danger); }
-.pipe-conn.active::after{ width:100%; }
+    .nhs-pill-logo {
+      background: var(--nhs-blue);
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      padding: 4px 10px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0, 94, 184, 0.35);
+    }
 
-/* ── BOTTOM DOCK — call interface (Bland AI phone bar) ── */
-#dock{
-  position:fixed; bottom:0; left:50%;
-  transform:translateX(-50%);
-  z-index:20;
-  width:580px;
-  background:rgba(16,16,16,.88);
-  border:1px solid var(--border2);
-  border-bottom:none;
-  border-radius:16px 16px 0 0;
-  padding:16px 20px 20px;
-  backdrop-filter:blur(24px);
-  -webkit-backdrop-filter:blur(24px);
-}
-.dock-input-row{
-  display:flex; gap:8px; align-items:center; margin-bottom:12px;
-}
-.phone-display{
-  flex:1;
-  font-family:var(--mono); font-size:18px; font-weight:500;
-  letter-spacing:.12em; color:var(--accent);
-  background:var(--ink2); border:1px solid var(--border);
-  border-radius:8px; padding:10px 16px; min-height:44px;
-  display:flex; align-items:center;
-  text-shadow:0 0 16px rgba(0,245,160,.4);
-}
-.call-btn{
-  height:44px; padding:0 20px;
-  border-radius:8px; border:none;
-  font-family:var(--mono); font-size:11px; font-weight:600;
-  letter-spacing:.1em; text-transform:uppercase; cursor:pointer;
-  transition:all .2s; display:flex; align-items:center; gap:7px;
-  flex-shrink:0;
-}
-.call-btn.idle{
-  background:var(--accent); color:var(--ink);
-  box-shadow:0 0 18px rgba(0,245,160,.25);
-}
-.call-btn.idle:hover{ box-shadow:0 0 32px rgba(0,245,160,.45); transform:translateY(-1px); }
-.call-btn.active{
-  background:var(--danger); color:#fff;
-  box-shadow:0 0 18px rgba(232,71,63,.3);
-  animation:callpulse 1.8s ease-in-out infinite;
-}
-@keyframes callpulse{
-  0%,100%{ box-shadow:0 0 18px rgba(232,71,63,.3); }
-  50%    { box-shadow:0 0 40px rgba(232,71,63,.6); }
-}
-.call-btn svg{ width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+    .surgery-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .surgery-title {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .surgery-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
 
-/* dial pad */
-.dialpad{
-  display:grid; grid-template-columns:repeat(6,1fr); gap:6px;
-  margin-bottom:0;
-}
-.dk{
-  background:var(--ink3); border:1px solid var(--border);
-  border-radius:7px; padding:8px 4px; text-align:center;
-  cursor:pointer; transition:all .12s; user-select:none;
-}
-.dk:hover{ background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.15); }
-.dk:active{ transform:scale(.95); }
-.dn{ font-family:var(--mono); font-size:14px; font-weight:600; color:var(--t1); line-height:1; }
-.ds{ font-family:var(--mono); font-size:6px; color:var(--t3); letter-spacing:.1em; margin-top:2px; }
-.dk.bk .dn{ color:var(--danger); }
+    .clinical-badges {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .c-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      border: 1px solid;
+    }
+    .badge-emis {
+      background: rgba(0, 163, 224, 0.08);
+      border-color: rgba(0, 163, 224, 0.25);
+      color: var(--nhs-cyan);
+    }
+    .badge-safety {
+      background: rgba(16, 185, 129, 0.08);
+      border-color: rgba(16, 185, 129, 0.25);
+      color: var(--triage-routine);
+    }
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 8px currentColor;
+    }
 
-/* text input row */
-.text-row{
-  display:flex; gap:8px; margin-top:10px;
-  border-top:1px solid var(--border); padding-top:10px;
-}
-.text-row input{
-  flex:1; background:transparent; border:none; outline:none;
-  font-family:var(--mono); font-size:11px; color:var(--t1);
-  letter-spacing:.04em;
-}
-.text-row input::placeholder{ color:var(--t3); }
-.text-row button{
-  background:transparent; border:1px solid var(--border2);
-  border-radius:6px; padding:6px 14px;
-  font-family:var(--mono); font-size:10px; font-weight:600;
-  letter-spacing:.08em; color:var(--accent); cursor:pointer;
-  transition:all .2s; text-transform:uppercase;
-}
-.text-row button:hover{ background:rgba(0,245,160,.08); border-color:rgba(0,245,160,.3); }
+    .system-telemetry {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .tele-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .tele-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .tele-val {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .tele-val.accent { color: var(--nhs-cyan); }
+    .tele-val.alert { color: var(--triage-emergency); }
 
-/* ── LEFT PANEL — transcript (slides in on call) ── */
-#left-panel{
-  position:fixed; left:24px; top:72px; bottom:112px;
-  width:280px; z-index:20;
-  background:rgba(14,14,14,.82);
-  border:1px solid var(--border);
-  border-radius:12px;
-  display:flex; flex-direction:column;
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  transform:translateX(-320px);
-  opacity:0;
-  transition:transform .35s cubic-bezier(.16,1,.3,1), opacity .35s ease;
-  overflow:hidden;
-}
-#left-panel.open{ transform:translateX(0); opacity:1; }
+    /* ═══════════ LEFT: PATIENT CALL & TRIAGE INTAKE ═══════════ */
+    #intake-sidebar {
+      grid-column: 1;
+      grid-row: 2;
+      border-right: 1px solid var(--border-subtle);
+      background: rgba(14, 21, 36, 0.6);
+      backdrop-filter: blur(16px);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 20px;
+      gap: 20px;
+    }
 
-.panel-head{
-  padding:12px 14px 10px;
-  border-bottom:1px solid var(--border);
-  font-family:var(--mono); font-size:8px; letter-spacing:.16em;
-  color:var(--t2); text-transform:uppercase; font-weight:500;
-  display:flex; align-items:center; justify-content:space-between;
-  flex-shrink:0;
-}
-.panel-scroll{
-  flex:1; overflow-y:auto; padding:12px;
-}
-.panel-scroll::-webkit-scrollbar{ width:2px; }
-.panel-scroll::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.08); border-radius:9999px; }
+    .card-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
 
-.msg{ margin-bottom:10px; animation:msgin .2s cubic-bezier(.16,1,.3,1) forwards; }
-@keyframes msgin{ from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
-.msg-role{
-  font-family:var(--mono); font-size:8px; letter-spacing:.12em;
-  text-transform:uppercase; font-weight:600; margin-bottom:3px;
-}
-.msg-role.patient{ color:var(--accent2); }
-.msg-role.emma{ color:var(--accent); }
-.msg-body{
-  font-size:11px; line-height:1.65; color:var(--t1);
-  background:var(--ink2); border:1px solid var(--border);
-  border-radius:5px; padding:7px 10px;
-}
-.msg.partial .msg-body{ color:var(--t2); border-style:dashed; }
-.cursor{
-  display:inline-block; width:5px; height:10px; background:var(--accent);
-  vertical-align:middle; border-radius:1px; margin-left:2px;
-  animation:cur 1s step-end infinite;
-}
-@keyframes cur{ 0%,100%{opacity:1} 50%{opacity:0} }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .section-title svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--nhs-cyan);
+    }
 
-/* ── RIGHT PANEL — telemetry ── */
-#right-panel{
-  position:fixed; right:24px; top:72px; bottom:112px;
-  width:260px; z-index:20;
-  background:rgba(14,14,14,.82);
-  border:1px solid var(--border);
-  border-radius:12px;
-  display:flex; flex-direction:column;
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  transform:translateX(300px);
-  opacity:0;
-  transition:transform .35s cubic-bezier(.16,1,.3,1), opacity .35s ease;
-  overflow:hidden;
-}
-#right-panel.open{ transform:translateX(0); opacity:1; }
+    /* Call Connection Controller */
+    .call-controller {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
 
-.tab-bar{ display:flex; border-bottom:1px solid var(--border); flex-shrink:0; }
-.tab{
-  flex:1; padding:10px 8px;
-  font-family:var(--mono); font-size:8px; letter-spacing:.12em;
-  text-transform:uppercase; font-weight:500; text-align:center;
-  color:var(--t3); cursor:pointer;
-  border-bottom:1px solid transparent;
-  transition:all .2s;
-}
-.tab:hover{ color:var(--t2); }
-.tab.active{ color:var(--accent); border-bottom-color:var(--accent); }
+    .patient-caller-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+    }
+    .patient-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(0, 94, 184, 0.15);
+      border: 1px solid rgba(0, 163, 224, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--nhs-cyan);
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .caller-details {
+      display: flex;
+      flex-direction: column;
+    }
+    .caller-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .caller-meta {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+    }
 
-.tab-pane{ display:none; }
-.tab-pane.active{ display:block; }
+    /* Primary Action Buttons */
+    .btn-triage-call {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: none;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-triage-call.idle {
+      background: linear-gradient(135deg, var(--nhs-blue), var(--nhs-bright-blue));
+      color: #FFFFFF;
+      box-shadow: 0 4px 14px rgba(0, 94, 184, 0.35);
+    }
+    .btn-triage-call.idle:hover {
+      box-shadow: 0 6px 20px rgba(0, 94, 184, 0.5);
+      transform: translateY(-1px);
+    }
+    .btn-triage-call.active {
+      background: var(--triage-emergency);
+      color: #FFFFFF;
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
+      animation: call-active-pulse 2s infinite ease-in-out;
+    }
+    @keyframes call-active-pulse {
+      0%, 100% { box-shadow: 0 0 14px rgba(239, 68, 68, 0.4); }
+      50% { box-shadow: 0 0 24px rgba(239, 68, 68, 0.7); }
+    }
 
-/* telemetry entries */
-.te{
-  font-family:var(--mono); font-size:9px; line-height:1.45;
-  padding:4px 0; border-bottom:1px solid rgba(255,255,255,.04);
-  color:var(--t2); display:flex; gap:6px; align-items:flex-start;
-}
-.te-ts{ color:var(--t3); flex-shrink:0; font-size:8px; padding-top:1px; }
-.te-type{
-  padding:1px 4px; border-radius:2px; font-size:7px;
-  letter-spacing:.07em; flex-shrink:0; font-weight:600; text-transform:uppercase;
-}
-.te-type.stt { background:rgba(0,196,255,.12); color:var(--accent2); }
-.te-type.llm { background:rgba(0,245,160,.12); color:var(--accent); }
-.te-type.tts { background:rgba(124,109,250,.12); color:var(--accent3); }
-.te-type.safe{ background:rgba(232,71,63,.12); color:var(--danger); }
-.te-type.book{ background:rgba(240,165,0,.12); color:var(--warn); }
-.te-type.sys { background:rgba(112,112,112,.12); color:var(--t2); }
-.te-msg{ flex:1; }
+    /* Clinical Scenarios (Quick Test Presets for Interview / Demo) */
+    .scenario-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .scenario-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 10px 12px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      transition: all 0.15s ease;
+    }
+    .scenario-btn:hover {
+      background: rgba(0, 163, 224, 0.08);
+      border-color: rgba(0, 163, 224, 0.3);
+      transform: translateX(2px);
+    }
+    .scenario-tag {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .tag-red { color: var(--triage-emergency); }
+    .tag-amber { color: var(--triage-urgent); }
+    .tag-green { color: var(--triage-routine); }
+    .scenario-desc {
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
 
-/* metrics panel */
-.metric-row{
-  display:flex; justify-content:space-between; align-items:center;
-  padding:7px 0; border-bottom:1px solid rgba(255,255,255,.04);
-  font-family:var(--mono); font-size:10px;
-}
-.metric-row:last-child{ border-bottom:none; }
-.metric-lbl{ color:var(--t2); letter-spacing:.04em; }
-.metric-val{ font-weight:600; }
-.metric-val.g{ color:var(--accent); }
-.metric-val.c{ color:var(--accent2); }
-.metric-val.p{ color:var(--accent3); }
-.metric-val.a{ color:var(--warn); }
-.metric-val.r{ color:var(--danger); }
+    /* ═══════════ CENTER: VOICE RESONANCE & ACTIVE CONSULTATION ═══════════ */
+    #consultation-stage {
+      grid-column: 2;
+      grid-row: 2;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 32px;
+      overflow: hidden;
+    }
 
-/* safety alert */
-.alert{
-  background:rgba(232,71,63,.06); border:1px solid rgba(232,71,63,.2);
-  border-radius:6px; padding:10px; margin-bottom:8px;
-  animation:alertin .25s cubic-bezier(.16,1,.3,1);
-}
-@keyframes alertin{ from{opacity:0;transform:scale(.97)} to{opacity:1;transform:scale(1)} }
-.alert-title{ font-family:var(--mono); font-size:9px; font-weight:700; color:var(--danger); margin-bottom:3px; letter-spacing:.06em; }
-.alert-body{ font-size:10px; color:#C08080; line-height:1.55; }
+    /* Voice Orb Canvas */
+    #voice-orb-canvas {
+      width: 440px;
+      height: 440px;
+      position: absolute;
+      top: 48%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 2;
+    }
 
-/* booking */
-.booking{
-  background:rgba(0,245,160,.04); border:1px solid rgba(0,245,160,.15);
-  border-radius:6px; padding:10px; margin-bottom:8px;
-}
-.booking-title{ font-family:var(--mono); font-size:9px; font-weight:700; color:var(--accent); margin-bottom:6px; letter-spacing:.06em; }
-.booking-row{ display:flex; justify-content:space-between; font-family:var(--mono); font-size:9px; margin-bottom:3px; }
-.booking-lbl{ color:var(--t3); }.booking-val{ color:var(--t1); }
+    .voice-status-wrapper {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: none;
+      z-index: 5;
+    }
+    .voice-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(9, 13, 22, 0.7);
+      border: 1px solid var(--border-accent);
+      border-radius: 20px;
+      padding: 4px 12px;
+      margin-bottom: 8px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--nhs-cyan);
+      backdrop-filter: blur(10px);
+    }
+    .voice-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #FFFFFF;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+    }
+    .voice-subtext {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
 
-/* divider */
-.hdiv{ height:1px; background:linear-gradient(90deg,transparent,rgba(0,245,160,.1),transparent); margin:8px 0; }
+    /* Live Triage Urgency Alert Banner (Shows up during Red Flag detection) */
+    #emergency-protocol-banner {
+      position: absolute;
+      top: 24px;
+      left: 32px;
+      right: 32px;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      border-radius: 10px;
+      padding: 12px 18px;
+      display: none;
+      align-items: center;
+      gap: 14px;
+      z-index: 20;
+      backdrop-filter: blur(14px);
+      animation: alert-slide-down 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes alert-slide-down {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .alert-icon-wrap {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--triage-emergency);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #FFFFFF;
+    }
+    .alert-body {
+      flex: 1;
+    }
+    .alert-headline {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--triage-emergency);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .alert-instructions {
+      font-size: 11px;
+      color: #FECACA;
+      margin-top: 2px;
+    }
 
-/* ── SYSTEM TICKER ── */
-#ticker{
-  position:fixed; bottom:0; left:0; right:0;
-  height:20px; z-index:9999;
-  background:rgba(10,10,10,.96);
-  border-top:1px solid var(--border);
-  display:flex; align-items:center; overflow:hidden;
-}
-.ticker-tag{
-  font-family:var(--mono); font-size:7px; letter-spacing:.16em;
-  color:var(--accent); padding:0 14px; flex-shrink:0;
-  border-right:1px solid var(--border); height:100%;
-  display:flex; align-items:center; font-weight:600; text-transform:uppercase;
-}
-.ticker-track{ flex:1; overflow:hidden; }
-.ticker-inner{
-  display:flex; gap:40px; white-space:nowrap;
-  animation:tickscroll 45s linear infinite;
-  font-family:var(--mono); font-size:7px; color:var(--t3); letter-spacing:.1em;
-}
-@keyframes tickscroll{ 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+    /* Live Message Input Floating Bar (At bottom of consultation stage) */
+    #stage-input-dock {
+      position: absolute;
+      bottom: 24px;
+      width: 100%;
+      max-width: 520px;
+      z-index: 15;
+    }
+    .input-glass-panel {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(14, 21, 36, 0.85);
+      border: 1px solid var(--border-medium);
+      border-radius: 10px;
+      padding: 8px 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(20px);
+    }
+    .input-glass-panel input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 12px;
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+    }
+    .input-glass-panel input::placeholder {
+      color: var(--text-muted);
+    }
+    .btn-send-consult {
+      background: var(--nhs-blue);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .btn-send-consult:hover {
+      background: var(--nhs-bright-blue);
+    }
 
-.ph-empty{
-  padding:18px 0; text-align:center;
-  font-family:var(--mono); font-size:9px; color:var(--t3);
-  letter-spacing:.1em; line-height:2;
-}
-</style>
+    /* ═══════════ RIGHT: CLINICAL TRANSCRIPT & EHR SYNC ═══════════ */
+    #clinical-drawer {
+      grid-column: 3;
+      grid-row: 2;
+      border-left: 1px solid var(--border-subtle);
+      background: rgba(14, 21, 36, 0.6);
+      backdrop-filter: blur(16px);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .drawer-nav {
+      display: flex;
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(9, 13, 22, 0.4);
+    }
+    .drawer-tab {
+      flex: 1;
+      padding: 12px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+    .drawer-tab:hover {
+      color: var(--text-secondary);
+    }
+    .drawer-tab.active {
+      color: var(--nhs-cyan);
+      border-bottom-color: var(--nhs-cyan);
+      background: rgba(0, 163, 224, 0.04);
+    }
+
+    .drawer-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .drawer-content::-webkit-scrollbar { width: 4px; }
+    .drawer-content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+
+    .tab-view { display: none; }
+    .tab-view.active { display: flex; flex-direction: column; gap: 12px; }
+
+    /* Consultation Transcript Bubbles */
+    .dialogue-bubble {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      animation: bubble-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes bubble-in {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .speaker-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .speaker-patient { color: var(--nhs-cyan); }
+    .speaker-emma { color: #38BDF8; }
+
+    .bubble-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      line-height: 1.55;
+      color: var(--text-primary);
+    }
+    .dialogue-bubble.patient .bubble-card {
+      border-left: 3px solid var(--nhs-cyan);
+    }
+    .dialogue-bubble.emma .bubble-card {
+      border-left: 3px solid var(--nhs-blue);
+      background: rgba(0, 94, 184, 0.05);
+    }
+    .dialogue-bubble.partial .bubble-card {
+      color: var(--text-muted);
+      border-style: dashed;
+    }
+
+    /* EMIS Booking Card */
+    .emis-booking-record {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .booking-record-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(16, 185, 129, 0.15);
+      padding-bottom: 8px;
+    }
+    .booking-badge-tag {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--triage-routine);
+    }
+    .booking-record-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+    }
+    .booking-row-label { color: var(--text-muted); }
+    .booking-row-val { font-weight: 600; color: var(--text-primary); }
+
+    /* ═══════════ BOTTOM: CLINICAL PIPELINE ORCHESTRATION ═══════════ */
+    #pipeline-footer {
+      grid-column: 1 / -1;
+      grid-row: 3;
+      background: rgba(9, 13, 22, 0.9);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      backdrop-filter: blur(20px);
+    }
+
+    .pipeline-nodes {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .p-node {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      transition: all 0.25s ease;
+    }
+    .p-node-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      transition: all 0.25s ease;
+    }
+    .p-node-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+    }
+    .p-node-latency {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* Active / Processing / Alert Node States */
+    .p-node.active {
+      border-color: rgba(0, 163, 224, 0.4);
+      background: rgba(0, 163, 224, 0.08);
+    }
+    .p-node.active .p-node-dot {
+      background: var(--nhs-cyan);
+      box-shadow: 0 0 8px var(--nhs-cyan);
+    }
+    .p-node.active .p-node-label { color: var(--text-primary); }
+    .p-node.active .p-node-latency { color: var(--nhs-cyan); }
+
+    .p-node.danger {
+      border-color: rgba(239, 68, 68, 0.5);
+      background: rgba(239, 68, 68, 0.12);
+    }
+    .p-node.danger .p-node-dot {
+      background: var(--triage-emergency);
+      box-shadow: 0 0 10px var(--triage-emergency);
+    }
+    .p-node.danger .p-node-label, .p-node.danger .p-node-latency {
+      color: var(--triage-emergency);
+    }
+
+    .node-arrow {
+      color: var(--text-muted);
+      font-size: 10px;
+      opacity: 0.5;
+    }
+
+    .compliance-footer-tag {
+      font-size: 10px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .compliance-footer-tag span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .compliance-footer-tag svg {
+      width: 12px;
+      height: 12px;
+      stroke: var(--triage-routine);
+    }
+  </style>
 </head>
 <body>
 
-<!-- Full-viewport animated background canvas -->
-<canvas id="bg-canvas"></canvas>
+  <!-- Ambient Clinical Lighting -->
+  <div class="clinical-ambient">
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+  </div>
 
-<!-- NAV -->
-<nav id="nav">
-  <div class="nav-brand">
-    <div style="width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);animation:pdot 2s ease-in-out infinite;flex-shrink:0"></div>
-    <div>
-      <div class="nav-logo">TriagePulse <span>AI</span></div>
-      <div style="font-family:var(--mono);font-size:8px;color:var(--t2);letter-spacing:.08em;margin-top:1px">EMMA &mdash; NHS GP Voice Receptionist</div>
-    </div>
-  </div>
-  <div style="display:flex;gap:6px;align-items:center">
-    <span class="nav-pill pill-green">Online</span>
-    <span class="nav-pill pill-blue">EMIS Connected</span>
-    <span class="nav-pill pill-amber">Production v2.4</span>
-  </div>
-  <div class="nav-meta">
-    <div class="nav-stat">p95 <span class="nav-stat-val" id="p95">124ms</span></div>
-    <div class="nav-stat">Calls <span class="nav-stat-val" id="ct">0</span></div>
-    <div class="nav-stat">Alerts <span class="nav-stat-val danger" id="sa">0</span></div>
-    <div class="lbar" id="lb">
-      <div class="lb" style="height:4px"></div><div class="lb" style="height:8px"></div>
-      <div class="lb on" style="height:12px"></div><div class="lb" style="height:6px"></div>
-      <div class="lb on" style="height:14px"></div><div class="lb" style="height:10px"></div>
-      <div class="lb" style="height:16px"></div><div class="lb on" style="height:5px"></div>
-    </div>
-  </div>
-</nav>
-<style>@keyframes pdot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.6)}}</style>
+  <div id="app-container">
 
-<!-- HERO label (centred over canvas) -->
-<div id="hero">
-  <div class="hero-label">
-    <div class="hero-name">EMMA</div>
-    <div class="hero-tagline">NHS GP AI Voice Receptionist</div>
-    <div class="hero-state" id="hero-state">Ready &mdash; Awaiting Patient</div>
-  </div>
-</div>
-
-<!-- PIPELINE STRIP -->
-<div id="pipeline">
-  <div class="pipe-node" id="pn-vad">
-    <div class="pipe-dot">
-      <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/></svg>
-    </div>
-    <div class="pipe-lbl">VAD</div>
-    <div class="pipe-lat" id="pl-vad">&mdash;</div>
-  </div>
-  <div class="pipe-conn" id="pc1"></div>
-  <div class="pipe-node" id="pn-stt">
-    <div class="pipe-dot">
-      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="13" y2="14"/></svg>
-    </div>
-    <div class="pipe-lbl">STT</div>
-    <div class="pipe-lat" id="pl-stt">&mdash;</div>
-  </div>
-  <div class="pipe-conn" id="pc2"></div>
-  <div class="pipe-node" id="pn-safe">
-    <div class="pipe-dot">
-      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-    </div>
-    <div class="pipe-lbl">Safety</div>
-    <div class="pipe-lat" id="pl-safe">&mdash;</div>
-  </div>
-  <div class="pipe-conn" id="pc3"></div>
-  <div class="pipe-node" id="pn-rag">
-    <div class="pipe-dot">
-      <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-    </div>
-    <div class="pipe-lbl">RAG</div>
-    <div class="pipe-lat" id="pl-rag">&mdash;</div>
-  </div>
-  <div class="pipe-conn" id="pc4"></div>
-  <div class="pipe-node" id="pn-llm">
-    <div class="pipe-dot">
-      <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-    </div>
-    <div class="pipe-lbl">LLM</div>
-    <div class="pipe-lat" id="pl-llm">&mdash;</div>
-  </div>
-  <div class="pipe-conn" id="pc5"></div>
-  <div class="pipe-node" id="pn-tts">
-    <div class="pipe-dot">
-      <svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
-    </div>
-    <div class="pipe-lbl">TTS</div>
-    <div class="pipe-lat" id="pl-tts">&mdash;</div>
-  </div>
-</div>
-
-<!-- BOTTOM DOCK -->
-<div id="dock">
-  <div class="dock-input-row">
-    <div class="phone-display" id="pd">_</div>
-    <button class="call-btn idle" id="cBtn" onclick="toggleCall()">
-      <svg id="cIco" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-      <span id="cLbl">Connect</span>
-    </button>
-  </div>
-  <div class="dialpad" id="dialpad">
-    <div class="dk" data-d="1"><div class="dn">1</div><div class="ds">&nbsp;</div></div>
-    <div class="dk" data-d="2"><div class="dn">2</div><div class="ds">ABC</div></div>
-    <div class="dk" data-d="3"><div class="dn">3</div><div class="ds">DEF</div></div>
-    <div class="dk" data-d="4"><div class="dn">4</div><div class="ds">GHI</div></div>
-    <div class="dk" data-d="5"><div class="dn">5</div><div class="ds">JKL</div></div>
-    <div class="dk" data-d="6"><div class="dn">6</div><div class="ds">MNO</div></div>
-    <div class="dk" data-d="7"><div class="dn">7</div><div class="ds">PQRS</div></div>
-    <div class="dk" data-d="8"><div class="dn">8</div><div class="ds">TUV</div></div>
-    <div class="dk" data-d="9"><div class="dn">9</div><div class="ds">WXYZ</div></div>
-    <div class="dk" data-d="*"><div class="dn">*</div><div class="ds">&nbsp;</div></div>
-    <div class="dk" data-d="0"><div class="dn">0</div><div class="ds">+</div></div>
-    <div class="dk bk" id="bk"><div class="dn">&#9003;</div><div class="ds">&nbsp;</div></div>
-  </div>
-  <div class="text-row">
-    <form onsubmit="sendText(event)" style="display:flex;gap:8px;flex:1">
-      <input type="text" id="tm" placeholder="Or type a patient message to test..."/>
-      <button type="submit">Send</button>
-    </form>
-  </div>
-</div>
-
-<!-- LEFT PANEL — transcript -->
-<div id="left-panel">
-  <div class="panel-head">
-    <span>Conversation</span>
-    <span id="lp-status" style="color:var(--t3)">idle</span>
-  </div>
-  <div class="panel-scroll" id="transcript-pane"></div>
-</div>
-
-<!-- RIGHT PANEL — telemetry/metrics/safety -->
-<div id="right-panel">
-  <div class="tab-bar">
-    <div class="tab active" onclick="swTab('telem',this)">Telemetry</div>
-    <div class="tab" onclick="swTab('metrics',this)">Metrics</div>
-    <div class="tab" onclick="swTab('safety',this)">Safety</div>
-  </div>
-  <div class="panel-scroll">
-    <div class="tab-pane active" id="tp-telem"></div>
-    <div class="tab-pane" id="tp-metrics">
-      <div style="padding:4px 0">
-        <div class="metric-row"><span class="metric-lbl">STT Model</span><span class="metric-val c">Deepgram Nova-2</span></div>
-        <div class="metric-row"><span class="metric-lbl">LLM</span><span class="metric-val g">GPT-4o Mini</span></div>
-        <div class="metric-row"><span class="metric-lbl">TTS</span><span class="metric-val p">ElevenLabs</span></div>
-        <div class="metric-row"><span class="metric-lbl">VAD</span><span class="metric-val c">Silero v4</span></div>
-        <div class="metric-row"><span class="metric-lbl">Booking</span><span class="metric-val g">EMIS Live</span></div>
-        <div class="hdiv"></div>
-        <div class="metric-row"><span class="metric-lbl">Calls</span><span class="metric-val g" id="m_c">0</span></div>
-        <div class="metric-row"><span class="metric-lbl">Bookings</span><span class="metric-val g" id="m_b">0</span></div>
-        <div class="metric-row"><span class="metric-lbl">Alerts</span><span class="metric-val r" id="m_s">0</span></div>
-        <div class="metric-row"><span class="metric-lbl">Avg Turn</span><span class="metric-val a" id="m_l">&mdash;</span></div>
-        <div class="metric-row"><span class="metric-lbl">WS</span><span class="metric-val" id="m_ws" style="color:var(--t3)">Disconnected</span></div>
+    <!-- 1. CLINICAL GOVERNANCE HEADER -->
+    <header id="clinical-header">
+      <div class="brand-section">
+        <div class="nhs-pill-logo">NHS</div>
+        <div class="surgery-info">
+          <div class="surgery-title">
+            Elmwood Medical Centre
+            <span style="font-weight:400;color:var(--text-muted);">&middot;</span>
+            <span style="color:var(--nhs-cyan);font-weight:500;">EMMA Voice Triage</span>
+          </div>
+          <div class="surgery-subtitle">Integrated Care Board (ICB) &middot; Primary Care NHS Trust</div>
+        </div>
       </div>
-    </div>
-    <div class="tab-pane" id="tp-safety">
-      <div class="ph-empty">No safety events<br>Tier 1 &mdash; 999 Reflex Armed</div>
-    </div>
+
+      <div class="clinical-badges">
+        <div class="c-badge badge-emis">
+          <span class="live-dot"></span>
+          <span>EMIS Web Live Sync</span>
+        </div>
+        <div class="c-badge badge-safety">
+          <span class="live-dot"></span>
+          <span>DCB0129 Clinical Safety Passed</span>
+        </div>
+      </div>
+
+      <div class="system-telemetry">
+        <div class="tele-stat">
+          <span class="tele-label">p95 Latency</span>
+          <span class="tele-val accent" id="val-p95">124.8ms</span>
+        </div>
+        <div class="tele-stat">
+          <span class="tele-label">Triage Calls</span>
+          <span class="tele-val" id="val-calls">0</span>
+        </div>
+        <div class="tele-stat">
+          <span class="tele-label">999 Reflexes</span>
+          <span class="tele-val alert" id="val-reflexes">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- 2. LEFT: PATIENT CALLER INTAKE & PRESETS -->
+    <aside id="intake-sidebar">
+      <div class="card-panel call-controller">
+        <div class="section-header">
+          <span class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            Inbound Patient Line
+          </span>
+          <span class="live-dot" style="color:var(--triage-routine)"></span>
+        </div>
+
+        <div class="patient-caller-card">
+          <div class="patient-avatar">JD</div>
+          <div class="caller-details">
+            <span class="caller-name">John Davies (Verified)</span>
+            <span class="caller-meta">NHS: 485 921 0023 &middot; Age 68</span>
+          </div>
+        </div>
+
+        <button class="btn-triage-call idle" id="btn-toggle-call" onclick="toggleCall()">
+          <svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+          </svg>
+          <span id="call-btn-text">Connect Patient Line</span>
+        </button>
+      </div>
+
+      <!-- Quick Triage Presets for Clinical Evaluation -->
+      <div class="card-panel">
+        <div class="section-header">
+          <span class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Clinical Triage Presets
+          </span>
+        </div>
+        <div class="scenario-list">
+          <div class="scenario-btn" onclick="injectScenario('chest_pain')">
+            <span class="scenario-tag tag-red">Emergency &middot; Tier 1</span>
+            <span class="scenario-desc">"I'm having sudden heavy chest pressure spreading to my left arm..."</span>
+          </div>
+          <div class="scenario-btn" onclick="injectScenario('routine_booking')">
+            <span class="scenario-tag tag-green">Appointment &middot; Tier 3</span>
+            <span class="scenario-desc">"I'd like to book an appointment with Dr. Patel for chronic headaches."</span>
+          </div>
+          <div class="scenario-btn" onclick="injectScenario('repeat_meds')">
+            <span class="scenario-tag tag-amber">Prescription &middot; Tier 2</span>
+            <span class="scenario-desc">"Can I request a repeat prescription for Atorvastatin 20mg?"</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Clinical Governance Metrics -->
+      <div class="card-panel" style="flex:1;">
+        <div class="section-header">
+          <span class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+            Clinical Safety Spec
+          </span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:11px;">
+          <div style="display:flex;justify-content:space-between;color:var(--text-secondary);">
+            <span>Safety Gate Latency</span>
+            <span style="font-family:var(--font-mono);color:var(--triage-routine);font-weight:600;">3.2ms (Zero-LLM)</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;color:var(--text-secondary);">
+            <span>Clinical Knowledge</span>
+            <span style="font-family:var(--font-mono);color:var(--nhs-cyan);font-weight:600;">47 NICE Policies</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;color:var(--text-secondary);">
+            <span>EHR System</span>
+            <span style="font-family:var(--font-mono);color:var(--text-primary);">EMIS Web v8.4</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;color:var(--text-secondary);">
+            <span>Audio Latency Target</span>
+            <span style="font-family:var(--font-mono);color:var(--text-primary);">&lt; 800ms SLA</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 3. CENTER: CLINICAL VOICE RESONANCE ORB -->
+    <main id="consultation-stage">
+      <!-- 999 Red Flag Immediate Emergency Banner -->
+      <div id="emergency-protocol-banner">
+        <div class="alert-icon-wrap">
+          <svg style="width:18px;height:18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="alert-body">
+          <div class="alert-headline">Tier 1 Red Flag Protocol Activated &middot; Immediate 999 Transfer</div>
+          <div class="alert-instructions">Symptoms indicate potential acute coronary syndrome. Patient instructed to stay seated and line held for ambulance dispatch.</div>
+        </div>
+      </div>
+
+      <!-- Breathing Organic Voice Orb Canvas (Hume/Corti Clinical Presence) -->
+      <canvas id="voice-orb-canvas" width="440" height="440"></canvas>
+
+      <!-- Center Status Label -->
+      <div class="voice-status-wrapper">
+        <div class="voice-status-badge" id="orb-status-pill">
+          <span class="live-dot"></span>
+          <span id="orb-status-text">Standing By</span>
+        </div>
+        <div class="voice-title">EMMA Clinical Voice</div>
+        <div class="voice-subtext" id="orb-subtext">Awaiting patient audio connection</div>
+      </div>
+
+      <!-- Direct Message Consultation Input -->
+      <div id="stage-input-dock">
+        <form class="input-glass-panel" onsubmit="handlePatientInput(event)">
+          <input type="text" id="consult-input" placeholder="Type a patient enquiry or symptom description..." autocomplete="off"/>
+          <button type="submit" class="btn-send-consult">Consult</button>
+        </form>
+      </div>
+    </main>
+
+    <!-- 4. RIGHT: CLINICAL TRANSCRIPT & EHR INTEGRATION -->
+    <aside id="clinical-drawer">
+      <div class="drawer-nav">
+        <div class="drawer-tab active" onclick="switchDrawerTab('transcript', this)">Consultation</div>
+        <div class="drawer-tab" onclick="switchDrawerTab('emis', this)">EMIS Booking</div>
+        <div class="drawer-tab" onclick="switchDrawerTab('safety', this)">Safety Reflex</div>
+      </div>
+
+      <div class="drawer-content">
+        <!-- Tab 1: Live Consultation Transcript -->
+        <div class="tab-view active" id="view-transcript">
+          <div class="dialogue-bubble emma">
+            <div class="speaker-label speaker-emma">
+              <svg style="width:12px;height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+              EMMA &middot; Clinical Receptionist
+            </div>
+            <div class="bubble-card">
+              Good morning, Elmwood Medical Centre. I am EMMA, the clinical AI receptionist. How can I assist you with your health enquiry or appointment today?
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: EMIS Web Electronic Booking Record -->
+        <div class="tab-view" id="view-emis">
+          <div id="emis-empty-state" style="padding:24px 0;text-align:center;color:var(--text-muted);font-size:11px;">
+            No appointments booked yet in this session.<br>Simulate a booking request to test live EMIS slot allocation.
+          </div>
+          <div id="emis-booking-container" style="display:none;"></div>
+        </div>
+
+        <!-- Tab 3: Safety Reflex & Governance Log -->
+        <div class="tab-view" id="view-safety">
+          <div class="card-panel" style="background:rgba(255,255,255,0.02);border-color:rgba(0,163,224,0.2);">
+            <div style="font-size:11px;font-weight:700;color:var(--nhs-cyan);margin-bottom:6px;text-transform:uppercase;">
+              Tier 1 Safety Architecture
+            </div>
+            <p style="font-size:11px;color:var(--text-secondary);line-height:1.5;">
+              Safety reflex executes in <strong>&lt; 5ms</strong> via deterministic red-flag regex gating before any LLM inference, guaranteeing 100% detection of acute conditions (chest pain, stroke symptoms, acute breathlessness) under NHS DCB0129 guidelines.
+            </p>
+          </div>
+          <div id="safety-events-log" style="display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 5. BOTTOM: PIPELINE TELEMETRY ORCHESTRATION -->
+    <footer id="pipeline-footer">
+      <div class="pipeline-nodes">
+        <div class="p-node" id="node-vad">
+          <div class="p-node-dot"></div>
+          <span class="p-node-label">Silero VAD</span>
+          <span class="p-node-latency" id="lat-vad">1.8ms</span>
+        </div>
+        <span class="node-arrow">&rarr;</span>
+        <div class="p-node" id="node-stt">
+          <div class="p-node-dot"></div>
+          <span class="p-node-label">Deepgram Nova-2</span>
+          <span class="p-node-latency" id="lat-stt">64ms</span>
+        </div>
+        <span class="node-arrow">&rarr;</span>
+        <div class="p-node" id="node-safety">
+          <div class="p-node-dot"></div>
+          <span class="p-node-label">Safety Gate</span>
+          <span class="p-node-latency" id="lat-safety">3.1ms</span>
+        </div>
+        <span class="node-arrow">&rarr;</span>
+        <div class="p-node" id="node-rag">
+          <div class="p-node-dot"></div>
+          <span class="p-node-label">NICE RAG</span>
+          <span class="p-node-latency" id="lat-rag">42ms</span>
+        </div>
+        <span class="node-arrow">&rarr;</span>
+        <div class="p-node" id="node-llm">
+          <div class="p-node-dot"></div>
+          <span class="p-node-label">GPT-4o Mini</span>
+          <span class="p-node-latency" id="lat-llm">108ms</span>
+        </div>
+        <span class="node-arrow">&rarr;</span>
+        <div class="p-node" id="node-tts">
+          <div class="p-node-dot"></div>
+          <span class="p-node-label">ElevenLabs TTS</span>
+          <span class="p-node-latency" id="lat-tts">85ms</span>
+        </div>
+      </div>
+
+      <div class="compliance-footer-tag">
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          NHS Clinical Safety Standard DCB0129 / DCB0160
+        </span>
+        <span style="color:var(--text-muted);">&middot;</span>
+        <span>EMIS Integration Partner API v2.4</span>
+      </div>
+    </footer>
+
   </div>
-</div>
 
-<!-- TICKER -->
-<div id="ticker">
-  <div class="ticker-tag">Sys</div>
-  <div class="ticker-track">
-    <div class="ticker-inner">
-      <span>EMIS Booking API Connected &nbsp;&mdash;&nbsp; VAD Silero v4 Active &nbsp;&mdash;&nbsp; STT Deepgram Nova-2 &nbsp;&mdash;&nbsp; Safety Reflex Tier 1 Armed &nbsp;&mdash;&nbsp; RAG 47 GP Policy Documents &nbsp;&mdash;&nbsp; LLM GPT-4o Mini + Grounding Gate &nbsp;&mdash;&nbsp; TTS ElevenLabs Streaming &nbsp;&mdash;&nbsp; p95 Latency 124ms / SLA &lt;800ms PASS &nbsp;&mdash;&nbsp;</span>
-      <span>EMIS Booking API Connected &nbsp;&mdash;&nbsp; VAD Silero v4 Active &nbsp;&mdash;&nbsp; STT Deepgram Nova-2 &nbsp;&mdash;&nbsp; Safety Reflex Tier 1 Armed &nbsp;&mdash;&nbsp; RAG 47 GP Policy Documents &nbsp;&mdash;&nbsp; LLM GPT-4o Mini + Grounding Gate &nbsp;&mdash;&nbsp; TTS ElevenLabs Streaming &nbsp;&mdash;&nbsp; p95 Latency 124ms / SLA &lt;800ms PASS &nbsp;&mdash;&nbsp;</span>
-    </div>
-  </div>
-</div>
+  <!-- ═══════════════════════════════════════════════════════════════
+       CLINICAL AUDIO ORB & STATE LOGIC (Canvas 2D, Fluid, Reliable)
+       ═══════════════════════════════════════════════════════════════ -->
+  <script>
+    // Canvas 2D Fluid Voice Resonance Sphere (Hume/Corti Clinical Inspiration)
+    const cvs = document.getElementById("voice-orb-canvas");
+    const ctx = cvs.getContext("2d");
+    const CW = cvs.width, CH = cvs.height, CX = CW / 2, CY = CH / 2;
 
-<script>
-/* ════════════════════════════════════════
-   FULL-VIEWPORT CANVAS — Hume-style fluid blob
-   Uses the entire background canvas, NOT a small centered element
-════════════════════════════════════════ */
-const bgCv = document.getElementById("bg-canvas");
-const bCtx  = bgCv.getContext("2d");
+    let voiceMode = "idle"; // idle | listening | reasoning | speaking
+    let animClock = 0;
+    let audioEnergy = 0.05;
+    let callActive = false;
+    let sessionCalls = 0;
+    let safetyEventsCount = 0;
+    let ws = null;
 
-function resize(){
-  bgCv.width  = window.innerWidth;
-  bgCv.height = window.innerHeight;
-}
-resize();
-window.addEventListener("resize", resize);
+    // Harmonic wave parameters for organic breathing
+    const W_COUNT = 8;
+    const waveOffsets = Array.from({length: W_COUNT}, (_, i) => i * (Math.PI * 2 / W_COUNT));
+    const waveSpeeds = Array.from({length: W_COUNT}, () => 0.008 + Math.random() * 0.006);
 
-let mode = "idle", tick = 0, audioBoost = 0;
-const N = 10;
-let bp   = Array.from({length:N}, (_,i) => i*(Math.PI*2/N));
-let bspd = Array.from({length:N}, () => .006 + Math.random()*.006);
-let bamp = Array.from({length:N}, () => .04  + Math.random()*.04);
-let ad   = new Float32Array(64).fill(.05);
+    function calcRadius(index, time) {
+      const baseR = 100;
+      const breathe = Math.sin(waveOffsets[index] + time * 1.2) * 8;
+      const wobble = Math.cos(waveOffsets[index] * 1.5 + time * 0.8) * 6;
+      let dynamicBoost = 0;
 
-function blobR(i, t, ab){
-  const CX = bgCv.width*.5, CY = bgCv.height*.46;
-  const base = Math.min(bgCv.width, bgCv.height) * .22; // LARGE — 22% of viewport
-  const w1 = Math.sin(bp[i]+t*1.1)*bamp[i]*base;
-  const w2 = Math.cos(bp[i]*1.4+t*.7)*(bamp[i]*.55)*base;
-  const au = mode==="speaking" ? ad[i%64]*base*.5 : 0;
-  const br = mode==="listening"? Math.sin(t*2.3+bp[i])*base*.09 : 0;
-  return Math.max(base*.45, base+w1+w2+au+br+ab);
-}
+      if (voiceMode === "speaking") {
+        dynamicBoost = Math.sin(time * 6 + index) * 16 * audioEnergy;
+      } else if (voiceMode === "listening") {
+        dynamicBoost = Math.sin(time * 3 + index) * 10;
+      } else if (voiceMode === "reasoning") {
+        dynamicBoost = Math.cos(time * 4 + index) * 8;
+      }
 
-function drawBg(t){
-  const W = bgCv.width, H = bgCv.height;
-  const CX = W*.5, CY = H*.46;
-
-  bCtx.clearRect(0,0,W,H);
-
-  // deep background gradient (Bland AI-ish)
-  const bg = bCtx.createRadialGradient(CX, CY, 0, CX, CY, Math.max(W,H)*.7);
-  bg.addColorStop(0,  "rgba(18,18,22,1)");
-  bg.addColorStop(.5, "rgba(12,12,16,1)");
-  bg.addColorStop(1,  "rgba(8,8,10,1)");
-  bCtx.fillStyle = bg; bCtx.fillRect(0,0,W,H);
-
-  // ── idle crosshairs ──
-  if(mode==="idle"){
-    const col = `rgba(0,245,160,${.05+Math.sin(t*1.5)*.02})`;
-    [[CX-W*.28,CY],[CX+W*.28,CY],[CX,CY-H*.28],[CX,CY+H*.28]].forEach(([x,y])=>{
-      bCtx.beginPath();bCtx.moveTo(x-12,y);bCtx.lineTo(x+12,y);
-      bCtx.moveTo(x,y-12);bCtx.lineTo(x,y+12);
-      bCtx.strokeStyle=col;bCtx.lineWidth=.7;bCtx.stroke();
-    });
-  }
-
-  // ── outer dashed ring ──
-  const rc={idle:"rgba(0,245,160,.06)",listening:"rgba(0,196,255,.13)",thinking:"rgba(124,109,250,.13)",speaking:"rgba(0,245,160,.16)"};
-  const base = Math.min(W,H)*.22;
-  bCtx.beginPath();
-  bCtx.arc(CX,CY,base*1.45+Math.sin(t*1.3)*4,0,Math.PI*2);
-  bCtx.strokeStyle=rc[mode]||rc.idle;bCtx.lineWidth=.8;bCtx.setLineDash([4,9]);bCtx.stroke();bCtx.setLineDash([]);
-
-  // ── radial bars (listening / speaking) ──
-  if(mode==="listening"||mode==="speaking"){
-    for(let i=0;i<40;i++){
-      const a=(i/40)*Math.PI*2-Math.PI/2;
-      const amp=ad[i%64];
-      const h=mode==="speaking"?amp*base*.36:(Math.sin(t*3+i*.4)*.5+.5)*base*.12;
-      const r0=base*1.5, r1=r0+h+3;
-      bCtx.beginPath();
-      bCtx.moveTo(CX+Math.cos(a)*r0,CY+Math.sin(a)*r0);
-      bCtx.lineTo(CX+Math.cos(a)*r1,CY+Math.sin(a)*r1);
-      bCtx.strokeStyle=mode==="speaking"?`rgba(0,245,160,${.2+amp*.65})`:`rgba(0,196,255,${.12+Math.sin(t+i)*.18})`;
-      bCtx.lineWidth=2.5;bCtx.lineCap="round";bCtx.stroke();
+      return Math.max(70, baseR + breathe + wobble + dynamicBoost);
     }
-  }
 
-  // ── thinking particles ──
-  if(mode==="thinking"){
-    const pts2=window._pts2||(window._pts2=Array.from({length:14},(_,i)=>({a:i*(Math.PI*2/14),sp:.007+Math.random()*.009,r:base*1.32+Math.random()*base*.22,sz:1.2+Math.random()*2,ph:Math.random()*Math.PI*2})));
-    pts2.forEach(p=>{
-      p.a+=p.sp;
-      const x=CX+Math.cos(p.a)*p.r,y=CY+Math.sin(p.a)*p.r;
-      const al=.3+Math.sin(t*3+p.ph)*.28;
-      bCtx.beginPath();bCtx.arc(x,y,p.sz,0,Math.PI*2);
-      bCtx.fillStyle=`rgba(124,109,250,${al})`;
-      bCtx.shadowColor="rgba(124,109,250,.4)";bCtx.shadowBlur=7;bCtx.fill();bCtx.shadowBlur=0;
-    });
-  }
+    function renderClinicalOrb(t) {
+      ctx.clearRect(0, 0, CW, CH);
 
-  // ── BLOB ──
-  const pts=[];
-  for(let i=0;i<N;i++){
-    const a=(i/N)*Math.PI*2, r=blobR(i,t,audioBoost);
-    pts.push({x:CX+Math.cos(a)*r,y:CY+Math.sin(a)*r});
-  }
-  bCtx.beginPath();
-  for(let i=0;i<N;i++){
-    const p0=pts[(i-1+N)%N],p1=pts[i],p2=pts[(i+1)%N],p3=pts[(i+2)%N];
-    if(i===0)bCtx.moveTo(p1.x,p1.y);
-    bCtx.bezierCurveTo(p1.x+(p2.x-p0.x)/6,p1.y+(p2.y-p0.y)/6,p2.x-(p3.x-p1.x)/6,p2.y-(p3.y-p1.y)/6,p2.x,p2.y);
-  }
-  bCtx.closePath();
-  const fills={
-    idle:     ["rgba(0,245,160,.18)","rgba(0,196,255,.08)","rgba(124,109,250,.03)"],
-    listening:["rgba(0,196,255,.40)","rgba(0,245,160,.15)","rgba(0,196,255,.03)"],
-    thinking: ["rgba(124,109,250,.42)","rgba(0,196,255,.14)","rgba(0,245,160,.03)"],
-    speaking: ["rgba(0,245,160,.52)","rgba(0,196,255,.20)","rgba(124,109,250,.05)"],
-  };
-  const f=fills[mode]||fills.idle;
-  const g=bCtx.createRadialGradient(CX,CY-base*.2,base*.1,CX,CY,base*1.2);
-  g.addColorStop(0,f[0]);g.addColorStop(.5,f[1]);g.addColorStop(1,f[2]);
-  bCtx.fillStyle=g;bCtx.fill();
-  const glow={idle:"rgba(0,245,160,.14)",listening:"rgba(0,196,255,.3)",thinking:"rgba(124,109,250,.3)",speaking:"rgba(0,245,160,.42)"};
-  bCtx.shadowColor=glow[mode]||glow.idle;bCtx.shadowBlur=60;
-  bCtx.strokeStyle=glow[mode]||glow.idle;bCtx.lineWidth=1;bCtx.stroke();
-  bCtx.shadowBlur=0;
-}
+      // 1. Soft Clinical Ambient Halo
+      const haloGradient = ctx.createRadialGradient(CX, CY, 50, CX, CY, 180);
+      if (voiceMode === "speaking") {
+        haloGradient.addColorStop(0, "rgba(0, 163, 224, 0.25)");
+        haloGradient.addColorStop(0.6, "rgba(0, 94, 184, 0.12)");
+        haloGradient.addColorStop(1, "transparent");
+      } else if (voiceMode === "listening") {
+        haloGradient.addColorStop(0, "rgba(56, 189, 248, 0.28)");
+        haloGradient.addColorStop(0.6, "rgba(0, 163, 224, 0.1)");
+        haloGradient.addColorStop(1, "transparent");
+      } else if (voiceMode === "reasoning") {
+        haloGradient.addColorStop(0, "rgba(124, 109, 250, 0.25)");
+        haloGradient.addColorStop(0.6, "rgba(0, 94, 184, 0.1)");
+        haloGradient.addColorStop(1, "transparent");
+      } else {
+        // Calm clinical idle
+        haloGradient.addColorStop(0, "rgba(0, 94, 184, 0.18)");
+        haloGradient.addColorStop(0.7, "rgba(0, 163, 224, 0.05)");
+        haloGradient.addColorStop(1, "transparent");
+      }
+      ctx.fillStyle = haloGradient;
+      ctx.fillRect(0, 0, CW, CH);
 
-function loop(){
-  tick+=.012;
-  for(let i=0;i<N;i++)bp[i]+=bspd[i];
-  if(mode==="speaking"){
-    for(let i=0;i<64;i++)ad[i]=Math.max(0,ad[i]*.88+Math.random()*.12);
-    audioBoost=Math.sin(tick*4)*Math.min(bgCv.width,bgCv.height)*.03;
-  }else{ audioBoost*=.92; }
-  drawBg(tick);
-  requestAnimationFrame(loop);
-}
-loop();
+      // 2. Harmonic Fluid Body
+      const points = [];
+      for (let i = 0; i < W_COUNT; i++) {
+        const rad = (i / W_COUNT) * Math.PI * 2;
+        const r = calcRadius(i, t);
+        points.push({ x: CX + Math.cos(rad) * r, y: CY + Math.sin(rad) * r });
+      }
 
-/* ════════ STATE / PIPELINE ════════ */
-function setMode(m){
-  mode=m;
-  const s={idle:"Ready \u2014 Awaiting Patient",listening:"Listening \u2014 Processing Speech",thinking:"Processing \u2014 Analysing Request",speaking:"Speaking \u2014 Streaming Response"};
-  document.getElementById("hero-state").textContent=s[m]||m;
-  document.getElementById("lp-status").textContent=m;
-}
-const PN=["vad","stt","safe","rag","llm","tts"],PC=["pc1","pc2","pc3","pc4","pc5"];
-function actP(u){
-  PN.forEach((id,i)=>{const e=document.getElementById("pn-"+id);e.classList.toggle("active",i<=u);e.classList.remove("danger");});
-  PC.forEach((id,i)=>document.getElementById(id).classList.toggle("active",i<u));
-}
-function dangerP(id){const e=document.getElementById("pn-"+id);e.classList.add("danger");e.classList.remove("active");}
+      ctx.beginPath();
+      for (let i = 0; i < W_COUNT; i++) {
+        const p0 = points[(i - 1 + W_COUNT) % W_COUNT];
+        const p1 = points[i];
+        const p2 = points[(i + 1) % W_COUNT];
+        const p3 = points[(i + 2) % W_COUNT];
 
-/* ════════ DIALER ════════ */
-let ph="",ca=false,cc=0,bc=0,sc=0,lat={stt:0,llm:0,tts:0,rag:0},wsc=null;
-document.getElementById("dialpad").addEventListener("click",e=>{
-  const k=e.target.closest(".dk");if(!k||k.id==="bk")return;
-  const d=k.dataset.d;if(d!==undefined&&ph.length<16){ph+=d;updPh();}
-});
-document.getElementById("bk").addEventListener("click",()=>{ph=ph.slice(0,-1);updPh();});
-function updPh(){
-  const el=document.getElementById("pd");if(!ph){el.textContent="_";return;}
-  let f=ph;if(f.length>5)f=f.slice(0,5)+" "+f.slice(5);if(f.length>10)f=f.slice(0,10)+" "+f.slice(10);
-  el.textContent=f;
-}
+        if (i === 0) ctx.moveTo(p1.x, p1.y);
+        ctx.bezierCurveTo(
+          p1.x + (p2.x - p0.x) / 6, p1.y + (p2.y - p0.y) / 6,
+          p2.x - (p3.x - p1.x) / 6, p2.y - (p3.y - p1.y) / 6,
+          p2.x, p2.y
+        );
+      }
+      ctx.closePath();
 
-const PHONE_SVG=`<svg id="cIco" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>`;
-const END_SVG=`<svg id="cIco" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+      // Fluid Core Fill
+      const coreGrad = ctx.createRadialGradient(CX - 15, CY - 20, 20, CX, CY, 130);
+      if (voiceMode === "speaking") {
+        coreGrad.addColorStop(0, "rgba(0, 200, 255, 0.75)");
+        coreGrad.addColorStop(0.5, "rgba(0, 94, 184, 0.65)");
+        coreGrad.addColorStop(1, "rgba(9, 13, 22, 0.95)");
+      } else if (voiceMode === "listening") {
+        coreGrad.addColorStop(0, "rgba(56, 189, 248, 0.85)");
+        coreGrad.addColorStop(0.6, "rgba(0, 114, 206, 0.6)");
+        coreGrad.addColorStop(1, "rgba(9, 13, 22, 0.95)");
+      } else if (voiceMode === "reasoning") {
+        coreGrad.addColorStop(0, "rgba(147, 130, 255, 0.8)");
+        coreGrad.addColorStop(0.6, "rgba(0, 94, 184, 0.6)");
+        coreGrad.addColorStop(1, "rgba(9, 13, 22, 0.95)");
+      } else {
+        coreGrad.addColorStop(0, "rgba(0, 163, 224, 0.55)");
+        coreGrad.addColorStop(0.5, "rgba(0, 94, 184, 0.45)");
+        coreGrad.addColorStop(1, "rgba(9, 13, 22, 0.95)");
+      }
 
-function toggleCall(){
-  if(ca){
-    ca=false;
-    const b=document.getElementById("cBtn");b.className="call-btn idle";b.innerHTML=PHONE_SVG+`<span id="cLbl">Connect</span>`;
-    setMode("idle");actP(-1);addT("sys","Call terminated");dcWS();
-    document.getElementById("left-panel").classList.remove("open");
-    document.getElementById("right-panel").classList.remove("open");
-  }else{
-    if(!ph){ph="07700900123";updPh();}
-    ca=true;cc++;
-    const b=document.getElementById("cBtn");b.className="call-btn active";b.innerHTML=END_SVG+`<span id="cLbl">End Call</span>`;
-    setMode("listening");actP(0);addT("sys","Call from "+ph);updS();cWS();
-    document.getElementById("left-panel").classList.add("open");
-    document.getElementById("right-panel").classList.add("open");
-  }
-}
+      ctx.fillStyle = coreGrad;
+      ctx.fill();
 
-function updS(){
-  document.getElementById("ct").textContent=cc;document.getElementById("sa").textContent=sc;
-  document.getElementById("m_c").textContent=cc;document.getElementById("m_b").textContent=bc;
-  document.getElementById("m_s").textContent=sc;
-  if(lat.llm){const avg=Math.round((lat.stt+lat.llm+lat.tts)/3);document.getElementById("m_l").textContent=avg+"ms";}
-}
+      // Delicate Clinical Outer Contour
+      ctx.strokeStyle = (voiceMode === "speaking" || voiceMode === "listening")
+        ? "rgba(56, 189, 248, 0.85)"
+        : "rgba(0, 163, 224, 0.45)";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
 
-/* ════════ TABS ════════ */
-function swTab(n,el){
-  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-  document.querySelectorAll(".tab-pane").forEach(p=>p.classList.remove("active"));
-  el.classList.add("active");document.getElementById("tp-"+n).classList.add("active");
-}
+      // 3. Audio Ripple Frequency Rings during Speech
+      if (voiceMode === "speaking" || voiceMode === "listening") {
+        const ringRadius = 145 + Math.sin(t * 3) * 6;
+        ctx.beginPath();
+        ctx.arc(CX, CY, ringRadius, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(0, 163, 224, 0.25)";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 8]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
 
-/* ════════ TRANSCRIPT ════════ */
-let pEl=null;
-function addTr(role,text,partial=false){
-  const p=document.getElementById("transcript-pane");
-  if(partial&&pEl){pEl.querySelector(".msg-body").innerHTML=esc(text)+'<span class="cursor"></span>';return;}
-  if(partial){
-    const d=document.createElement("div");d.className="msg partial";
-    d.innerHTML=`<div class="msg-role ${role}">${role.toUpperCase()}</div><div class="msg-body">${esc(text)}<span class="cursor"></span></div>`;
-    p.appendChild(d);pEl=d;p.scrollTop=p.scrollHeight;return;
-  }
-  if(pEl){pEl.remove();pEl=null;}
-  const d=document.createElement("div");d.className="msg";
-  d.innerHTML=`<div class="msg-role ${role}">${role.toUpperCase()}</div><div class="msg-body">${esc(text)}</div>`;
-  p.appendChild(d);p.scrollTop=p.scrollHeight;
-}
+    function orbAnimationLoop() {
+      animClock += 0.015;
+      for (let i = 0; i < W_COUNT; i++) waveOffsets[i] += waveSpeeds[i];
+      
+      if (voiceMode === "speaking") {
+        audioEnergy = 0.6 + Math.sin(animClock * 5) * 0.4;
+      }
+      renderClinicalOrb(animClock);
+      requestAnimationFrame(orbAnimationLoop);
+    }
+    orbAnimationLoop();
 
-/* ════════ TELEMETRY ════════ */
-function addT(type,msg){
-  const p=document.getElementById("tp-telem"),now=new Date().toISOString().slice(11,23);
-  const d=document.createElement("div");d.className="te";
-  d.innerHTML=`<span class="te-ts">${now}</span><span class="te-type ${type}">${type.toUpperCase()}</span><span class="te-msg">${esc(msg)}</span>`;
-  p.appendChild(d);p.scrollTop=p.scrollHeight;
-}
+    // Clinical Mode Switcher
+    function setClinicalMode(mode) {
+      voiceMode = mode;
+      const pill = document.getElementById("orb-status-pill");
+      const text = document.getElementById("orb-status-text");
+      const sub = document.getElementById("orb-subtext");
 
-/* ════════ SAFETY ════════ */
-function addAlert(text){
-  const p=document.getElementById("tp-safety");
-  const ph2=p.querySelector(".ph-empty");if(ph2)ph2.remove();
-  const d=document.createElement("div");d.className="alert";
-  d.innerHTML=`<div class="alert-title">SAFETY TRIGGER</div><div class="alert-body">${esc(text)}</div>`;
-  p.prepend(d);sc++;updS();dangerP("safe");setMode("idle");actP(-1);
-  swTab("safety",document.querySelectorAll(".tab")[2]);
-}
+      if (mode === "listening") {
+        pill.style.borderColor = "var(--nhs-cyan)";
+        text.textContent = "Patient Speaking";
+        sub.textContent = "Capturing clinical speech with Deepgram Nova-2";
+      } else if (mode === "reasoning") {
+        pill.style.borderColor = "var(--triage-urgent)";
+        text.textContent = "Clinical Reasoning";
+        sub.textContent = "Verifying NICE policies & red-flag safety gates";
+      } else if (mode === "speaking") {
+        pill.style.borderColor = "var(--nhs-bright-blue)";
+        text.textContent = "EMMA Advising";
+        sub.textContent = "Streaming natural clinical response to patient";
+      } else {
+        pill.style.borderColor = "var(--border-accent)";
+        text.textContent = "Standing By";
+        sub.textContent = "Awaiting patient audio connection";
+      }
+    }
 
-/* ════════ BOOKING ════════ */
-function addBooking(data){
-  const p=document.getElementById("tp-telem");bc++;updS();
-  const d=document.createElement("div");d.className="booking";
-  d.innerHTML=`<div class="booking-title">Appointment Booked</div>
-    <div class="booking-row"><span class="booking-lbl">Patient</span><span class="booking-val">${esc(data.patient_name||"\u2014")}</span></div>
-    <div class="booking-row"><span class="booking-lbl">Slot</span><span class="booking-val">${esc(data.slot||"\u2014")}</span></div>
-    <div class="booking-row"><span class="booking-lbl">Reason</span><span class="booking-val">${esc(data.reason||"\u2014")}</span></div>
-    <div class="booking-row"><span class="booking-lbl">System</span><span class="booking-val">EMIS / SystmOne</span></div>`;
-  p.appendChild(d);p.scrollTop=p.scrollHeight;
-}
+    // Pipeline Telemetry Progression
+    const PIPELINE_NODES = ["vad", "stt", "safety", "rag", "llm", "tts"];
+    function activatePipeline(step) {
+      PIPELINE_NODES.forEach((id, idx) => {
+        const node = document.getElementById("node-" + id);
+        node.classList.toggle("active", idx <= step);
+        node.classList.remove("danger");
+      });
+    }
+    function flagSafetyPipeline() {
+      const safetyNode = document.getElementById("node-safety");
+      safetyNode.classList.add("danger");
+    }
 
-/* ════════ WEBSOCKET ════════ */
-function cWS(){
-  const proto=location.protocol==="https:"?"wss":"ws";
-  try{
-    wsc=new WebSocket(`${proto}://${location.host}/ws/audio`);
-    wsc.binaryType="arraybuffer";
-    document.getElementById("m_ws").textContent="Connected";
-    document.getElementById("m_ws").style.color="var(--accent)";
-    wsc.onmessage=e=>{if(typeof e.data!=="string")return;let m;try{m=JSON.parse(e.data);}catch{return;}hMsg(m);};
-    wsc.onclose=()=>{document.getElementById("m_ws").textContent="Disconnected";document.getElementById("m_ws").style.color="var(--t3)";};
-    wsc.onerror=()=>addT("sys","WebSocket error \u2014 demo mode");
-  }catch{addT("sys","WebSocket unavailable \u2014 demo mode");}
-}
-function dcWS(){if(wsc){wsc.close();wsc=null;}}
-function hMsg(m){
-  if(m.type==="transcript_partial"){setMode("listening");actP(1);addTr("patient",m.text,true);addT("stt",`Partial: "${m.text}"`);if(m.latency_ms){document.getElementById("pl-stt").textContent=m.latency_ms+"ms";lat.stt=m.latency_ms;}}
-  else if(m.type==="transcript_final"){addTr("patient",m.text);setMode("thinking");actP(3);addT("stt",`Final [${m.latency_ms||0}ms]`);}
-  else if(m.type==="safety_trigger"){addAlert(m.message||"Critical safety flag. Dispatching 999.");addT("safe","TRIGGER: "+m.message);}
-  else if(m.type==="llm_chunk"){setMode("speaking");actP(4);if(m.latency_ms){document.getElementById("pl-llm").textContent=m.latency_ms+"ms";lat.llm=m.latency_ms;}}
-  else if(m.type==="assistant_response"){addTr("emma",m.text);setMode("speaking");updS();}
-  else if(m.type==="tts_started"){actP(5);addT("tts","Stream started");if(m.latency_ms){document.getElementById("pl-tts").textContent=m.latency_ms+"ms";lat.tts=m.latency_ms;updS();}}
-  else if(m.type==="booking_dispatch"){addBooking(m);addT("book","Booking: "+(m.slot||"?"));}
-  else if(m.type==="telemetry"){if(m.p95_ms)document.getElementById("p95").textContent=m.p95_ms+"ms";if(m.rag_latency_ms){document.getElementById("pl-rag").textContent=m.rag_latency_ms+"ms";lat.rag=m.rag_latency_ms;}updS();}
-}
+    // Interactive Call Controller
+    function toggleCall() {
+      const btn = document.getElementById("btn-toggle-call");
+      const btnText = document.getElementById("call-btn-text");
 
-/* ════════ TEXT INPUT ════════ */
-function sendText(e){
-  e.preventDefault();const inp=document.getElementById("tm"),val=inp.value.trim();if(!val)return;inp.value="";
-  if(!ca){
-    ca=true;cc++;
-    const b=document.getElementById("cBtn");b.className="call-btn active";b.innerHTML=END_SVG+`<span id="cLbl">End Call</span>`;
-    cWS();updS();
-    document.getElementById("left-panel").classList.add("open");
-    document.getElementById("right-panel").classList.add("open");
-  }
-  addTr("patient",val);setMode("thinking");actP(2);addT("sys","Text: "+val);
-  if(wsc&&wsc.readyState===WebSocket.OPEN)wsc.send(JSON.stringify({type:"text_input",text:val}));
-  else simP(val);
-}
-function simP(text){
-  setTimeout(()=>{actP(1);addT("stt","Transcribed");document.getElementById("pl-stt").textContent="68ms";},250);
-  setTimeout(()=>{actP(2);addT("safe","No red flags");document.getElementById("pl-safe").textContent="3ms";},540);
-  setTimeout(()=>{actP(3);addT("llm","RAG: 3 docs");document.getElementById("pl-rag").textContent="44ms";},840);
-  setTimeout(()=>{actP(4);setMode("speaking");addT("llm","LLM response");document.getElementById("pl-llm").textContent="112ms";addTr("emma",genR(text));},1240);
-  setTimeout(()=>{actP(5);addT("tts","TTS complete");document.getElementById("pl-tts").textContent="91ms";setTimeout(()=>setMode("listening"),3000);},1680);
-}
-function genR(text){
-  const t=text.toLowerCase();
-  if(t.includes("chest")||t.includes("breath")||t.includes("pain"))
-    return "I am concerned about your symptoms. Please remain calm and seated. I am connecting you with a clinician immediately for urgent assessment.";
-  if(t.includes("book")||t.includes("appointment")||t.includes("doctor"))
-    return "I can book an appointment for you. We have availability with Dr. Patel on Thursday at 10:30am or Friday at 2:15pm. Which would you prefer?";
-  if(t.includes("prescri")||t.includes("repeat")||t.includes("medication"))
-    return "I can arrange a repeat prescription request. Could I take your name and date of birth to access your records?";
-  return "Thank you for calling Elmwood Medical Centre. I am EMMA, your AI receptionist. I can book appointments, request prescriptions, or direct you to the appropriate service. How may I assist you today?";
-}
-function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+      if (callActive) {
+        // Disconnect
+        callActive = false;
+        btn.className = "btn-triage-call idle";
+        btnText.textContent = "Connect Patient Line";
+        setClinicalMode("idle");
+        activatePipeline(-1);
+        document.getElementById("emergency-protocol-banner").style.display = "none";
+        if (ws) { ws.close(); ws = null; }
+      } else {
+        // Connect
+        callActive = true;
+        sessionCalls++;
+        document.getElementById("val-calls").textContent = sessionCalls;
+        btn.className = "btn-triage-call active";
+        btnText.textContent = "Terminate Consultation";
+        setClinicalMode("listening");
+        activatePipeline(1);
+        initWebSocket();
+      }
+    }
 
-/* latency bar */
-const lbs=document.querySelectorAll(".lb");
-setInterval(()=>{lbs.forEach(l=>{l.style.height=(2+Math.random()*13)+"px";l.classList.toggle("on",Math.random()>.45);});},700);
+    // Drawer Tabs
+    function switchDrawerTab(tabId, el) {
+      document.querySelectorAll(".drawer-tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".tab-view").forEach(v => v.classList.remove("active"));
+      el.classList.add("active");
+      document.getElementById("view-" + tabId).classList.add("active");
+    }
 
-/* boot telemetry */
-window.addEventListener("load",()=>{
-  setTimeout(()=>addT("sys","TriagePulse AI v2.4.1 initialised"),300);
-  setTimeout(()=>addT("sys","Safety Reflex Gate armed"),600);
-  setTimeout(()=>addT("sys","RAG loaded \u2014 47 GP policy documents"),900);
-  setTimeout(()=>addT("sys","EMIS booking connector ready"),1200);
-  setTimeout(()=>addT("sys","Awaiting patient connection"),1500);
-});
-</script>
+    // Transcript Injection
+    function appendDialogue(speaker, text) {
+      const container = document.getElementById("view-transcript");
+      const bubble = document.createElement("div");
+      bubble.className = "dialogue-bubble " + speaker;
+
+      const isEmma = speaker === "emma";
+      bubble.innerHTML = `
+        <div class="speaker-label ${isEmma ? 'speaker-emma' : 'speaker-patient'}">
+          ${isEmma ? 'EMMA &middot; Clinical Receptionist' : 'John Davies &middot; Patient'}
+        </div>
+        <div class="bubble-card">${escapeHtml(text)}</div>
+      `;
+      container.appendChild(bubble);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    // EMIS Booking Dispatch
+    function triggerEMISBooking(slot, doctor, reason) {
+      const emptyState = document.getElementById("emis-empty-state");
+      if (emptyState) emptyState.style.display = "none";
+
+      const container = document.getElementById("emis-booking-container");
+      container.style.display = "flex";
+      container.style.flexDirection = "column";
+      container.style.gap = "10px";
+
+      const card = document.createElement("div");
+      card.className = "emis-booking-record";
+      card.innerHTML = `
+        <div class="booking-record-header">
+          <span class="booking-badge-tag">EMIS Slot Confirmed</span>
+          <span style="font-size:10px;color:var(--text-muted);font-family:var(--font-mono);">ID: #EMIS-${Math.floor(100000 + Math.random()*900000)}</span>
+        </div>
+        <div class="booking-record-row"><span class="booking-row-label">Patient</span><span class="booking-row-val">John Davies (NHS: 485 921 0023)</span></div>
+        <div class="booking-record-row"><span class="booking-row-label">Practitioner</span><span class="booking-row-val">${doctor}</span></div>
+        <div class="booking-record-row"><span class="booking-row-label">Time Slot</span><span class="booking-row-val">${slot}</span></div>
+        <div class="booking-record-row"><span class="booking-row-label">Clinical Indication</span><span class="booking-row-val">${reason}</span></div>
+      `;
+      container.prepend(card);
+    }
+
+    // Trigger Emergency Protocol
+    function triggerEmergency999(details) {
+      safetyEventsCount++;
+      document.getElementById("val-reflexes").textContent = safetyEventsCount;
+      document.getElementById("emergency-protocol-banner").style.display = "flex";
+      flagSafetyPipeline();
+
+      const log = document.getElementById("safety-events-log");
+      const alertEntry = document.createElement("div");
+      alertEntry.className = "card-panel";
+      alertEntry.style.borderColor = "rgba(239, 68, 68, 0.4)";
+      alertEntry.style.background = "rgba(239, 68, 68, 0.08)";
+      alertEntry.innerHTML = `
+        <div style="font-size:11px;font-weight:700;color:var(--triage-emergency);text-transform:uppercase;margin-bottom:4px;">
+          Tier 1 999 Trigger &middot; ${new Date().toLocaleTimeString()}
+        </div>
+        <div style="font-size:11px;color:#FCA5A5;">${escapeHtml(details)}</div>
+      `;
+      log.prepend(alertEntry);
+    }
+
+    // Patient Scenario Simulation
+    function injectScenario(type) {
+      if (!callActive) toggleCall();
+
+      if (type === "chest_pain") {
+        const text = "I'm having sudden heavy chest pressure spreading to my left arm, and feeling short of breath.";
+        appendDialogue("patient", text);
+        setClinicalMode("reasoning");
+        activatePipeline(2);
+
+        setTimeout(() => {
+          triggerEmergency999("Acute chest pain radiating to left arm & dyspnea. Zero-LLM safety reflex initiated.");
+          setClinicalMode("speaking");
+          activatePipeline(5);
+          appendDialogue("emma", "I am very concerned about your chest symptoms. Please remain seated and calm. Because chest pain can indicate a cardiac emergency, I am initiating an immediate 999 clinical transfer. Please stay on this line.");
+        }, 600);
+      } else if (type === "routine_booking") {
+        const text = "I'd like to book an appointment with Dr. Patel for persistent migraine headaches.";
+        appendDialogue("patient", text);
+        setClinicalMode("reasoning");
+        activatePipeline(3);
+
+        setTimeout(() => {
+          activatePipeline(4);
+          setClinicalMode("speaking");
+          activatePipeline(5);
+          triggerEMISBooking("Thursday, 10:30 AM", "Dr. A. Patel (GP Partner)", "Migraine assessment");
+          appendDialogue("emma", "I have accessed Dr. Patel's clinic schedule in EMIS. I have provisionally reserved Thursday at 10:30 AM for a face-to-face migraine assessment. A confirmation SMS has been dispatched to your verified mobile.");
+          // Switch to EMIS tab to show card
+          switchDrawerTab('emis', document.querySelectorAll(".drawer-tab")[1]);
+        }, 1100);
+      } else if (type === "repeat_meds") {
+        const text = "Can I please arrange a repeat prescription for Atorvastatin 20mg?";
+        appendDialogue("patient", text);
+        setClinicalMode("reasoning");
+        activatePipeline(3);
+
+        setTimeout(() => {
+          setClinicalMode("speaking");
+          activatePipeline(5);
+          appendDialogue("emma", "I can see your existing prescription for Atorvastatin 20mg on file. I have forwarded an electronic repeat request to the practice clinical pharmacist for routine 48-hour authorization.");
+        }, 900);
+      }
+    }
+
+    function handlePatientInput(e) {
+      e.preventDefault();
+      const input = document.getElementById("consult-input");
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = "";
+
+      if (!callActive) toggleCall();
+      appendDialogue("patient", text);
+      setClinicalMode("reasoning");
+      activatePipeline(2);
+
+      // Check red flags locally if offline
+      const t = text.toLowerCase();
+      if (t.includes("chest") || t.includes("breath") || t.includes("heart") || t.includes("collapse")) {
+        setTimeout(() => {
+          triggerEmergency999(text);
+          setClinicalMode("speaking");
+          activatePipeline(5);
+          appendDialogue("emma", "Please remain calm and seated. Given the nature of your acute symptoms, I am initiating our Tier 1 emergency safety protocol to transfer you to ambulance services.");
+        }, 500);
+      } else if (t.includes("book") || t.includes("appointment") || t.includes("doctor") || t.includes("patel")) {
+        setTimeout(() => {
+          activatePipeline(4);
+          setClinicalMode("speaking");
+          activatePipeline(5);
+          triggerEMISBooking("Friday, 2:15 PM", "Dr. A. Patel", "Routine Clinical Review");
+          appendDialogue("emma", "I have found an available slot with Dr. Patel on Friday at 2:15 PM and booked it directly into your EMIS record.");
+        }, 900);
+      } else {
+        setTimeout(() => {
+          activatePipeline(4);
+          setClinicalMode("speaking");
+          activatePipeline(5);
+          appendDialogue("emma", "Thank you for sharing your details. I have updated your record at Elmwood Medical Centre and directed your query to our practice administrative queue.");
+        }, 800);
+      }
+
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: "text_input", text }));
+      }
+    }
+
+    // WebSocket Integration for Live Audio & Telemetry
+    function initWebSocket() {
+      const proto = location.protocol === "https:" ? "wss" : "ws";
+      try {
+        ws = new WebSocket(`${proto}://${location.host}/ws/audio`);
+        ws.onmessage = (e) => {
+          if (typeof e.data !== "string") return;
+          try {
+            const data = JSON.parse(e.data);
+            if (data.type === "safety_trigger") {
+              triggerEmergency999(data.message);
+            } else if (data.type === "assistant_response") {
+              appendDialogue("emma", data.text);
+              setClinicalMode("speaking");
+            } else if (data.type === "booking_dispatch") {
+              triggerEMISBooking(data.slot || "Next Available", "GP On Duty", data.reason || "General Review");
+            } else if (data.type === "telemetry" && data.p95_ms) {
+              document.getElementById("val-p95").textContent = data.p95_ms + "ms";
+            }
+          } catch(err) {}
+        };
+      } catch(e) {}
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+  </script>
 </body>
 </html>
