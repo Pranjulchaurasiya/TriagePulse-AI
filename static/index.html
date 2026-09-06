@@ -1,817 +1,402 @@
 <!DOCTYPE html>
-<html lang="en" class="light" data-theme="light">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TriagePulse AI &bull; Intelligent NHS Voice Receptionist</title>
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Google Fonts -->
+  <title>TriagePulse AI &middot; EMMA</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
-
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <style>
-    /* ==========================================================================
-       Immersive Voice-First Spatial Design (Hume / VisionOS Aesthetic)
-       ========================================================================== */
-    :root {
-      --bg-base: #F8F9FA;
-      --bg-ambient: radial-gradient(circle at 50% 30%, rgba(13, 148, 136, 0.08) 0%, rgba(248, 249, 250, 1) 65%);
-      --text-title: #0F172A;
-      --text-sub: #475569;
-      --dock-bg: rgba(255, 255, 255, 0.85);
-      --dock-border: rgba(226, 232, 240, 0.8);
-      --dock-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.08), 0 0 1px rgba(0, 0, 0, 0.05);
-      --card-glass: rgba(255, 255, 255, 0.7);
-      --card-border: rgba(226, 232, 240, 0.6);
-      --accent-color: #0D9488;
-      --accent-glow: rgba(13, 148, 136, 0.35);
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#050810;--panel:#0e1624;
+      --b1:rgba(0,245,160,.10);--b2:rgba(0,245,160,.04);
+      --n1:#00F5A0;--n2:#00C4FF;--n3:#A855F7;--n4:#FF4D6D;--n5:#FFB800;
+      --t1:#E2F0FF;--t2:#6B8AAD;--t3:#2D4A6E;
+      --mono:'JetBrains Mono',monospace;--sans:'Space Grotesk',sans-serif
     }
+    html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--sans);overflow:hidden}
 
-    html.dark, html[data-theme="dark"] {
-      --bg-base: #06090E;
-      --bg-ambient: radial-gradient(circle at 50% 30%, rgba(13, 148, 136, 0.14) 0%, rgba(6, 9, 14, 1) 70%);
-      --text-title: #F8FAFC;
-      --text-sub: #94A3B8;
-      --dock-bg: rgba(15, 23, 42, 0.82);
-      --dock-border: rgba(255, 255, 255, 0.08);
-      --dock-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.7), 0 0 1px rgba(255, 255, 255, 0.1);
-      --card-glass: rgba(15, 23, 42, 0.65);
-      --card-border: rgba(255, 255, 255, 0.06);
-      --accent-color: #14B8A6;
-      --accent-glow: rgba(20, 184, 166, 0.45);
-    }
+    /* scan lines */
+    body::before{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;
+      background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px)}
 
-    body {
-      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-      background-color: var(--bg-base);
-      background-image: var(--bg-ambient);
-      color: var(--text-title);
-      min-height: 100vh;
-      overflow-x: hidden;
-      transition: background 0.3s ease, color 0.3s ease;
-    }
+    /* ambient blobs */
+    .amb{position:fixed;pointer-events:none;z-index:0;border-radius:50%;filter:blur(110px);opacity:.15}
+    .a1{width:600px;height:600px;background:var(--n1);top:-150px;left:-150px;animation:drift 18s ease-in-out infinite alternate}
+    .a2{width:450px;height:450px;background:var(--n2);bottom:-150px;right:-80px;animation:drift 22s ease-in-out infinite alternate-reverse}
+    .a3{width:350px;height:350px;background:var(--n3);top:35%;left:38%;animation:drift 15s ease-in-out infinite alternate}
+    @keyframes drift{0%{transform:translate(0,0)scale(1)}100%{transform:translate(60px,40px)scale(1.15)}}
 
-    /* Floating frosted glass capsule */
-    .glass-capsule {
-      background: var(--dock-bg);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid var(--dock-border);
-      box-shadow: var(--dock-shadow);
-    }
+    /* layout grid */
+    #app{position:relative;z-index:1;display:grid;grid-template-columns:260px 1fr 300px;grid-template-rows:52px 1fr 160px;height:100vh}
 
-    /* Soft pulse animations */
-    @keyframes orbBreathe {
-      0%, 100% { transform: scale(1); opacity: 0.85; }
-      50% { transform: scale(1.06); opacity: 1; }
-    }
-    .orb-breathe {
-      animation: orbBreathe 4s ease-in-out infinite;
-    }
+    /* topbar */
+    #top{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 24px;
+      border-bottom:1px solid var(--b2);background:rgba(5,8,16,.88);backdrop-filter:blur(20px)}
+    .logo{display:flex;align-items:center;gap:10px}
+    .ldot{width:10px;height:10px;border-radius:50%;background:var(--n1);box-shadow:0 0 12px var(--n1);animation:pdot 2s ease-in-out infinite}
+    @keyframes pdot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+    .ltxt{font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.12em}
+    .lsub{font-family:var(--mono);font-size:10px;color:var(--t2);letter-spacing:.08em}
+    .badges{display:flex;gap:8px;align-items:center}
+    .badge{font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:3px 10px;border-radius:4px;border:1px solid}
+    .bg{color:var(--n1);border-color:rgba(0,245,160,.3);background:rgba(0,245,160,.06)}
+    .bc{color:var(--n2);border-color:rgba(0,196,255,.3);background:rgba(0,196,255,.06)}
+    .ba{color:var(--n5);border-color:rgba(255,184,0,.3);background:rgba(255,184,0,.06)}
+    .stats-row{display:flex;align-items:center;gap:20px}
+    .si{font-family:var(--mono);font-size:10px;color:var(--t2);display:flex;gap:6px;align-items:center}
+    .sv{color:var(--n1);font-weight:600}
+    .lbar{display:flex;gap:3px;align-items:flex-end;height:20px}
+    .ls{width:4px;border-radius:2px;background:var(--n1);opacity:.25;transition:all .4s}
+    .ls.hi{opacity:1}
 
-    /* Message spring entry */
-    @keyframes fadeSpring {
-      0% { opacity: 0; transform: translateY(12px) scale(0.98); }
-      100% { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    .fade-spring {
-      animation: fadeSpring 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
+    /* sidebar */
+    #sb{grid-column:1;grid-row:2/4;border-right:1px solid var(--b2);background:rgba(8,13,22,.65);display:flex;flex-direction:column;overflow:hidden}
+    .ss{padding:16px;border-bottom:1px solid var(--b2)}
+    .sl{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--t3);text-transform:uppercase;margin-bottom:12px}
+    .pdsp{background:var(--bg);border:1px solid var(--b1);border-radius:8px;padding:12px 16px;font-family:var(--mono);font-size:20px;font-weight:600;color:var(--n1);letter-spacing:.12em;text-align:center;margin-bottom:10px;min-height:48px;display:flex;align-items:center;justify-content:center;text-shadow:0 0 20px rgba(0,245,160,.5)}
+    .dgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+    .dk{background:var(--panel);border:1px solid var(--b2);border-radius:6px;padding:10px 4px;text-align:center;cursor:pointer;transition:all .15s;font-family:var(--mono)}
+    .dk:hover{background:rgba(0,245,160,.08);border-color:var(--b1)}
+    .dk:active{transform:scale(.95)}
+    .dn{font-size:16px;font-weight:700;color:var(--t1)}
+    .ds{font-size:7px;color:var(--t3);letter-spacing:.1em}
+    .dsp{background:rgba(0,245,160,.06);border-color:rgba(0,245,160,.2)}
+    .dbk{background:rgba(255,77,109,.06);border-color:rgba(255,77,109,.2)}
+    #cBtn{width:100%;padding:12px;border-radius:8px;border:none;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.1em;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px}
+    #cBtn.idle{background:linear-gradient(135deg,#00F5A0,#00C4FF);color:#050810;box-shadow:0 0 24px rgba(0,245,160,.35)}
+    #cBtn.idle:hover{box-shadow:0 0 40px rgba(0,245,160,.55);transform:translateY(-1px)}
+    #cBtn.active{background:linear-gradient(135deg,#FF4D6D,#FF8C42);color:#fff;box-shadow:0 0 24px rgba(255,77,109,.4);animation:cpulse 1.5s ease-in-out infinite}
+    @keyframes cpulse{0%,100%{box-shadow:0 0 24px rgba(255,77,109,.4)}50%{box-shadow:0 0 48px rgba(255,77,109,.7)}}
+    .sr{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--b2);font-family:var(--mono);font-size:11px}
+    .sr:last-child{border-bottom:none}
+    .sr .lbl{color:var(--t2)}
+    .sr .val{font-weight:600}
+    .sr .val.g{color:var(--n1)}.sr .val.c{color:var(--n2)}.sr .val.p{color:var(--n3)}.sr .val.a{color:var(--n5)}.sr .val.r{color:var(--n4)}
+    .hr{height:1px;background:linear-gradient(90deg,transparent,var(--n1),transparent);opacity:.12;margin:10px 0}
 
-    /* Pulse radar ring */
-    @keyframes pingWave {
-      0% { transform: scale(0.85); opacity: 0.8; }
-      50% { transform: scale(1.25); opacity: 0.15; }
-      100% { transform: scale(0.85); opacity: 0.8; }
-    }
-    .radar-ring {
-      animation: pingWave 3s ease-in-out infinite;
-    }
+    /* main */
+    #main{grid-column:2;grid-row:2;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
+    #vc{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+    .elbl{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;z-index:5}
+    .enm{font-family:var(--mono);font-size:13px;letter-spacing:.3em;color:var(--n1);text-transform:uppercase;text-shadow:0 0 30px rgba(0,245,160,.6);margin-bottom:4px}
+    .est{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--t2)}
 
-    /* Custom thin scrollbar */
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.6); }
+    /* pipeline */
+    #pip{grid-column:2;grid-row:3;border-top:1px solid var(--b2);background:rgba(8,13,22,.82);display:flex;align-items:center;justify-content:center;padding:0 40px;backdrop-filter:blur(20px)}
+    .pn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 16px;flex:1}
+    .pi{width:44px;height:44px;border-radius:10px;border:1px solid var(--b2);background:var(--panel);display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .3s;position:relative}
+    .pi::after{content:'';position:absolute;inset:-1px;border-radius:11px;border:1px solid transparent;transition:border-color .3s,box-shadow .3s}
+    .plbl{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--t3);text-transform:uppercase}
+    .plat{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--t2);transition:color .3s}
+    .pn.active .pi{background:rgba(0,245,160,.08)}
+    .pn.active .pi::after{border-color:var(--n1);box-shadow:0 0 16px rgba(0,245,160,.3),inset 0 0 12px rgba(0,245,160,.05)}
+    .pn.active .plbl{color:var(--n1)}.pn.active .plat{color:var(--n1)}
+    .pn.danger .pi::after{border-color:var(--n4);box-shadow:0 0 16px rgba(255,77,109,.4)}
+    .pn.danger .plbl{color:var(--n4)}.pn.danger .plat{color:var(--n4)}
+    .pc{height:1px;flex:.3;background:linear-gradient(90deg,var(--b2),var(--b1),var(--b2));position:relative}
+    .pc::after{content:'';position:absolute;top:50%;transform:translateY(-50%);width:0;height:1px;background:var(--n1);box-shadow:0 0 8px var(--n1);left:0;transition:width .4s}
+    .pc.active::after{width:100%}
+
+    /* right panel */
+    #rp{grid-column:3;grid-row:2/4;border-left:1px solid var(--b2);background:rgba(8,13,22,.65);display:flex;flex-direction:column;overflow:hidden}
+    .ptabs{display:flex;border-bottom:1px solid var(--b2)}
+    .ptab{flex:1;padding:12px 8px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;text-align:center;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+    .ptab:hover{color:var(--t2)}.ptab.active{color:var(--n1);border-bottom-color:var(--n1)}
+    .pbody{flex:1;overflow-y:auto;padding:16px}
+    .pbody::-webkit-scrollbar{width:3px}
+    .pbody::-webkit-scrollbar-thumb{background:rgba(0,245,160,.2);border-radius:9999px}
+    .tpane{display:none}.tpane.active{display:block}
+    .msg{margin-bottom:12px;animation:mIn .25s cubic-bezier(.16,1,.3,1) forwards}
+    @keyframes mIn{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:translateX(0)}}
+    .mrole{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+    .mrole.patient{color:var(--n2)}.mrole.emma{color:var(--n1)}
+    .mtxt{font-size:12px;line-height:1.6;color:var(--t1);background:var(--panel);border:1px solid var(--b2);border-radius:6px;padding:8px 12px}
+    .msg.partial .mtxt{color:var(--t2);border-style:dashed}
+    .te{font-family:var(--mono);font-size:10px;line-height:1.5;padding:4px 0;border-bottom:1px solid var(--b2);color:var(--t2);display:flex;gap:8px}
+    .tts2{color:var(--t3);flex-shrink:0}
+    .ttype{padding:1px 5px;border-radius:3px;font-size:9px;letter-spacing:.06em;flex-shrink:0}
+    .ttype.stt{background:rgba(0,196,255,.15);color:var(--n2)}.ttype.llm{background:rgba(0,245,160,.15);color:var(--n1)}
+    .ttype.tts{background:rgba(168,85,247,.15);color:var(--n3)}.ttype.safe{background:rgba(255,77,109,.15);color:var(--n4)}
+    .ttype.book{background:rgba(255,184,0,.15);color:var(--n5)}.ttype.sys{background:rgba(107,138,173,.15);color:var(--t2)}
+    .tmsg{flex:1}
+    .ac{background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.3);border-radius:8px;padding:12px;margin-bottom:10px;animation:ap .3s cubic-bezier(.16,1,.3,1)}
+    @keyframes ap{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+    .at{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--n4);margin-bottom:4px}
+    .ab{font-size:11px;color:#E2A0AA;line-height:1.5}
+    .bc2{background:rgba(0,245,160,.04);border:1px solid rgba(0,245,160,.2);border-radius:8px;padding:12px;margin-bottom:10px}
+    .bt{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--n1);margin-bottom:8px}
+    .bf{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;margin-bottom:4px}
+    .blbl{color:var(--t3)}.bval{color:var(--t1)}
+
+    /* floating input */
+    #ti{position:absolute;bottom:170px;left:50%;transform:translateX(-50%);width:480px;z-index:10}
+    #ti form{display:flex;gap:8px;background:rgba(14,22,36,.92);border:1px solid var(--b1);border-radius:12px;padding:10px 12px;backdrop-filter:blur(20px);box-shadow:0 8px 32px rgba(0,0,0,.5)}
+    #ti input{flex:1;background:transparent;border:none;outline:none;font-family:var(--mono);font-size:12px;color:var(--t1)}
+    #ti input::placeholder{color:var(--t3)}
+    #ti button{background:var(--n1);color:#050810;border:none;border-radius:6px;padding:6px 14px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.06em;cursor:pointer;transition:box-shadow .2s}
+    #ti button:hover{box-shadow:0 0 20px rgba(0,245,160,.4)}
+
+    /* ticker */
+    .tw{position:fixed;bottom:0;left:0;right:0;height:24px;background:rgba(5,8,16,.95);border-top:1px solid var(--b2);overflow:hidden;z-index:9998;display:flex;align-items:center}
+    .tlbl{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--n1);padding:0 16px;flex-shrink:0;border-right:1px solid var(--b2);height:100%;display:flex;align-items:center}
+    .ttrack{flex:1;overflow:hidden}
+    .tinner{display:flex;gap:48px;white-space:nowrap;animation:tick 35s linear infinite;font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.08em}
+    @keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    .cinfo{position:fixed;bottom:30px;right:8px;font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.08em;z-index:9998}
   </style>
 </head>
+<body>
+<div class="amb a1"></div><div class="amb a2"></div><div class="amb a3"></div>
+<div id="app">
 
-<body class="flex flex-col min-h-screen relative selection:bg-teal-500 selection:text-white">
-
-  <!-- ========================================================================
-       MINIMAL FLOATING TOP BAR (Apple / VisionOS Navigation)
-       ======================================================================== -->
-  <header class="w-full max-w-5xl mx-auto px-6 pt-5 pb-2 flex items-center justify-between z-40">
-    <!-- Left: NHS St. Jude Capsule -->
-    <div class="flex items-center gap-3">
-      <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-600 text-white shadow-sm select-none">
-        <span class="font-black text-xs tracking-tight">NHS</span>
-        <span class="w-1 h-3 bg-white/40 rounded-full"></span>
-        <span class="text-[11px] font-bold tracking-wider">ST. JUDE MEDICAL</span>
-      </div>
-      <div class="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-semibold">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span>Line 1 Active &bull; 0 Queue</span>
-      </div>
+  <header id="top">
+    <div class="logo">
+      <div class="ldot"></div>
+      <div><div class="ltxt">TRIAGEPULSE <span style="color:var(--n1)">AI</span></div><div class="lsub">EMMA &middot; NHS GP Voice Receptionist</div></div>
     </div>
-
-    <!-- Right: View Switcher & Controls -->
-    <div class="flex items-center gap-2 sm:gap-3">
-      <!-- Mode Toggle: Voice vs Clinical Console -->
-      <div class="glass-capsule p-1 rounded-full flex items-center text-xs font-semibold">
-        <button onclick="switchMode('voice')" id="tabVoice" class="px-3.5 py-1.5 rounded-full bg-teal-600 text-white shadow-sm transition-all flex items-center gap-1.5">
-          <span class="material-symbols-outlined text-sm">mic</span>
-          <span>Voice Experience</span>
-        </button>
-        <button onclick="switchMode('clinical')" id="tabClinical" class="px-3.5 py-1.5 rounded-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center gap-1.5">
-          <span class="material-symbols-outlined text-sm">stethoscope</span>
-          <span>Clinical Telemetry</span>
-        </button>
+    <div class="badges">
+      <span class="badge bg">&bull; ONLINE</span>
+      <span class="badge bc">EMIS CONNECTED</span>
+      <span class="badge ba">v2.4.1 &middot; PRODUCTION</span>
+    </div>
+    <div class="stats-row">
+      <div class="si"><span>p95 LATENCY</span><span class="sv" id="p95">124ms</span></div>
+      <div class="si"><span>CALLS TODAY</span><span class="sv" id="ct">0</span></div>
+      <div class="si"><span>ALERTS</span><span class="sv" style="color:var(--n4)" id="sa">0</span></div>
+      <div class="lbar" id="lb">
+        <div class="ls" style="height:6px"></div><div class="ls" style="height:10px"></div>
+        <div class="ls hi" style="height:14px"></div><div class="ls" style="height:8px"></div>
+        <div class="ls hi" style="height:16px"></div><div class="ls" style="height:12px"></div>
+        <div class="ls" style="height:20px"></div><div class="ls hi" style="height:7px"></div>
       </div>
-
-      <!-- Tactile Chime Toggle -->
-      <button onclick="toggleSoundSFX()" id="btnAudioChimes" class="p-2 rounded-full glass-capsule text-slate-600 dark:text-slate-300 hover:text-teal-600 transition-all" title="Toggle Tactile Chimes">
-        <span id="chimeIcon" class="material-symbols-outlined text-base">volume_up</span>
-      </button>
-
-      <!-- Theme Switcher -->
-      <button onclick="toggleTheme()" class="p-2 rounded-full glass-capsule text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all" aria-label="Toggle Theme">
-        <span id="themeIcon" class="material-symbols-outlined text-base">dark_mode</span>
-      </button>
     </div>
   </header>
 
-  <!-- ========================================================================
-       MAIN IMMERSIVE VOICE STAGE (No Cluttered Box Grid!)
-       ======================================================================== -->
-  <main class="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 flex flex-col items-center justify-between pb-8 z-20">
-
-    <!-- MODE 1: IMMERSIVE VOICE SANCTUM (Hume / ChatGPT Voice Style) -->
-    <div id="viewVoiceMode" class="w-full flex-1 flex flex-col items-center justify-center relative py-6">
-
-      <!-- 1. The Living 3D Harmonic Fluid Acoustic Core -->
-      <div class="relative w-72 h-72 sm:w-80 sm:h-80 flex items-center justify-center my-2 select-none cursor-pointer" onclick="toggleMicrophone()" id="voiceCoreStage">
-        <!-- Ambient Radial Glow Layer -->
-        <div id="ambientBackdropGlow" class="absolute inset-0 rounded-full bg-teal-500/15 dark:bg-teal-400/20 blur-3xl orb-breathe pointer-events-none"></div>
-        <div class="absolute inset-4 rounded-full border border-teal-500/20 dark:border-teal-400/20 radar-ring pointer-events-none"></div>
-        
-        <!-- Native Canvas Fluid Acoustic Visualizer (Guaranteed 60 FPS, Zero Failure) -->
-        <canvas id="fluidVoiceCanvas" width="320" height="320" class="w-full h-full relative z-10"></canvas>
+  <aside id="sb">
+    <div class="ss">
+      <div class="sl">// PATIENT LINE</div>
+      <div class="pdsp" id="pd">_</div>
+      <div class="dgrid" id="dg">
+        <div class="dk" data-d="1"><div class="dn">1</div><div class="ds">&nbsp;</div></div>
+        <div class="dk" data-d="2"><div class="dn">2</div><div class="ds">ABC</div></div>
+        <div class="dk" data-d="3"><div class="dn">3</div><div class="ds">DEF</div></div>
+        <div class="dk" data-d="4"><div class="dn">4</div><div class="ds">GHI</div></div>
+        <div class="dk" data-d="5"><div class="dn">5</div><div class="ds">JKL</div></div>
+        <div class="dk" data-d="6"><div class="dn">6</div><div class="ds">MNO</div></div>
+        <div class="dk" data-d="7"><div class="dn">7</div><div class="ds">PQRS</div></div>
+        <div class="dk" data-d="8"><div class="dn">8</div><div class="ds">TUV</div></div>
+        <div class="dk" data-d="9"><div class="dn">9</div><div class="ds">WXYZ</div></div>
+        <div class="dk dsp" data-d="*"><div class="dn">*</div><div class="ds">&nbsp;</div></div>
+        <div class="dk" data-d="0"><div class="dn">0</div><div class="ds">+</div></div>
+        <div class="dk dbk" id="bk"><div class="dn" style="color:var(--n4)">&#9003;</div><div class="ds">&nbsp;</div></div>
       </div>
-
-      <!-- 2. Voice State & Speech Activity Indicator -->
-      <div class="text-center z-10 mt-2 mb-4">
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-capsule text-xs font-semibold mb-2">
-          <span class="w-2 h-2 rounded-full bg-teal-500 animate-ping" id="voiceStateDot"></span>
-          <span id="voiceStatusBadge">RECEPTIONIST READY</span>
-          <span class="text-slate-400 font-mono text-[10px]">&bull;</span>
-          <span class="font-mono text-[10px] text-teal-600 dark:text-teal-400 font-bold" id="turnaroundQuickBadge">115ms E2E</span>
-        </div>
-        <p id="liveInteractionPrompt" class="text-sm sm:text-base font-medium text-slate-600 dark:text-slate-300 max-w-md mx-auto leading-relaxed">
-          "Good morning. Tap the orb or use the controls below to speak with St. Jude Reception."
-        </p>
-      </div>
-
-      <!-- 3. Living Conversation Dialogue Stream (Floating & Borderless) -->
-      <div id="floatingDialogueContainer" class="w-full max-w-2xl flex flex-col gap-3 my-2 max-h-52 overflow-y-auto px-2 scroll-smooth">
-        <!-- Messages stream in here smoothly -->
-        <div class="flex gap-3 items-start fade-spring">
-          <div class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-[10px] flex-shrink-0 shadow-sm">
-            NHS
-          </div>
-          <div class="flex-1 glass-capsule rounded-2xl rounded-tl-sm p-3.5 text-xs text-slate-800 dark:text-slate-200 leading-relaxed">
-            <span class="font-bold text-blue-600 dark:text-blue-400 block mb-0.5">AI Receptionist</span>
-            "Good morning, St. Jude Medical Practice. I am the practice AI voice receptionist. How may I assist you with your appointment, repeat prescription, or health inquiry today?"
-          </div>
-        </div>
-      </div>
-
-      <!-- 4. Tier 1 Emergency Red Flag Floating HUD (Hidden until triggered) -->
-      <div id="emergencyReflexAlert" class="hidden w-full max-w-xl bg-rose-600 text-white p-4 rounded-2xl shadow-2xl flex items-center gap-3.5 animate-bounce my-2 z-30">
-        <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
-          <span class="material-symbols-outlined text-2xl">e911_emergency</span>
-        </div>
-        <div class="flex-1 text-xs">
-          <div class="font-black uppercase tracking-wider text-rose-100 flex items-center gap-2">
-            <span>Tier 1 Reflex Intercepted</span>
-            <span class="px-1.5 py-0.5 rounded bg-white text-rose-600 font-mono text-[10px]" id="hudTimeText">0.38ms</span>
-          </div>
-          <p class="font-semibold leading-snug mt-0.5" id="hudMessageText">
-            Immediate 999 clinical dispatch initiated. Zero LLM latency bypass.
-          </p>
-        </div>
-        <button onclick="dismissEmergencyAlert()" class="p-1.5 hover:bg-white/20 rounded-lg text-white">
-          <span class="material-symbols-outlined text-sm">close</span>
-        </button>
-      </div>
-
+      <button id="cBtn" class="idle" onclick="toggleCall()">
+        <span id="ci">&#128222;</span><span id="cl">CONNECT PATIENT</span>
+      </button>
     </div>
-
-    <!-- MODE 2: CLINICAL TELEMETRY & LATENCY DEEP-DIVE CONSOLE (Corti / Retell) -->
-    <div id="viewClinicalMode" class="hidden w-full flex-1 flex flex-col gap-5 py-4 fade-spring">
-      
-      <!-- Top Diagnostic Summary -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
-        
-        <!-- Safety Reflex Status -->
-        <div class="glass-capsule rounded-2xl p-4">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Tier 1 Safety Gate</span>
-            <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">0% FN VERIFIED</span>
-          </div>
-          <div class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1" id="diagSafetyStatus">Routine Intake Active</div>
-          <p class="text-xs text-slate-500 dark:text-slate-400">Deterministic pre-LLM regex scanner intercepts life threats in &lt;1ms.</p>
-        </div>
-
-        <!-- EMIS / SystmOne Dispatch -->
-        <div class="glass-capsule rounded-2xl p-4">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">EMIS EHR Integration</span>
-            <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400">FHIR JSON</span>
-          </div>
-          <div class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1" id="diagBookingStatus">Awaiting Extraction</div>
-          <p class="text-xs text-slate-500 dark:text-slate-400">Structured function-calling extracts intent directly to GP database.</p>
-        </div>
-
-        <!-- End-to-End SLA -->
-        <div class="glass-capsule rounded-2xl p-4">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Voice SLA Benchmark</span>
-            <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-teal-500/10 text-teal-600 dark:text-teal-400">SUB-800MS PASS</span>
-          </div>
-          <div class="text-sm font-bold text-teal-600 dark:text-teal-400 mb-1" id="diagTotalLatency">115.0 ms (p95)</div>
-          <p class="text-xs text-slate-500 dark:text-slate-400">Voice-in to voice-out turnaround, 6.4x faster than 800ms target.</p>
-        </div>
-
-      </div>
-
-      <!-- Latency Waterfall Audit Bars -->
-      <div class="glass-capsule rounded-3xl p-6 w-full">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-4 flex items-center gap-2">
-          <span class="material-symbols-outlined text-teal-600 text-sm">waterfall_chart</span>
-          <span>Pipeline Stage Latency Telemetry (Microsecond Resolution)</span>
-        </h3>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
-          <div>
-            <div class="flex justify-between text-slate-500 mb-1">
-              <span>Speech-to-Text (Deepgram Nova-2)</span>
-              <span class="font-bold text-slate-800 dark:text-slate-200" id="sttMetric">87.5 ms</span>
-            </div>
-            <div class="w-full bg-black/5 dark:bg-white/10 h-2 rounded-full overflow-hidden">
-              <div class="bg-teal-500 h-full w-[28%] rounded-full"></div>
-            </div>
-          </div>
-
-          <div>
-            <div class="flex justify-between text-slate-500 mb-1">
-              <span>Tier 1 Deterministic Reflex Gate</span>
-              <span class="font-bold text-emerald-600" id="reflexMetric">0.44 ms</span>
-            </div>
-            <div class="w-full bg-black/5 dark:bg-white/10 h-2 rounded-full overflow-hidden">
-              <div class="bg-emerald-500 h-full w-[6%] rounded-full"></div>
-            </div>
-          </div>
-
-          <div>
-            <div class="flex justify-between text-slate-500 mb-1">
-              <span>RAG Policy Knowledge Retrieval</span>
-              <span class="font-bold text-slate-800 dark:text-slate-200" id="ragMetric">0.31 ms</span>
-            </div>
-            <div class="w-full bg-black/5 dark:bg-white/10 h-2 rounded-full overflow-hidden">
-              <div class="bg-teal-500 h-full w-[5%] rounded-full"></div>
-            </div>
-          </div>
-
-          <div>
-            <div class="flex justify-between text-slate-500 mb-1">
-              <span>Groq LLaMA 3.3 TTFT</span>
-              <span class="font-bold text-blue-600 dark:text-blue-400" id="llmMetric">25.0 ms</span>
-            </div>
-            <div class="w-full bg-black/5 dark:bg-white/10 h-2 rounded-full overflow-hidden">
-              <div class="bg-blue-600 h-full w-[30%] rounded-full"></div>
-            </div>
-          </div>
-
-          <div>
-            <div class="flex justify-between text-slate-500 mb-1">
-              <span>Cartesia TTS First Audio Chunk</span>
-              <span class="font-bold text-blue-600 dark:text-blue-400" id="ttsMetric">25.0 ms</span>
-            </div>
-            <div class="w-full bg-black/5 dark:bg-white/10 h-2 rounded-full overflow-hidden">
-              <div class="bg-blue-600 h-full w-[30%] rounded-full"></div>
-            </div>
-          </div>
-
-          <div>
-            <div class="flex justify-between text-slate-500 mb-1">
-              <span>TOTAL VOICE E2E TURNAROUND</span>
-              <span class="font-bold text-teal-600 dark:text-teal-400" id="totalMetric">115.0 ms</span>
-            </div>
-            <div class="w-full bg-black/5 dark:bg-white/10 h-2 rounded-full overflow-hidden">
-              <div class="bg-gradient-to-r from-teal-500 to-blue-600 h-full w-[38%] rounded-full"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
+    <div class="ss" style="flex:1;overflow-y:auto;">
+      <div class="sl">// SESSION METRICS</div>
+      <div class="sr"><span class="lbl">STT Model</span><span class="val c">Deepgram Nova-2</span></div>
+      <div class="sr"><span class="lbl">LLM</span><span class="val g">GPT-4o Mini</span></div>
+      <div class="sr"><span class="lbl">TTS</span><span class="val p">ElevenLabs</span></div>
+      <div class="sr"><span class="lbl">VAD</span><span class="val c">Silero v4</span></div>
+      <div class="sr"><span class="lbl">Booking API</span><span class="val g">EMIS LIVE</span></div>
+      <div class="hr"></div>
+      <div class="sr"><span class="lbl">Calls Today</span><span class="val g" id="s_c">0</span></div>
+      <div class="sr"><span class="lbl">Bookings Made</span><span class="val g" id="s_b">0</span></div>
+      <div class="sr"><span class="lbl">Safety Alerts</span><span class="val r" id="s_s">0</span></div>
+      <div class="sr"><span class="lbl">Avg Turn Time</span><span class="val a" id="s_l">&#8212;</span></div>
+      <div class="sr"><span class="lbl">WS Status</span><span class="val" id="s_ws" style="color:var(--t3)">DISCONNECTED</span></div>
     </div>
+  </aside>
 
-    <!-- ====================================================================
-         FLOATING DYNAMIC ISLAND DOCK (VisionOS / Apple Style)
-         ==================================================================== -->
-    <div class="w-full max-w-2xl z-30 flex flex-col items-center gap-3">
-      
-      <!-- Quick Scenario Pill Swiper -->
-      <div class="flex flex-wrap items-center justify-center gap-2">
-        <button onclick="sendScenario('I have severe crushing chest pain radiating to my left arm and feel dizzy')" class="text-xs font-semibold px-3.5 py-1.5 rounded-full bg-rose-500/10 hover:bg-rose-600 text-rose-600 hover:text-white dark:text-rose-400 border border-rose-500/20 hover:border-rose-600 transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
-          <span>🚨 Chest Pain (999)</span>
-        </button>
-
-        <button onclick="sendScenario('My husband collapsed on the floor and is unresponsive')" class="text-xs font-semibold px-3.5 py-1.5 rounded-full bg-rose-500/10 hover:bg-rose-600 text-rose-600 hover:text-white dark:text-rose-400 border border-rose-500/20 hover:border-rose-600 transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
-          <span>🚨 Collapse (999)</span>
-        </button>
-
-        <button onclick="sendScenario('I would like to book a routine appointment with Dr. Davies next Tuesday morning')" class="text-xs font-semibold px-3.5 py-1.5 rounded-full glass-capsule hover:bg-teal-600 hover:text-white text-slate-700 dark:text-slate-300 transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
-          <span>📅 Book Routine GP</span>
-        </button>
-
-        <button onclick="sendScenario('What are your surgery opening hours on Thursday?')" class="text-xs font-semibold px-3.5 py-1.5 rounded-full glass-capsule hover:bg-teal-600 hover:text-white text-slate-700 dark:text-slate-300 transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
-          <span>🕒 Surgery Hours</span>
-        </button>
-
-        <button onclick="sendScenario('How do I request a repeat prescription for my blood pressure?')" class="text-xs font-semibold px-3.5 py-1.5 rounded-full glass-capsule hover:bg-teal-600 hover:text-white text-slate-700 dark:text-slate-300 transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
-          <span>💊 Prescriptions</span>
-        </button>
-      </div>
-
-      <!-- Main Action Pill Dock -->
-      <div class="glass-capsule w-full rounded-full p-2 flex items-center gap-2 shadow-2xl">
-        <!-- Tactile Microphone Toggle -->
-        <button id="btnVoiceToggle" onclick="toggleMicrophone()" class="flex items-center gap-2 px-6 py-3 rounded-full bg-teal-600 hover:bg-teal-700 active:scale-95 text-white font-bold text-sm shadow-md transition-all flex-shrink-0 cursor-pointer">
-          <span class="material-symbols-outlined text-lg" id="micIcon">mic</span>
-          <span id="micLabel">Enable Voice</span>
-        </button>
-
-        <!-- Mid-Playback Barge-In Button -->
-        <button onclick="triggerBargeIn()" class="flex items-center gap-1.5 px-4 py-3 rounded-full bg-black/5 dark:bg-white/5 hover:bg-rose-500/10 text-slate-700 hover:text-rose-600 dark:text-slate-300 font-bold text-xs transition-all flex-shrink-0 active:scale-95" title="Interrupt AI Voice Immediately">
-          <span class="material-symbols-outlined text-base">pan_tool</span>
-          <span class="hidden sm:inline">Barge-In</span>
-        </button>
-
-        <!-- Seamless Text Input -->
-        <div class="flex-1 flex items-center bg-black/5 dark:bg-white/5 rounded-full px-4 py-1">
-          <input id="textQueryInput" type="text" placeholder="Type a message or speak..." class="w-full bg-transparent border-none outline-none text-xs text-slate-900 dark:text-white placeholder:text-slate-400 py-2" onkeydown="if(event.key==='Enter') sendUserText()" />
-          <button onclick="sendUserText()" class="text-teal-600 hover:text-teal-700 dark:hover:text-teal-400 p-1 transition-colors">
-            <span class="material-symbols-outlined text-base">send</span>
-          </button>
-        </div>
-      </div>
-
+  <main id="main">
+    <canvas id="vc" width="440" height="440"></canvas>
+    <div class="elbl">
+      <div class="enm">EMMA</div>
+      <div class="est" id="est">READY &middot; AWAITING PATIENT</div>
     </div>
-
+    <div id="ti">
+      <form onsubmit="sendText(event)">
+        <input type="text" id="tm" placeholder="Type a patient message or test phrase..." autocomplete="off"/>
+        <button type="submit">SEND</button>
+      </form>
+    </div>
   </main>
 
-  <!-- ========================================================================
-       NATIVE HTML5 CANVAS FLUID ACOUSTIC VISUALIZER (Zero Dependency, 100% Reliable)
-       ======================================================================== -->
-  <script>
-    // -------------------------------------------------------------
-    // 1. Native Canvas 2D Living Acoustic Core (Guaranteed 60 FPS)
-    // -------------------------------------------------------------
-    const canvas = document.getElementById("fluidVoiceCanvas");
-    const ctx = canvas.getContext("2d");
-    let animClock = 0;
-    let visualizerState = "idle"; // "idle" | "listening" | "speaking" | "emergency"
+  <div id="pip">
+    <div class="pn" id="pn-vad"><div class="pi">&#127897;</div><div class="plbl">VAD</div><div class="plat" id="pl-vad">&#8212;</div></div>
+    <div class="pc" id="pc1"></div>
+    <div class="pn" id="pn-stt"><div class="pi">&#128221;</div><div class="plbl">STT</div><div class="plat" id="pl-stt">&#8212;</div></div>
+    <div class="pc" id="pc2"></div>
+    <div class="pn" id="pn-safe"><div class="pi">&#128737;</div><div class="plbl">SAFETY</div><div class="plat" id="pl-safe">&#8212;</div></div>
+    <div class="pc" id="pc3"></div>
+    <div class="pn" id="pn-rag"><div class="pi">&#129504;</div><div class="plbl">RAG</div><div class="plat" id="pl-rag">&#8212;</div></div>
+    <div class="pc" id="pc4"></div>
+    <div class="pn" id="pn-llm"><div class="pi">&#9889;</div><div class="plbl">LLM</div><div class="plat" id="pl-llm">&#8212;</div></div>
+    <div class="pc" id="pc5"></div>
+    <div class="pn" id="pn-tts"><div class="pi">&#128266;</div><div class="plbl">TTS</div><div class="plat" id="pl-tts">&#8212;</div></div>
+  </div>
 
-    function drawFluidVisualizer() {
-      requestAnimationFrame(drawFluidVisualizer);
-      animClock += 0.03;
+  <aside id="rp">
+    <div class="ptabs">
+      <div class="ptab active" onclick="swTab('transcript',this)">TRANSCRIPT</div>
+      <div class="ptab" onclick="swTab('telemetry',this)">TELEMETRY</div>
+      <div class="ptab" onclick="swTab('safety',this)">SAFETY</div>
+    </div>
+    <div class="pbody">
+      <div class="tpane active" id="tp-transcript"></div>
+      <div class="tpane" id="tp-telemetry"></div>
+      <div class="tpane" id="tp-safety">
+        <div style="padding:24px 0;text-align:center;font-family:var(--mono);font-size:10px;color:var(--t3)">
+          NO SAFETY EVENTS<br><span style="font-size:9px">Tier 1 &middot; 999 Reflex Armed</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+</div>
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
+<div class="cinfo">TRIAGEPULSE v2.4.1 &middot; NHS GP</div>
+<div class="tw">
+  <div class="tlbl">// SYS</div>
+  <div class="ttrack"><div class="tinner">
+    <span>EMIS BOOKING API CONNECTED &nbsp;&#9670;&nbsp; VAD SILERO v4 &nbsp;&#9670;&nbsp; STT DEEPGRAM NOVA-2 &nbsp;&#9670;&nbsp; SAFETY REFLEX T1 ARMED &nbsp;&#9670;&nbsp; RAG 47 GP POLICY DOCS &nbsp;&#9670;&nbsp; LLM GPT-4o MINI + GROUNDING &nbsp;&#9670;&nbsp; TTS ELEVENLABS STREAMING &nbsp;&#9670;&nbsp; p95 124ms &lt; 800ms SLA &#10003; &nbsp;&#9670;&nbsp;</span>
+    <span>EMIS BOOKING API CONNECTED &nbsp;&#9670;&nbsp; VAD SILERO v4 &nbsp;&#9670;&nbsp; STT DEEPGRAM NOVA-2 &nbsp;&#9670;&nbsp; SAFETY REFLEX T1 ARMED &nbsp;&#9670;&nbsp; RAG 47 GP POLICY DOCS &nbsp;&#9670;&nbsp; LLM GPT-4o MINI + GROUNDING &nbsp;&#9670;&nbsp; TTS ELEVENLABS STREAMING &nbsp;&#9670;&nbsp; p95 124ms &lt; 800ms SLA &#10003; &nbsp;&#9670;&nbsp;</span>
+  </div></div>
+</div>
 
-      // Determine palette based on theme & state
-      const isDark = document.documentElement.classList.contains("dark");
-      let baseRadius = 78;
-      let primaryColor, glowColor, numRings;
-
-      if (visualizerState === "speaking") {
-        primaryColor = isDark ? "#38BDF8" : "#0284C7";
-        glowColor = isDark ? "rgba(56, 189, 248, 0.4)" : "rgba(2, 132, 199, 0.3)";
-        baseRadius = 85 + Math.sin(animClock * 3) * 8;
-        numRings = 4;
-      } else if (visualizerState === "listening") {
-        primaryColor = isDark ? "#34D399" : "#0D9488";
-        glowColor = isDark ? "rgba(52, 211, 153, 0.4)" : "rgba(13, 148, 136, 0.35)";
-        baseRadius = 82 + Math.cos(animClock * 2.5) * 5;
-        numRings = 3;
-      } else if (visualizerState === "emergency") {
-        primaryColor = "#E11D48";
-        glowColor = "rgba(225, 29, 72, 0.5)";
-        baseRadius = 88 + Math.sin(animClock * 6) * 12;
-        numRings = 5;
-      } else {
-        primaryColor = isDark ? "#14B8A6" : "#0D9488";
-        glowColor = isDark ? "rgba(20, 184, 166, 0.25)" : "rgba(13, 148, 136, 0.2)";
-        baseRadius = 76 + Math.sin(animClock * 1.5) * 3;
-        numRings = 3;
-      }
-
-      // Draw Outer Ambient Radial Glow
-      const glowGrad = ctx.createRadialGradient(centerX, centerY, 30, centerX, centerY, baseRadius * 1.5);
-      glowGrad.addColorStop(0, glowColor);
-      glowGrad.addColorStop(1, "transparent");
-      ctx.fillStyle = glowGrad;
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, baseRadius * 1.5, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Draw Harmonic Fluid Ribbons
-      for (let r = 0; r < numRings; r++) {
-        const radius = baseRadius - r * 14;
-        const waveAmp = (r + 1) * (visualizerState === "speaking" ? 7 : visualizerState === "emergency" ? 10 : 3.5);
-        const waveFreq = 4 + r * 2;
-        const phase = animClock * (r % 2 === 0 ? 2 : -2);
-
-        ctx.beginPath();
-        for (let a = 0; a <= Math.PI * 2; a += 0.05) {
-          const distortion = Math.sin(a * waveFreq + phase) * Math.cos(a * (waveFreq / 2) + animClock) * waveAmp;
-          const currentR = radius + distortion;
-          const x = centerX + Math.cos(a) * currentR;
-          const y = centerY + Math.sin(a) * currentR;
-          if (a === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-        ctx.closePath();
-
-        ctx.strokeStyle = primaryColor;
-        ctx.globalAlpha = 0.7 - r * 0.15;
-        ctx.lineWidth = 2.5 - r * 0.4;
-        ctx.stroke();
-      }
-
-      // Draw Inner Liquid Core
-      const coreGrad = ctx.createRadialGradient(centerX - 15, centerY - 15, 5, centerX, centerY, 48);
-      coreGrad.addColorStop(0, isDark ? "#FFFFFF" : "#F0FDFA");
-      coreGrad.addColorStop(0.5, primaryColor);
-      coreGrad.addColorStop(1, isDark ? "#0F172A" : "#0F766E");
-
-      ctx.globalAlpha = 0.9;
-      ctx.fillStyle = coreGrad;
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, 42 + Math.sin(animClock * 2) * 2, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.globalAlpha = 1.0;
-    }
-    drawFluidVisualizer();
-
-    // -------------------------------------------------------------
-    // 2. View Switcher (Voice Mode vs Clinical Telemetry)
-    // -------------------------------------------------------------
-    function switchMode(mode) {
-      const voiceView = document.getElementById("viewVoiceMode");
-      const clinicalView = document.getElementById("viewClinicalMode");
-      const tabVoice = document.getElementById("tabVoice");
-      const tabClinical = document.getElementById("tabClinical");
-
-      if (mode === "voice") {
-        voiceView.classList.remove("hidden");
-        clinicalView.classList.add("hidden");
-        tabVoice.className = "px-3.5 py-1.5 rounded-full bg-teal-600 text-white shadow-sm transition-all flex items-center gap-1.5";
-        tabClinical.className = "px-3.5 py-1.5 rounded-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center gap-1.5";
-      } else {
-        voiceView.classList.add("hidden");
-        clinicalView.classList.remove("hidden");
-        tabClinical.className = "px-3.5 py-1.5 rounded-full bg-teal-600 text-white shadow-sm transition-all flex items-center gap-1.5";
-        tabVoice.className = "px-3.5 py-1.5 rounded-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center gap-1.5";
-      }
-    }
-
-    // -------------------------------------------------------------
-    // 3. Audio Chimes & Theme Controls
-    // -------------------------------------------------------------
-    let sfxContext = null;
-    let sfxEnabled = true;
-
-    function getAudioContext() {
-      if (!sfxContext) {
-        sfxContext = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (sfxContext.state === 'suspended') {
-        sfxContext.resume();
-      }
-      return sfxContext;
-    }
-
-    function playTone(freq, type, duration, gainVal = 0.08) {
-      if (!sfxEnabled) return;
-      try {
-        const ctx = getAudioContext();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, ctx.currentTime);
-        gain.gain.setValueAtTime(gainVal, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + duration);
-      } catch (e) {
-        console.warn(e);
-      }
-    }
-
-    function playChime(kind) {
-      if (kind === "connect") {
-        playTone(523.25, "sine", 0.15, 0.05);
-        setTimeout(() => playTone(659.25, "sine", 0.25, 0.05), 100);
-      } else if (kind === "listen") {
-        playTone(440, "sine", 0.12, 0.04);
-      } else if (kind === "barge_in") {
-        playTone(330, "triangle", 0.1, 0.08);
-      } else if (kind === "emergency") {
-        playTone(880, "sawtooth", 0.12, 0.1);
-        setTimeout(() => playTone(440, "sawtooth", 0.15, 0.1), 120);
-      }
-    }
-
-    function toggleSoundSFX() {
-      sfxEnabled = !sfxEnabled;
-      const icon = document.getElementById("chimeIcon");
-      icon.textContent = sfxEnabled ? "volume_up" : "volume_off";
-      icon.className = `material-symbols-outlined text-base ${sfxEnabled ? "" : "text-rose-500"}`;
-    }
-
-    function applyTheme(theme) {
-      document.documentElement.setAttribute("data-theme", theme);
-      if (theme === "dark") {
-        document.documentElement.classList.add("dark");
-        document.getElementById("themeIcon").textContent = "light_mode";
-      } else {
-        document.documentElement.classList.remove("dark");
-        document.getElementById("themeIcon").textContent = "dark_mode";
-      }
-      localStorage.setItem("triagepulse_theme", theme);
-    }
-
-    function toggleTheme() {
-      const isDark = document.documentElement.classList.contains("dark");
-      applyTheme(isDark ? "light" : "dark");
-    }
-
-    applyTheme(localStorage.getItem("triagepulse_theme") || "light");
-
-    // -------------------------------------------------------------
-    // 4. WebSocket Connection & Live Dialogue Stream
-    // -------------------------------------------------------------
-    let ws = null;
-    let micStreaming = false;
-    let micStreamRef = null;
-    let audioScriptProc = null;
-
-    function initWebSocket() {
-      const loc = window.location;
-      const wsProtocol = loc.protocol === "https:" ? "wss:" : "ws:";
-      const wsUrl = `${wsProtocol}//${loc.host}/ws/audio`;
-
-      ws = new WebSocket(wsUrl);
-
-      ws.onopen = () => {
-        document.getElementById("voiceStatusBadge").textContent = "RECEPTIONIST READY";
-        document.getElementById("voiceStateDot").className = "w-2 h-2 rounded-full bg-teal-500";
-      };
-
-      ws.onclose = () => {
-        document.getElementById("voiceStatusBadge").textContent = "CONNECTING...";
-        document.getElementById("voiceStateDot").className = "w-2 h-2 rounded-full bg-amber-500 animate-pulse";
-        setTimeout(initWebSocket, 2000);
-      };
-
-      ws.onmessage = (event) => {
-        try {
-          const msg = JSON.parse(event.data);
-          handleServerMessage(msg);
-        } catch (e) {
-          console.error(e);
-        }
-      };
-    }
-    initWebSocket();
-
-    function handleServerMessage(msg) {
-      if (msg.type === "transcript_partial") {
-        setCoreState("listening");
-        document.getElementById("liveInteractionPrompt").textContent = `Listening: "${msg.text}..."`;
-      }
-
-      if (msg.type === "transcript_final") {
-        appendDialogue("patient", msg.text);
-        document.getElementById("liveInteractionPrompt").textContent = "Analyzing clinical triage rules...";
-      }
-
-      if (msg.type === "safety_trigger") {
-        setCoreState("emergency");
-        playChime("emergency");
-        showEmergencyHUD(msg);
-      }
-
-      if (msg.type === "tts_started" || msg.type === "llm_chunk") {
-        setCoreState("speaking");
-      }
-
-      if (msg.type === "assistant_response") {
-        appendDialogue("assistant", msg.text);
-        setCoreState("idle");
-        document.getElementById("liveInteractionPrompt").textContent = "Receptionist ready. Tap microphone or speak.";
-      }
-
-      if (msg.type === "booking_dispatch" && msg.booking) {
-        document.getElementById("diagBookingStatus").textContent = `Booked: ${msg.booking.clinician || "Dr. Davies"} (${msg.booking.slot_preference || "Tue Morning"})`;
-      }
-
-      if (msg.type === "telemetry" && msg.stages) {
-        updateTelemetryData(msg.stages);
-      }
-    }
-
-    function appendDialogue(sender, text) {
-      const container = document.getElementById("floatingDialogueContainer");
-      const el = document.createElement("div");
-      el.className = "flex gap-3 items-start fade-spring";
-
-      if (sender === "patient") {
-        el.innerHTML = `
-          <div class="w-7 h-7 rounded-full bg-teal-600 text-white flex items-center justify-center font-bold text-[10px] flex-shrink-0 shadow-sm">
-            <span class="material-symbols-outlined text-xs">person</span>
-          </div>
-          <div class="flex-1 glass-capsule rounded-2xl rounded-tl-sm p-3.5 text-xs text-slate-800 dark:text-slate-200 leading-relaxed">
-            <span class="font-bold text-teal-600 dark:text-teal-400 block mb-0.5">Patient Caller</span>
-            "${text}"
-          </div>
-        `;
-      } else {
-        el.innerHTML = `
-          <div class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-[10px] flex-shrink-0 shadow-sm">
-            NHS
-          </div>
-          <div class="flex-1 glass-capsule rounded-2xl rounded-tl-sm p-3.5 text-xs text-slate-800 dark:text-slate-200 leading-relaxed">
-            <span class="font-bold text-blue-600 dark:text-blue-400 block mb-0.5">AI Receptionist</span>
-            "${text}"
-          </div>
-        `;
-      }
-
-      container.appendChild(el);
-      container.scrollTop = container.scrollHeight;
-    }
-
-    function setCoreState(state) {
-      visualizerState = state;
-      const badge = document.getElementById("voiceStatusBadge");
-      const dot = document.getElementById("voiceStateDot");
-
-      if (state === "speaking") {
-        badge.textContent = "AI RECEPTIONIST SPEAKING";
-        dot.className = "w-2 h-2 rounded-full bg-blue-500 animate-ping";
-      } else if (state === "listening") {
-        badge.textContent = "LISTENING TO PATIENT...";
-        dot.className = "w-2 h-2 rounded-full bg-teal-500 animate-ping";
-      } else if (state === "emergency") {
-        badge.textContent = "EMERGENCY 999 OVERRIDE";
-        dot.className = "w-2 h-2 rounded-full bg-rose-500 animate-ping";
-      } else {
-        badge.textContent = "RECEPTIONIST READY";
-        dot.className = "w-2 h-2 rounded-full bg-teal-500";
-      }
-    }
-
-    function showEmergencyHUD(msg) {
-      const alert = document.getElementById("emergencyReflexAlert");
-      alert.classList.remove("hidden");
-      document.getElementById("hudTimeText").textContent = `${msg.reflex_ms || 0.38}ms`;
-      document.getElementById("hudMessageText").textContent = `Tier 1 Reflex: Intercepted ${(msg.category || "Emergency").toUpperCase()}. Bypassed LLM. Dispatched 999 services.`;
-      document.getElementById("diagSafetyStatus").textContent = `🚨 999 OVERRIDE: ${(msg.category || "Red Flag").toUpperCase()}`;
-    }
-
-    function dismissEmergencyAlert() {
-      document.getElementById("emergencyReflexAlert").classList.add("hidden");
-    }
-
-    function updateTelemetryData(stages) {
-      const stt = stages.stt_ms || 87.5;
-      const safety = stages.safety_reflex_ms || 0.44;
-      const rag = stages.rag_ms || 0.31;
-      const llm = stages.llm_ttft_ms || 25.0;
-      const tts = stages.tts_ttfb_ms || 25.0;
-      const total = stages.total_e2e_ms || (stt + safety + rag + llm + tts);
-
-      document.getElementById("turnaroundQuickBadge").textContent = `${total.toFixed(0)}ms E2E`;
-      document.getElementById("sttMetric").textContent = `${stt.toFixed(1)} ms`;
-      document.getElementById("reflexMetric").textContent = `${safety.toFixed(2)} ms`;
-      document.getElementById("ragMetric").textContent = `${rag.toFixed(2)} ms`;
-      document.getElementById("llmMetric").textContent = `${llm.toFixed(1)} ms`;
-      document.getElementById("ttsMetric").textContent = `${tts.toFixed(1)} ms`;
-      document.getElementById("totalMetric").textContent = `${total.toFixed(1)} ms`;
-      document.getElementById("diagTotalLatency").textContent = `${total.toFixed(1)} ms (p95)`;
-    }
-
-    // -------------------------------------------------------------
-    // 5. Microphone & Interactions
-    // -------------------------------------------------------------
-    async function toggleMicrophone() {
-      if (micStreaming) {
-        stopMicrophone();
-      } else {
-        await startMicrophone();
-      }
-    }
-
-    async function startMicrophone() {
-      try {
-        getAudioContext();
-        micStreamRef = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1 } });
-        const ctx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
-        const source = ctx.createMediaStreamSource(micStreamRef);
-        audioScriptProc = ctx.createScriptProcessor(2048, 1, 1);
-
-        audioScriptProc.onaudioprocess = (e) => {
-          if (!micStreaming || !ws || ws.readyState !== WebSocket.OPEN) return;
-          const input = e.inputBuffer.getChannelData(0);
-          const pcm16 = new Int16Array(input.length);
-          for (let i = 0; i < input.length; i++) {
-            let s = Math.max(-1, Math.min(1, input[i]));
-            pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
-          }
-          ws.send(pcm16.buffer);
-        };
-
-        source.connect(audioScriptProc);
-        audioScriptProc.connect(ctx.destination);
-
-        micStreaming = true;
-        setCoreState("listening");
-        playChime("connect");
-        document.getElementById("micIcon").textContent = "mic_off";
-        document.getElementById("micLabel").textContent = "Stop Voice";
-        document.getElementById("btnVoiceToggle").className = "flex items-center gap-2 px-6 py-3 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm shadow-md transition-all flex-shrink-0 cursor-pointer active:scale-95";
-        document.getElementById("liveInteractionPrompt").textContent = "Microphone active. Speak naturally to the practice receptionist...";
-      } catch (err) {
-        console.error("Mic error:", err);
-        alert("Microphone permission unavailable. You can click any scenario pill below to test immediately!");
-      }
-    }
-
-    function stopMicrophone() {
-      micStreaming = false;
-      if (micStreamRef) {
-        micStreamRef.getTracks().forEach(t => t.stop());
-        micStreamRef = null;
-      }
-      if (audioScriptProc) audioScriptProc.disconnect();
-
-      setCoreState("idle");
-      document.getElementById("micIcon").textContent = "mic";
-      document.getElementById("micLabel").textContent = "Enable Voice";
-      document.getElementById("btnVoiceToggle").className = "flex items-center gap-2 px-6 py-3 rounded-full bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm shadow-md transition-all flex-shrink-0 cursor-pointer active:scale-95";
-      document.getElementById("liveInteractionPrompt").textContent = "Voice call idle. Tap microphone or select an inquiry.";
-    }
-
-    function triggerBargeIn() {
-      playChime("barge_in");
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ type: "barge_in" }));
-      }
-      setCoreState("idle");
-      document.getElementById("liveInteractionPrompt").textContent = "Barge-in triggered: Receptionist speech interrupted & buffer cleared.";
-    }
-
-    function sendScenario(text) {
-      playChime("listen");
-      appendDialogue("patient", text);
-      document.getElementById("liveInteractionPrompt").textContent = `Transmitted: "${text}"`;
-      setCoreState("listening");
-
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ type: "user_text", text: text }));
-      }
-    }
-
-    function sendUserText() {
-      const input = document.getElementById("textQueryInput");
-      const val = input.value.trim();
-      if (!val) return;
-      input.value = "";
-      sendScenario(val);
-    }
-  </script>
+<script>
+const cv=document.getElementById('vc'),ctx=cv.getContext('2d'),W=440,H=440,CX=220,CY=220;
+let mode='idle',tick=0,ab=0,wsc=null,ph='',ca=false,cc=0,bc=0,sc=0,lat={stt:0,llm:0,tts:0,rag:0};
+let ad=new Float32Array(64).fill(.05);
+const N=8;
+let bp=Array.from({length:N},(_,i)=>i*(Math.PI*2/N));
+let bs=Array.from({length:N},()=>.008+Math.random()*.008);
+let bamp=Array.from({length:N},()=>.05+Math.random()*.04);
+function gr(i,t,a){
+  const r=110,w1=Math.sin(bp[i]+t*1.2)*bamp[i]*r,w2=Math.cos(bp[i]*1.3+t*.7)*(bamp[i]*.6)*r;
+  const au=mode==='speaking'?ad[i%ad.length]*55:0,br=mode==='listening'?Math.sin(t*2.5+bp[i])*10:0;
+  return Math.max(55,r+w1+w2+au+br+a);
+}
+function drawBlob(t,a){
+  const pts=[];
+  for(let i=0;i<N;i++){const ang=(i/N)*Math.PI*2,r=gr(i,t,a);pts.push({x:CX+Math.cos(ang)*r,y:CY+Math.sin(ang)*r});}
+  ctx.beginPath();
+  for(let i=0;i<N;i++){
+    const p0=pts[(i-1+N)%N],p1=pts[i],p2=pts[(i+1)%N],p3=pts[(i+2)%N];
+    if(i===0)ctx.moveTo(p1.x,p1.y);
+    ctx.bezierCurveTo(p1.x+(p2.x-p0.x)/6,p1.y+(p2.y-p0.y)/6,p2.x-(p3.x-p1.x)/6,p2.y-(p3.y-p1.y)/6,p2.x,p2.y);
+  }
+  ctx.closePath();
+  const g=ctx.createRadialGradient(CX,CY-25,15,CX,CY,140);
+  const fm={idle:['rgba(0,245,160,.28)','rgba(0,196,255,.14)','rgba(168,85,247,.04)'],listening:['rgba(0,196,255,.50)','rgba(0,245,160,.22)','rgba(0,196,255,.04)'],thinking:['rgba(168,85,247,.50)','rgba(0,196,255,.18)','rgba(0,245,160,.04)'],speaking:['rgba(0,245,160,.60)','rgba(0,196,255,.28)','rgba(168,85,247,.06)']};
+  const f=fm[mode]||fm.idle;
+  g.addColorStop(0,f[0]);g.addColorStop(.5,f[1]);g.addColorStop(1,f[2]);
+  ctx.fillStyle=g;ctx.fill();
+  const gm={idle:'rgba(0,245,160,.18)',listening:'rgba(0,196,255,.38)',thinking:'rgba(168,85,247,.38)',speaking:'rgba(0,245,160,.52)'};
+  ctx.shadowColor=gm[mode]||gm.idle;ctx.shadowBlur=45;ctx.strokeStyle=gm[mode]||gm.idle;ctx.lineWidth=1.5;ctx.stroke();ctx.shadowBlur=0;
+}
+function drawRing(t){
+  const rm={idle:'rgba(0,245,160,.10)',listening:'rgba(0,196,255,.18)',thinking:'rgba(168,85,247,.18)',speaking:'rgba(0,245,160,.22)'};
+  ctx.beginPath();ctx.arc(CX,CY,152+Math.sin(t*1.4)*5,0,Math.PI*2);ctx.strokeStyle=rm[mode]||rm.idle;ctx.lineWidth=1;ctx.setLineDash([5,10]);ctx.stroke();ctx.setLineDash([]);
+}
+function drawBars(t){
+  if(mode!=='listening'&&mode!=='speaking')return;
+  for(let i=0;i<32;i++){
+    const a=(i/32)*Math.PI*2-Math.PI/2,amp=ad[i%ad.length];
+    const h=mode==='speaking'?amp*38:(Math.sin(t*3+i*.4)*.5+.5)*12;
+    const x1=CX+Math.cos(a)*174,y1=CY+Math.sin(a)*174,x2=CX+Math.cos(a)*(174+h+3),y2=CY+Math.sin(a)*(174+h+3);
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);
+    ctx.strokeStyle=mode==='speaking'?`rgba(0,245,160,${.25+amp*.75})`:`rgba(0,196,255,${.18+Math.sin(t+i)*.25})`;
+    ctx.lineWidth=2.5;ctx.lineCap='round';ctx.stroke();
+  }
+}
+const pts2=Array.from({length:12},(_,i)=>({a:i*(Math.PI*2/12),sp:.009+Math.random()*.011,r:145+Math.random()*22,sz:1.5+Math.random()*2,ph:Math.random()*Math.PI*2}));
+function drawPts(t){
+  if(mode!=='thinking')return;
+  pts2.forEach(p=>{p.a+=p.sp;const x=CX+Math.cos(p.a)*p.r,y=CY+Math.sin(p.a)*p.r,al=.35+Math.sin(t*3+p.ph)*.3;ctx.beginPath();ctx.arc(x,y,p.sz,0,Math.PI*2);ctx.fillStyle=`rgba(168,85,247,${al})`;ctx.shadowColor='rgba(168,85,247,.5)';ctx.shadowBlur=8;ctx.fill();ctx.shadowBlur=0;});
+}
+function drawCross(t){
+  if(mode!=='idle')return;
+  const l=18,col=`rgba(0,245,160,${.10+Math.sin(t*2)*.05})`;
+  [[CX-172,CY],[CX+172,CY],[CX,CY-172],[CX,CY+172]].forEach(([x,y])=>{ctx.beginPath();ctx.moveTo(x-l/2,y);ctx.lineTo(x+l/2,y);ctx.moveTo(x,y-l/2);ctx.lineTo(x,y+l/2);ctx.strokeStyle=col;ctx.lineWidth=.8;ctx.stroke();});
+}
+function loop(){
+  tick+=.015;for(let i=0;i<N;i++)bp[i]+=bs[i];
+  if(mode==='speaking'){for(let i=0;i<64;i++)ad[i]=Math.max(0,ad[i]*.88+Math.random()*.12);ab=Math.sin(tick*4)*8;}else ab*=.92;
+  ctx.clearRect(0,0,W,H);drawCross(tick);drawRing(tick);drawPts(tick);drawBlob(tick,ab);drawBars(tick);
+  requestAnimationFrame(loop);
+}
+loop();
+function setMode(m){mode=m;const s={idle:'READY \u00b7 AWAITING PATIENT',listening:'LISTENING \u00b7 PROCESSING SPEECH',thinking:'PROCESSING \u00b7 ANALYSING REQUEST',speaking:'SPEAKING \u00b7 STREAMING RESPONSE'};document.getElementById('est').textContent=s[m]||m;}
+const PN=['vad','stt','safe','rag','llm','tts'],PC=['pc1','pc2','pc3','pc4','pc5'];
+function actP(u){PN.forEach((id,i)=>{const el=document.getElementById('pn-'+id);el.classList.toggle('active',i<=u);el.classList.remove('danger');});PC.forEach((id,i)=>document.getElementById(id).classList.toggle('active',i<u));}
+function dangerP(id){const el=document.getElementById('pn-'+id);el.classList.add('danger');el.classList.remove('active');}
+document.getElementById('dg').addEventListener('click',e=>{const k=e.target.closest('.dk');if(!k||k.id==='bk')return;const d=k.dataset.d;if(d!==undefined&&ph.length<16){ph+=d;updP();}});
+document.getElementById('bk').addEventListener('click',()=>{ph=ph.slice(0,-1);updP();});
+function updP(){const el=document.getElementById('pd');if(!ph){el.textContent='_';return;}let f=ph;if(f.length>5)f=f.slice(0,5)+' '+f.slice(5);if(f.length>10)f=f.slice(0,10)+' '+f.slice(10);el.textContent=f;}
+function toggleCall(){
+  if(ca){ca=false;document.getElementById('cBtn').className='idle';document.getElementById('ci').innerHTML='&#128222;';document.getElementById('cl').textContent='CONNECT PATIENT';setMode('idle');actP(-1);addT('sys','Call terminated');dcWS();}
+  else{if(!ph){ph='07700900123';updP();}ca=true;cc++;document.getElementById('cBtn').className='active';document.getElementById('ci').innerHTML='&#128245;';document.getElementById('cl').textContent='END CALL';setMode('listening');actP(0);addT('sys','Incoming call from '+ph);updS();cWS();}
+}
+function updS(){document.getElementById('ct').textContent=cc;document.getElementById('sa').textContent=sc;document.getElementById('s_c').textContent=cc;document.getElementById('s_b').textContent=bc;document.getElementById('s_s').textContent=sc;if(lat.llm){const avg=Math.round((lat.stt+lat.llm+lat.tts)/3);document.getElementById('s_l').textContent=avg+'ms';}}
+function swTab(n,el){document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tpane').forEach(p=>p.classList.remove('active'));el.classList.add('active');document.getElementById('tp-'+n).classList.add('active');}
+let pEl=null;
+function addTr(role,text,partial=false){
+  const p=document.getElementById('tp-transcript');
+  if(partial&&pEl){pEl.querySelector('.mtxt').textContent=text+'&#9607;';return;}
+  if(partial){const d=document.createElement('div');d.className='msg partial';d.innerHTML=`<div class="mrole ${role}">${role.toUpperCase()}</div><div class="mtxt">${text}&#9607;</div>`;p.appendChild(d);pEl=d;p.scrollTop=p.scrollHeight;return;}
+  if(pEl){pEl.remove();pEl=null;}
+  const d=document.createElement('div');d.className='msg';d.innerHTML=`<div class="mrole ${role}">${role.toUpperCase()}</div><div class="mtxt">${esc(text)}</div>`;p.appendChild(d);p.scrollTop=p.scrollHeight;
+}
+function addT(type,msg){const p=document.getElementById('tp-telemetry'),now=new Date().toISOString().slice(11,23),d=document.createElement('div');d.className='te';d.innerHTML=`<span class="tts2">${now}</span><span class="ttype ${type}">${type.toUpperCase()}</span><span class="tmsg">${esc(msg)}</span>`;p.appendChild(d);p.scrollTop=p.scrollHeight;}
+function addAlert(text){const p=document.getElementById('tp-safety');const ph2=p.querySelector('div[style*="padding:24px"]');if(ph2)ph2.remove();const d=document.createElement('div');d.className='ac';d.innerHTML=`<div class="at">&#9888; SAFETY TRIGGER</div><div class="ab">${esc(text)}</div>`;p.prepend(d);sc++;updS();dangerP('safe');setMode('idle');actP(-1);}
+function addBook(data){const p=document.getElementById('tp-telemetry');bc++;updS();const d=document.createElement('div');d.className='bc2';d.innerHTML=`<div class="bt">&#10003; APPOINTMENT BOOKED</div><div class="bf"><span class="blbl">PATIENT</span><span class="bval">${esc(data.patient_name||'&#8212;')}</span></div><div class="bf"><span class="blbl">SLOT</span><span class="bval">${esc(data.slot||'&#8212;')}</span></div><div class="bf"><span class="blbl">REASON</span><span class="bval">${esc(data.reason||'&#8212;')}</span></div><div class="bf"><span class="blbl">SYSTEM</span><span class="bval">EMIS &middot; SystmOne</span></div>`;p.appendChild(d);p.scrollTop=p.scrollHeight;}
+function cWS(){const proto=location.protocol==='https:'?'wss':'ws';try{wsc=new WebSocket(`${proto}://${location.host}/ws/audio`);wsc.binaryType='arraybuffer';document.getElementById('s_ws').textContent='CONNECTED';document.getElementById('s_ws').style.color='var(--n1)';wsc.onmessage=e=>{if(typeof e.data!=='string')return;let m;try{m=JSON.parse(e.data);}catch{return;}hMsg(m);};wsc.onclose=()=>{document.getElementById('s_ws').textContent='DISCONNECTED';document.getElementById('s_ws').style.color='var(--t3)';};wsc.onerror=()=>addT('sys','WS error — demo mode');}catch{addT('sys','WS unavailable — demo mode');}}
+function dcWS(){if(wsc){wsc.close();wsc=null;}}
+function hMsg(m){
+  if(m.type==='transcript_partial'){setMode('listening');actP(1);addTr('patient',m.text,true);addT('stt',`Partial: "${m.text}"`);if(m.latency_ms){document.getElementById('pl-stt').textContent=m.latency_ms+'ms';lat.stt=m.latency_ms;}}
+  else if(m.type==='transcript_final'){addTr('patient',m.text);setMode('thinking');actP(3);addT('stt',`Final [${m.latency_ms||0}ms]`);}
+  else if(m.type==='safety_trigger'){addAlert(m.message||'Critical safety flag. Dispatching 999.');addT('safe','SAFETY: '+m.message);}
+  else if(m.type==='llm_chunk'){setMode('speaking');actP(4);addT('llm',`Chunk [${m.latency_ms||0}ms]`);if(m.latency_ms){document.getElementById('pl-llm').textContent=m.latency_ms+'ms';lat.llm=m.latency_ms;}}
+  else if(m.type==='assistant_response'){addTr('emma',m.text);setMode('speaking');addT('llm',`Complete [${m.latency_ms||0}ms]`);updS();}
+  else if(m.type==='tts_started'){actP(5);addT('tts','TTS started');if(m.latency_ms){document.getElementById('pl-tts').textContent=m.latency_ms+'ms';lat.tts=m.latency_ms;updS();}}
+  else if(m.type==='booking_dispatch'){addBook(m);addT('book',`Booking EMIS: ${m.slot||'?'}`);}
+  else if(m.type==='telemetry'){if(m.p95_ms)document.getElementById('p95').textContent=m.p95_ms+'ms';if(m.rag_latency_ms){document.getElementById('pl-rag').textContent=m.rag_latency_ms+'ms';lat.rag=m.rag_latency_ms;}updS();}
+}
+function sendText(e){
+  e.preventDefault();const inp=document.getElementById('tm'),val=inp.value.trim();if(!val)return;inp.value='';
+  if(!ca){ca=true;cc++;document.getElementById('cBtn').className='active';document.getElementById('ci').innerHTML='&#128245;';document.getElementById('cl').textContent='END CALL';cWS();updS();}
+  addTr('patient',val);setMode('thinking');actP(2);addT('sys',`Text: "${val}"`);
+  if(wsc&&wsc.readyState===WebSocket.OPEN)wsc.send(JSON.stringify({type:'text_input',text:val}));else simP(val);
+}
+function simP(text){
+  setTimeout(()=>{actP(1);addT('stt',`Transcribed: "${text}"`);document.getElementById('pl-stt').textContent='68ms';},250);
+  setTimeout(()=>{actP(2);addT('safe','No red flags');document.getElementById('pl-safe').textContent='3ms';},550);
+  setTimeout(()=>{actP(3);addT('llm','RAG: 3 docs');document.getElementById('pl-rag').textContent='44ms';},850);
+  setTimeout(()=>{actP(4);setMode('speaking');addT('llm','LLM generating');document.getElementById('pl-llm').textContent='112ms';addTr('emma',genR(text));},1250);
+  setTimeout(()=>{actP(5);addT('tts','TTS complete');document.getElementById('pl-tts').textContent='91ms';setTimeout(()=>setMode('listening'),3000);},1700);
+}
+function genR(text){
+  const t=text.toLowerCase();
+  if(t.includes('chest')||t.includes('breath')||t.includes('pain'))return"I'm very concerned about your symptoms. Please sit down and stay calm. I'm connecting you with a clinician immediately.";
+  if(t.includes('book')||t.includes('appointment')||t.includes('doctor'))return"I can book that for you. We have Dr. Patel available Thursday at 10:30am or Friday at 2:15pm. Which would you prefer?";
+  if(t.includes('prescri')||t.includes('repeat')||t.includes('medication'))return"I can arrange a repeat prescription request. Could I take your name and date of birth to pull up your records?";
+  return"Thank you for calling Elmwood Medical Centre. I'm EMMA, your AI receptionist. I can book appointments, request prescriptions, or direct you to the right service. How can I help?";
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+const lbs=document.querySelectorAll('.ls');
+setInterval(()=>{lbs.forEach(s=>{s.style.height=(4+Math.random()*16)+'px';s.classList.toggle('hi',Math.random()>.4);});},600);
+window.addEventListener('load',()=>{
+  setTimeout(()=>addT('sys','TriagePulse AI v2.4.1 initialised'),300);
+  setTimeout(()=>addT('sys','Safety Reflex Gate ARMED'),600);
+  setTimeout(()=>addT('sys','RAG KB loaded 47 GP policy docs'),900);
+  setTimeout(()=>addT('sys','EMIS booking connector READY'),1200);
+  setTimeout(()=>addT('sys','Awaiting patient connection...'),1500);
+});
+</script>
 </body>
 </html>
