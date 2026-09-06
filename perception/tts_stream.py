@@ -4,12 +4,10 @@ Streams audio chunks token-by-token with sub-200ms TTFB.
 
 from __future__ import annotations
 import asyncio
-import io
 import logging
 import math
 import os
 import struct
-import wave
 from typing import AsyncGenerator, Optional
 
 logger = logging.getLogger(__name__)
@@ -25,17 +23,6 @@ def generate_synthesized_audio_chunk(duration_s: float = 0.2, freq: float = 440.
         sample = int(32767.0 * 0.3 * envelope * math.sin(2.0 * math.pi * freq * i / sample_rate))
         buffer.extend(struct.pack("<h", max(-32767, min(32767, sample))))
     return bytes(buffer)
-
-
-def pcm_to_wav(pcm_bytes: bytes, sample_rate: int = 16000) -> bytes:
-    """Wrap raw 16-bit mono PCM bytes in a WAV header."""
-    wav_io = io.BytesIO()
-    with wave.open(wav_io, "wb") as wav_file:
-        wav_file.setnchannels(1)
-        wav_file.setsampwidth(2)
-        wav_file.setframerate(sample_rate)
-        wav_file.writeframes(pcm_bytes)
-    return wav_io.getvalue()
 
 
 class StreamingTTS:

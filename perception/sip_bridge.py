@@ -132,22 +132,6 @@ class TelephonyAudioTranscoder:
         return encode_pcm16_to_alaw(pcm_8k)
 
 
-class AdaptiveJitterBuffer:
-    """Adaptive Jitter Buffer for 20ms RTP packet smoothing."""
-
-    def __init__(self, target_delay_ms: int = 40):
-        self.target_delay_ms = target_delay_ms
-        self.buffer: asyncio.Queue[bytes] = asyncio.Queue()
-        self.packets_received = 0
-
-    async def push_packet(self, rtp_payload: bytes) -> None:
-        self.packets_received += 1
-        await self.buffer.put(rtp_payload)
-
-    async def pop_packet(self) -> bytes:
-        return await self.buffer.get()
-
-
 class SIPTelephonySession:
     """Manages an active telephone call bridged into the TriagePulse-AI gateway."""
 
@@ -155,7 +139,6 @@ class SIPTelephonySession:
         self.metadata = metadata
         self.state = CallState.IDLE
         self.transcoder = TelephonyAudioTranscoder()
-        self.jitter_buffer = AdaptiveJitterBuffer()
         self.is_active = False
 
     def answer_call(self) -> None:
