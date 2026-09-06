@@ -127,3 +127,29 @@ def test_booking_extractor_nurse_clinic(booking_extractor):
     assert req is not None
     assert req.patient_name == "David Miller"
     assert req.urgency == "nurse_clinic"
+
+
+def test_grounding_gate_inline_clause_audit(grounding_gate):
+    """Verify inline clause audit detects unauthorized prescriptions synchronously."""
+    safe_clause = "I can certainly help you schedule a consultation with the GP."
+    assert grounding_gate.audit_clause(safe_clause) is None
+
+    unsafe_clause = "You should take 500mg amoxicillin three times daily."
+    violation = grounding_gate.audit_clause(unsafe_clause)
+    assert violation is not None
+    assert "take 500mg" in violation.lower()
+
+
+def test_booking_extractor_fhir_r4_export(booking_extractor):
+    """Verify that confirmed appointments generate compliant HL7 FHIR R4 resources."""
+    req = booking_extractor.extract_from_conversation("My name is Alice Jones, book routine appointment for migraines.")
+    assert req is not None
+    confirmed = booking_extractor.write_to_calendar(req)
+    
+    assert "fhir_payload" in confirmed
+    fhir = confirmed["fhir_payload"]
+    assert fhir["resourceType"] == "Appointment"
+    assert fhir["status"] == "booked"
+    assert fhir["participant"][0]["actor"]["display"] == "Alice Jones"
+    assert fhir["serviceCategory"][0]["coding"][0]["system"] == "http://snomed.info/sct"
+    assert "UKCore-Appointment" in fhir["meta"]["profile"][0]

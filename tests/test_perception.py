@@ -77,3 +77,46 @@ async def test_streaming_tts_cancellation_barge_in():
     # Verify stream was cut short
     assert tts.is_cancelled
     assert chunks_received < 10
+
+
+def test_sip_telephony_transcoder():
+    """Verify G.711 A-law 8kHz <-> 16kHz PCM transcoding roundtrip."""
+    from perception.sip_bridge import TelephonyAudioTranscoder
+    
+    # 160 bytes of G.711 A-law = 20ms of 8kHz telephony audio
+    raw_rtp_alaw = bytes([0xD5] * 160)
+    pcm16 = TelephonyAudioTranscoder.g711a_to_pcm16(raw_rtp_alaw)
+    
+    # 160 samples @ 8kHz -> 320 samples @ 16kHz * 2 bytes/sample = 640 bytes
+    assert len(pcm16) == 640
+    
+    # Roundtrip back to G.711 A-law
+    out_alaw = TelephonyAudioTranscoder.pcm16_to_g711a(pcm16)
+    assert len(out_alaw) == 160
+
+
+@pytest.mark.asyncio
+async def test_sip_session_lifecycle():
+    """Verify SIP call session state transitions."""
+    from perception.sip_bridge import SIPCallMetadata, SIPTelephonySession, CallState
+    
+    metadata = SIPCallMetadata(
+        call_id="SIP-TEST-9988",
+        caller_cli="07891234567",
+        called_did="02079460123",
+    )
+    session = SIPTelephonySession(metadata)
+    assert session.state == CallState.IDLE
+    
+    session.answer_call()
+    assert session.state == CallState.CONNECTED
+    assert session.is_active
+    
+    # Test processing a 20ms inbound RTP packet
+    rtp_frame = bytes([0x55] * 160)
+    ai_frame = await session.process_inbound_rtp_frame(rtp_frame)
+    assert len(ai_frame) == 640
+    
+    session.terminate_call(reason="caller_hung_up")
+    assert session.state == CallState.TERMINATED
+    assert not session.is_active

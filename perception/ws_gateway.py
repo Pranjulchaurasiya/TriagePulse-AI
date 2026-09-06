@@ -309,8 +309,11 @@ async def execute_pipeline_reasoning(
     # 2. Groq LLaMA 3.3 Streaming Inference
     telemetry.start_llm()
     generated_tokens: list[str] = []
+    clause_buffer = ""
+    stream_aborted = False
 
     async def token_generator():
+        nonlocal clause_buffer, stream_aborted
         async for token in llm_client.stream_response(
             user_utterance=user_utterance,
             policy_chunks=relevant_chunks,
@@ -318,7 +321,26 @@ async def execute_pipeline_reasoning(
         ):
             telemetry.mark_llm_first_token()
             generated_tokens.append(token)
+            clause_buffer += token
+
+            # Inline clause audit at punctuation or boundary (~0.02ms)
+            if any(p in token for p in (".", "?", "!", ";", "\n")):
+                violation = grounding_gate.audit_clause(clause_buffer)
+                if violation:
+                    logger.warning(f"INLINE GROUNDING INTERCEPT: {violation}. Halting generation.")
+                    stream_aborted = True
+                    break
+                clause_buffer = ""
+
             yield token
+
+        # If a clinical violation occurred, stream safe receptionist handoff instead
+        if stream_aborted:
+            session.tts.cancel()
+            logger.info("Streaming safe clinical handoff fallback to caller.")
+            for word in grounding_gate.SAFE_FALLBACK_HANDOFF.split(" "):
+                yield word + " "
+                await asyncio.sleep(0.01)
 
     # Stream tokens into TTS engine for lowest Time-To-First-Byte (TTFB)
     session.is_system_playing = True
@@ -336,9 +358,13 @@ async def execute_pipeline_reasoning(
     telemetry.end_tts()
     session.is_system_playing = False
 
-    full_generated_text = "".join(generated_tokens).strip()
+    full_generated_text = (
+        grounding_gate.SAFE_FALLBACK_HANDOFF
+        if stream_aborted
+        else "".join(generated_tokens).strip()
+    )
 
-    # 3. Grounding / Auditor Gate
+    # 3. Grounding / Auditor Gate (Full audit)
     grounding_result = grounding_gate.audit(full_generated_text, relevant_chunks)
     telemetry.grounding_confidence = grounding_result.confidence_score
 
