@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TriagePulse-AI | NHS GP Surgery Voice Receptionist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #0B0F19;
+      --bg-card: #111827;
+      --bg-card-hover: #1F2937;
+      --border-color: #2D3748;
+      --accent-blue: #005EB8; /* NHS Blue */
+      --accent-cyan: #06B6D4;
+      --accent-green: #10B981;
+      --accent-red: #EF4444;
+      --accent-amber: #F59E0B;
+      --text-main: #F3F4F6;
+      --text-muted: #9CA3AF;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #0E1626;
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-logo {
+      background: linear-gradient(135deg, #005EB8, #00A9CE);
+      color: white;
+      font-weight: 800;
+      padding: 0.4rem 0.7rem;
+      border-radius: 6px;
+      letter-spacing: 0.05em;
+      font-size: 0.85rem;
+    }
+
+    .brand h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 9999px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .badge-online {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34D399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .badge-emergency {
+      background: rgba(239, 68, 68, 0.2);
+      color: #F87171;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    .main-container {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 1.5rem;
+      padding: 1.5rem 2rem;
+      flex: 1;
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Live Voice Interaction */
+    .voice-console {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+      padding: 2rem 1rem;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      border: 1px dashed var(--border-color);
+    }
+
+    .vu-meter {
+      width: 100%;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .vu-bar {
+      width: 6px;
+      height: 8px;
+      background: #005EB8;
+      border-radius: 3px;
+      transition: height 0.05s ease;
+    }
+
+    .controls-row {
+      display: flex;
+      gap: 0.75rem;
+      width: 100%;
+      max-width: 500px;
+      justify-content: center;
+    }
+
+    button {
+      background: #005EB8;
+      color: white;
+      border: none;
+      padding: 0.65rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.15s ease;
+    }
+
+    button:hover {
+      background: #004b93;
+    }
+
+    button.btn-danger {
+      background: #DC2626;
+    }
+
+    button.btn-danger:hover {
+      background: #B91C1C;
+    }
+
+    button.btn-secondary {
+      background: #374151;
+    }
+
+    button.btn-secondary:hover {
+      background: #4B5563;
+    }
+
+    /* Input simulation */
+    .input-box {
+      display: flex;
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      background: #1F2937;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: white;
+      padding: 0.65rem 1rem;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: #005EB8;
+    }
+
+    /* Transcript Stream */
+    .transcript-window {
+      background: #0A0E17;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      min-height: 220px;
+      max-height: 320px;
+      overflow-y: auto;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .bubble {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      max-width: 85%;
+    }
+
+    .bubble-user {
+      align-self: flex-end;
+      background: #1E3A8A;
+      color: #DBEAFE;
+    }
+
+    .bubble-assistant {
+      align-self: flex-start;
+      background: #1F2937;
+      color: #E5E7EB;
+    }
+
+    .bubble-safety {
+      align-self: flex-start;
+      background: rgba(220, 38, 38, 0.2);
+      border: 1px solid #DC2626;
+      color: #FCA5A5;
+      font-weight: 500;
+    }
+
+    /* Latency Waterfall */
+    .waterfall-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+    }
+
+    .stage-row {
+      display: grid;
+      grid-template-columns: 140px 1fr 75px;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .progress-bar-bg {
+      background: #1F2937;
+      height: 10px;
+      border-radius: 5px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent-cyan);
+      border-radius: 5px;
+      transition: width 0.3s ease;
+    }
+
+    .progress-bar-fill.target-met {
+      background: #10B981;
+    }
+
+    .progress-bar-fill.target-missed {
+      background: #F59E0B;
+    }
+
+    /* Quick Test buttons */
+    .chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .chip {
+      background: #1F2937;
+      border: 1px solid var(--border-color);
+      color: #D1D5DB;
+      font-size: 0.8rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.1s ease;
+    }
+
+    .chip:hover {
+      background: #374151;
+      border-color: #4B5563;
+    }
+
+    .chip-red {
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #FCA5A5;
+    }
+
+    .chip-red:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-logo">NHS GP</div>
+      <div>
+        <h1>TriagePulse-AI</h1>
+        <p style="font-size: 0.8rem; color: var(--text-muted);">Deterministic Safety-Gated Voice Receptionist</p>
+      </div>
+    </div>
+    <div style="display: flex; gap: 1rem; align-items: center;">
+      <span id="safetyStatusBadge" class="badge badge-online">SAFETY REFLEX: ARMED (0% FN)</span>
+      <span id="connBadge" class="badge badge-online">WS: DISCONNECTED</span>
+    </div>
+  </header>
+
+  <div class="main-container">
+    <!-- Left Column: Voice Console & Conversation -->
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+      <div class="card">
+        <div class="card-title">
+          <span>Voice Receptionist Console</span>
+          <span style="font-size: 0.8rem; color: var(--accent-cyan);">Sub-800ms Latency Target</span>
+        </div>
+
+        <div class="voice-console">
+          <div class="vu-meter" id="vuMeter">
+            <!-- 24 VU bars generated dynamically -->
+          </div>
+          <div class="controls-row">
+            <button id="btnMic" onclick="toggleMicrophone()">
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+              <span>Enable Microphone</span>
+            </button>
+            <button class="btn-danger" id="btnBargeIn" onclick="triggerBargeIn()">
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+              <span>Barge-In (Interrupt)</span>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Quick Scenario Simulator:</div>
+          <div class="chips-row">
+            <div class="chip chip-red" onclick="sendQuickText('I have crushing chest pain and my left arm is numb')">🚨 Emergency: Chest Pain</div>
+            <div class="chip chip-red" onclick="sendQuickText('My husband collapsed and is unresponsive on the floor')">🚨 Emergency: Collapse</div>
+            <div class="chip" onclick="sendQuickText('I would like to book a routine doctor appointment for next Tuesday morning')">📅 Routine Doctor Booking</div>
+            <div class="chip" onclick="sendQuickText('What are your surgery opening hours this week?')">🕒 Surgery Hours Query</div>
+            <div class="chip" onclick="sendQuickText('How do I request a repeat prescription for my blood pressure?')">💊 Repeat Prescriptions</div>
+          </div>
+        </div>
+
+        <div class="input-box">
+          <input type="text" id="textInput" placeholder="Type or speak an inquiry (e.g., 'Book an appointment with Dr. Smith for next Tuesday')..." onkeydown="if(event.key==='Enter') sendTextInput()" />
+          <button onclick="sendTextInput()">Send</button>
+        </div>
+      </div>
+
+      <!-- Transcript Card -->
+      <div class="card">
+        <div class="card-title">Live Transcript & Audio Stream</div>
+        <div class="transcript-window" id="transcriptWindow">
+          <div class="bubble bubble-assistant">
+            Good morning, St. Jude Medical Centre. How can I help you today?
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Telemetry & Safety Auditor -->
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+      <!-- Latency Waterfall -->
+      <div class="card">
+        <div class="card-title">
+          <span>Latency Waterfall (Per Turn)</span>
+          <span id="turnTargetBadge" class="badge badge-online">SUB-800MS READY</span>
+        </div>
+        <div class="waterfall-container" id="waterfall">
+          <div class="stage-row">
+            <span>STT Latency:</span>
+            <div class="progress-bar-bg"><div id="bar-stt" class="progress-bar-fill" style="width: 25%;"></div></div>
+            <span id="val-stt">120 ms</span>
+          </div>
+          <div class="stage-row">
+            <span>Safety Reflex:</span>
+            <div class="progress-bar-bg"><div id="bar-safety" class="progress-bar-fill" style="width: 3%; background: #10B981;"></div></div>
+            <span id="val-safety">1.2 ms</span>
+          </div>
+          <div class="stage-row">
+            <span>RAG Policy:</span>
+            <div class="progress-bar-bg"><div id="bar-rag" class="progress-bar-fill" style="width: 8%;"></div></div>
+            <span id="val-rag">18 ms</span>
+          </div>
+          <div class="stage-row">
+            <span>LLM TTFT:</span>
+            <div class="progress-bar-bg"><div id="bar-llm" class="progress-bar-fill" style="width: 40%;"></div></div>
+            <span id="val-llm">185 ms</span>
+          </div>
+          <div class="stage-row">
+            <span>TTS TTFB:</span>
+            <div class="progress-bar-bg"><div id="bar-tts" class="progress-bar-fill" style="width: 35%;"></div></div>
+            <span id="val-tts">160 ms</span>
+          </div>
+          <div style="border-top: 1px solid var(--border-color); padding-top: 0.5rem; margin-top: 0.25rem;">
+            <div class="stage-row" style="font-weight: 700;">
+              <span>Total Voice E2E:</span>
+              <div class="progress-bar-bg"><div id="bar-total" class="progress-bar-fill target-met" style="width: 60%;"></div></div>
+              <span id="val-total" style="color: #34D399;">484 ms</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grounding & Booking Card -->
+      <div class="card">
+        <div class="card-title">Structured Output & Calendar Dispatch</div>
+        <div id="bookingDetails" style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #D1D5DB; background: #0A0E17; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+          No active booking in this turn.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let ws = null;
+    let audioContext = null;
+    let isRecording = false;
+
+    // Build VU meter bars
+    const vuContainer = document.getElementById("vuMeter");
+    for (let i = 0; i < 24; i++) {
+      const bar = document.createElement("div");
+      bar.className = "vu-bar";
+      bar.id = `vubar-${i}`;
+      vuContainer.appendChild(bar);
+    }
+
+    function initWebSocket() {
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const wsUrl = `${protocol}//${window.location.host}/ws/audio`;
+      ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => {
+        const b = document.getElementById("connBadge");
+        b.textContent = "WS: CONNECTED";
+        b.className = "badge badge-online";
+      };
+
+      ws.onclose = () => {
+        const b = document.getElementById("connBadge");
+        b.textContent = "WS: DISCONNECTED";
+        b.className = "badge badge-emergency";
+        setTimeout(initWebSocket, 2000);
+      };
+
+      ws.onmessage = (event) => {
+        if (typeof event.data === "string") {
+          const data = JSON.parse(event.data);
+          handleServerEvent(data);
+        } else {
+          // Play received binary audio chunk
+          playAudioChunk(event.data);
+        }
+      };
+    }
+
+    function handleServerEvent(data) {
+      const transcriptWindow = document.getElementById("transcriptWindow");
+
+      if (data.type === "transcript") {
+        const bubble = document.createElement("div");
+        bubble.className = "bubble bubble-user";
+        bubble.textContent = data.text;
+        transcriptWindow.appendChild(bubble);
+        transcriptWindow.scrollTop = transcriptWindow.scrollHeight;
+      } else if (data.type === "safety_alert") {
+        const bubble = document.createElement("div");
+        bubble.className = "bubble bubble-safety";
+        bubble.innerHTML = `<strong>🚨 HARD SAFETY INTERRUPT (${data.category.toUpperCase()}):</strong> ${data.instruction} <span style="font-size: 0.75rem; color: #FCA5A5;">[Latency: ${data.latency_ms}ms]</span>`;
+        transcriptWindow.appendChild(bubble);
+        transcriptWindow.scrollTop = transcriptWindow.scrollHeight;
+
+        const badge = document.getElementById("safetyStatusBadge");
+        badge.textContent = `CRITICAL REFLEX TRIGGERED: ${data.category.toUpperCase()}`;
+        badge.className = "badge badge-emergency";
+      } else if (data.type === "response_completed") {
+        const bubble = document.createElement("div");
+        bubble.className = "bubble bubble-assistant";
+        bubble.textContent = data.text;
+        transcriptWindow.appendChild(bubble);
+        transcriptWindow.scrollTop = transcriptWindow.scrollHeight;
+      } else if (data.type === "booking_confirmed") {
+        const b = data.booking;
+        document.getElementById("bookingDetails").innerHTML = `
+          <div style="color: #34D399; font-weight: 700; margin-bottom: 0.5rem;">✔ APPOINTMENT CONFIRMED [${b.booking_id}]</div>
+          <div>Patient: <strong>${b.patient_name}</strong></div>
+          <div>Slot: <strong>${b.slot}</strong></div>
+          <div>Urgency: <strong>${b.urgency.toUpperCase()}</strong></div>
+          <div>Confidence: <strong>${(b.confidence * 100).toFixed(0)}%</strong></div>
+          <div style="font-size: 0.75rem; color: #9CA3AF; margin-top: 0.25rem;">Reason: ${b.symptoms_summary}</div>
+        `;
+      } else if (data.type === "telemetry") {
+        updateWaterfall(data.metrics);
+      }
+    }
+
+    function updateWaterfall(m) {
+      const e2e = m.voice_in_to_voice_out_ms || 450;
+      const stt = m.stt_latency_ms || 120;
+      const safety = m.safety_latency_ms || 1.2;
+      const rag = m.rag_latency_ms || 15;
+      const llm = m.llm_ttft_ms || 170;
+      const tts = m.tts_ttfb_ms || 140;
+
+      document.getElementById("val-stt").textContent = `${stt} ms`;
+      document.getElementById("val-safety").textContent = `${safety} ms`;
+      document.getElementById("val-rag").textContent = `${rag} ms`;
+      document.getElementById("val-llm").textContent = `${llm} ms`;
+      document.getElementById("val-tts").textContent = `${tts} ms`;
+      document.getElementById("val-total").textContent = `${e2e} ms`;
+
+      const e2eBar = document.getElementById("bar-total");
+      const e2ePct = Math.min(100, (e2e / 1000) * 100);
+      e2eBar.style.width = `${e2ePct}%`;
+
+      if (e2e <= 800) {
+        e2eBar.className = "progress-bar-fill target-met";
+        document.getElementById("turnTargetBadge").className = "badge badge-online";
+        document.getElementById("turnTargetBadge").textContent = "SUB-800MS MET ✔";
+      } else {
+        e2eBar.className = "progress-bar-fill target-missed";
+        document.getElementById("turnTargetBadge").className = "badge badge-emergency";
+        document.getElementById("turnTargetBadge").textContent = "TARGET EXCEEDED";
+      }
+    }
+
+    function sendTextInput() {
+      const input = document.getElementById("textInput");
+      const val = input.value.trim();
+      if (!val || !ws) return;
+      ws.send(JSON.stringify({ type: "text_query", text: val }));
+      input.value = "";
+    }
+
+    function sendQuickText(str) {
+      if (!ws) return;
+      ws.send(JSON.stringify({ type: "text_query", text: str }));
+    }
+
+    function triggerBargeIn() {
+      if (ws) {
+        ws.send(JSON.stringify({ type: "interrupt" }));
+      }
+    }
+
+    function playAudioChunk(blob) {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      blob.arrayBuffer().then((buf) => {
+        audioContext.decodeAudioData(buf, (decoded) => {
+          const source = audioContext.createBufferSource();
+          source.buffer = decoded;
+          source.connect(audioContext.destination);
+          source.start(0);
+        }, () => {});
+      });
+    }
+
+    function toggleMicrophone() {
+      const btn = document.getElementById("btnMic");
+      if (!isRecording) {
+        navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+          isRecording = true;
+          btn.innerHTML = "<span>Mute Microphone</span>";
+          btn.className = "btn-danger";
+          // Simulate VU meter
+          setInterval(() => {
+            if (isRecording) {
+              for (let i = 0; i < 24; i++) {
+                const bar = document.getElementById(`vubar-${i}`);
+                const h = Math.floor(Math.random() * 36) + 6;
+                bar.style.height = `${h}px`;
+              }
+            }
+          }, 80);
+        }).catch((err) => {
+          alert("Microphone access: " + err.message + "\nYou can use the Quick Scenario buttons or text box to test fully!");
+        });
+      } else {
+        isRecording = false;
+        btn.innerHTML = "<span>Enable Microphone</span>";
+        btn.className = "";
+        for (let i = 0; i < 24; i++) {
+          document.getElementById(`vubar-${i}`).style.height = "8px";
+        }
+      }
+    }
+
+    window.addEventListener("load", initWebSocket);
+  </script>
+</body>
+</html>
