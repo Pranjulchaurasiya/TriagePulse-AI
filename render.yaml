@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: triagepulse-ai
+    runtime: python
+    region: frankfurt
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn perception.ws_gateway:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: MOCK_PROVIDERS
+        value: "true"
