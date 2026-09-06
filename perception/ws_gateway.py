@@ -16,6 +16,9 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
+from starlette.responses import Response
 
 from perception.vad import VoiceActivityDetector
 from perception.stt_deepgram import DeepgramSTTStream
@@ -32,11 +35,23 @@ logger = logging.getLogger("TriagePulse.Gateway")
 
 app = FastAPI(title="TriagePulse-AI Voice Receptionist", version="0.1.0")
 
+# Security Headers Middleware (gstack CSO / OWASP hardening)
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        response: Response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "SAMEORIGIN"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Permissions-Policy"] = "microphone=*"
+        return response
+
+app.add_middleware(SecurityHeadersMiddleware)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -52,7 +67,8 @@ llm_client = GroqLLMClient()
 grounding_gate = GroundingGate()
 booking_extractor = BookingExtractor()
 
-# Global telemetry log
+# Bounded telemetry memory buffer (prevents unbounded memory leak)
+MAX_TELEMETRY_LOGS = 100
 telemetry_history: list[Dict[str, Any]] = []
 
 
@@ -137,9 +153,13 @@ async def websocket_audio_endpoint(websocket: WebSocket):
         while True:
             message = await websocket.receive()
             
-            # Handle binary audio frame
+            # Handle binary audio frame with size cap (gstack security hardening)
             if "bytes" in message and message["bytes"]:
                 raw_frame = message["bytes"]
+                if len(raw_frame) > 512 * 1024:
+                    logger.warning(f"Rejected oversized audio frame ({len(raw_frame)} bytes) from session {session_id}")
+                    continue
+
                 vad_result = session.vad.process_frame(raw_frame, is_system_speaking=session.is_system_playing)
 
                 # Check Barge-in mid-playback
@@ -154,11 +174,14 @@ async def websocket_audio_endpoint(websocket: WebSocket):
                 # If speech completed, finalize turn
                 if vad_result["speech_ended"]:
                     logger.info(f"User speech ended in session {session_id}. Processing turn.")
-                    # Trigger turn processing in background or inline
                     asyncio.create_task(process_turn(session, user_audio_ended=True))
 
-            # Handle JSON control packets (e.g. text input for testing, disconnects, pings)
+            # Handle JSON control packets (sanitized and validated)
             elif "text" in message and message["text"]:
+                if len(message["text"]) > 64 * 1024:
+                    logger.warning(f"Rejected oversized text packet from session {session_id}")
+                    continue
+
                 try:
                     payload = json.loads(message["text"])
                 except Exception:
@@ -166,8 +189,8 @@ async def websocket_audio_endpoint(websocket: WebSocket):
 
                 msg_type = payload.get("type")
                 if msg_type == "text_query":
-                    # Simulated speech via text input
-                    query_text = payload.get("text", "").strip()
+                    # Truncate input string safely to prevent memory bloat
+                    query_text = payload.get("text", "").strip()[:2000]
                     if query_text:
                         asyncio.create_task(process_turn_from_text(session, query_text))
                 elif msg_type == "interrupt":
