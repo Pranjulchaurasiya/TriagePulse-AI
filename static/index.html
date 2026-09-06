@@ -1244,7 +1244,9 @@
           if (typeof e.data !== "string") return;
           try {
             const data = JSON.parse(e.data);
-            if (data.type === "safety_trigger") triggerSafetyIntercept(data.message);
+            if (data.type === "safety_trigger" || data.type === "safety_alert") {
+              triggerSafetyIntercept(data.instruction || data.message || ("Immediate 999 alert: " + (data.category || "Acute Emergency")));
+            }
             else if (data.type === "assistant_response") { appendMessage("agent", data.text); setSystemMode("speaking"); }
             else if (data.type === "booking_dispatch") recordSimulatedEHR(data.slot || "Next Available", "Duty GP", data.reason || "General Consultation");
             else if (data.type === "telemetry" && data.p95_ms) document.getElementById("metric-p95").textContent = data.p95_ms + "ms";
