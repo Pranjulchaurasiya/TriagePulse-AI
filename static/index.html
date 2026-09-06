@@ -7,30 +7,30 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
   <style>
     /* ==========================================================================
-       Calm Clinical Design System — Dual-Theme CSS Variables
+       Bespoke Calm Clinical System — Dual Palette (Light by Default)
        ========================================================================== */
     :root {
-      --bg-canvas: #F8FAFC;
+      --bg-stage: #F8FAFD;
+      --bg-glass: rgba(255, 255, 255, 0.82);
+      --bg-glass-card: rgba(255, 255, 255, 0.92);
       --bg-surface: #FFFFFF;
-      --bg-surface-subtle: #F1F5F9;
-      --bg-surface-elevated: #FFFFFF;
-      --border-light: #E2E8F0;
+      --bg-subtle: #F1F5F9;
+      --border-subtle: rgba(15, 23, 42, 0.08);
       --border-focus: #0284C7;
-      
-      --text-heading: #0F172A;
+
+      --text-main: #0F172A;
       --text-body: #334155;
       --text-muted: #64748B;
-      --text-subtle: #94A3B8;
+      --text-faint: #94A3B8;
 
-      /* Calm Healthcare Brand Accents */
       --nhs-blue: #005EB8;
-      --nhs-blue-hover: #004B93;
-      --nhs-blue-tint: #EBF3FA;
-      
+      --nhs-blue-light: #E8F1FA;
       --calm-teal: #0D9488;
-      --calm-teal-tint: #F0FDFA;
+      --calm-teal-glow: rgba(13, 148, 136, 0.25);
       --calm-mint: #10B981;
       --calm-mint-tint: #ECFDF5;
 
@@ -38,816 +38,799 @@
       --alert-crimson-tint: #FEF2F2;
       --alert-crimson-border: #FCA5A5;
 
-      --card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
-      --card-shadow-elevated: 0 12px 32px -4px rgba(15, 23, 42, 0.08);
+      --glass-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.06), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+      --pill-shadow: 0 4px 16px rgba(0, 94, 184, 0.12);
 
-      --orb-core-color: rgba(13, 148, 136, 0.85);
-      --orb-halo-color: rgba(0, 94, 184, 0.15);
-      --orb-wave-color: #0D9488;
+      --sphere-color-1: 0x0D9488;
+      --sphere-color-2: 0x005EB8;
+      --sphere-wire: 0x0284C7;
+      --ambient-light: 0xffffff;
     }
 
     [data-theme="dark"] {
-      --bg-canvas: #0B0F19;
+      --bg-stage: #070A12;
+      --bg-glass: rgba(17, 24, 39, 0.78);
+      --bg-glass-card: rgba(17, 24, 39, 0.92);
       --bg-surface: #111827;
-      --bg-surface-subtle: #182234;
-      --bg-surface-elevated: #1E293B;
-      --border-light: #243046;
+      --bg-subtle: #1E293B;
+      --border-subtle: rgba(255, 255, 255, 0.1);
       --border-focus: #38BDF8;
 
-      --text-heading: #F8FAFC;
+      --text-main: #F8FAFC;
       --text-body: #E2E8F0;
       --text-muted: #94A3B8;
-      --text-subtle: #64748B;
+      --text-faint: #64748B;
 
       --nhs-blue: #0284C7;
-      --nhs-blue-hover: #0369A1;
-      --nhs-blue-tint: rgba(2, 132, 199, 0.15);
-
+      --nhs-blue-light: rgba(2, 132, 199, 0.15);
       --calm-teal: #14B8A6;
-      --calm-teal-tint: rgba(20, 184, 166, 0.12);
+      --calm-teal-glow: rgba(20, 184, 166, 0.35);
       --calm-mint: #34D399;
-      --calm-mint-tint: rgba(52, 211, 153, 0.12);
+      --calm-mint-tint: rgba(52, 211, 153, 0.15);
 
       --alert-crimson: #EF4444;
       --alert-crimson-tint: rgba(239, 68, 68, 0.15);
-      --alert-crimson-border: rgba(239, 68, 68, 0.35);
+      --alert-crimson-border: rgba(239, 68, 68, 0.4);
 
-      --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
-      --card-shadow-elevated: 0 12px 32px -4px rgba(0, 0, 0, 0.6);
+      --glass-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+      --pill-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 
-      --orb-core-color: rgba(20, 184, 166, 0.9);
-      --orb-halo-color: rgba(2, 132, 199, 0.25);
-      --orb-wave-color: #14B8A6;
+      --sphere-color-1: 0x14B8A6;
+      --sphere-color-2: 0x38BDF8;
+      --sphere-wire: 0x38BDF8;
+      --ambient-light: 0x223344;
     }
 
-    /* ==========================================================================
-       Reset & Base Typography
-       ========================================================================== */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      transition: background-color 0.2s ease, border-color 0.2s ease;
+      transition: background-color 0.25s ease, border-color 0.25s ease, color 0.2s ease;
     }
 
     body {
-      background-color: var(--bg-canvas);
+      background-color: var(--bg-stage);
       color: var(--text-body);
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
+      overflow-x: hidden;
       display: flex;
       flex-direction: column;
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
+      position: relative;
+    }
+
+    /* Ambient Background Illumination */
+    .ambient-glow {
+      position: absolute;
+      top: 15%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--calm-teal-glow) 0%, rgba(0,0,0,0) 70%);
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+      transition: all 0.5s ease;
     }
 
     /* ==========================================================================
-       Top Navigation Bar
+       Header Island
        ========================================================================== */
     header {
-      background-color: var(--bg-surface);
-      border-bottom: 1px solid var(--border-light);
-      padding: 0.85rem 2rem;
+      position: relative;
+      z-index: 20;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+      padding: 1.25rem 2.5rem;
+      width: 100%;
+      max-width: 1600px;
+      margin: 0 auto;
     }
 
-    .header-left {
+    .brand-island {
       display: flex;
       align-items: center;
-      gap: 1.25rem;
+      gap: 1rem;
     }
 
-    .nhs-pill {
-      background-color: #005EB8;
-      color: #FFFFFF;
+    .nhs-badge {
+      background: #005EB8;
+      color: white;
       font-weight: 800;
       font-size: 0.95rem;
-      letter-spacing: 0.04em;
-      padding: 0.3rem 0.75rem;
-      border-radius: 6px;
-      user-select: none;
+      padding: 0.35rem 0.8rem;
+      border-radius: 8px;
+      letter-spacing: 0.05em;
+      box-shadow: 0 2px 8px rgba(0, 94, 184, 0.25);
     }
 
-    .practice-info h1 {
+    .brand-titles h1 {
       font-size: 1.15rem;
       font-weight: 700;
-      color: var(--text-heading);
+      color: var(--text-main);
       letter-spacing: -0.01em;
     }
 
-    .practice-info p {
-      font-size: 0.8rem;
+    .brand-titles p {
+      font-size: 0.82rem;
       color: var(--text-muted);
       display: flex;
       align-items: center;
       gap: 0.4rem;
     }
 
-    .header-right {
+    .header-actions {
       display: flex;
       align-items: center;
       gap: 0.75rem;
     }
 
-    .badge {
+    .pill-btn {
+      background: var(--bg-glass);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-body);
+      font-size: 0.84rem;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
+      gap: 0.45rem;
+      box-shadow: var(--pill-shadow);
+      user-select: none;
+    }
+
+    .pill-btn:hover {
+      color: var(--text-main);
+      border-color: var(--border-focus);
+      transform: translateY(-1px);
+    }
+
+    .pill-telemetry-toggle {
+      background: var(--nhs-blue-light);
+      color: var(--nhs-blue);
+      border-color: rgba(0, 94, 184, 0.2);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--calm-mint);
+      box-shadow: 0 0 10px var(--calm-mint);
+      animation: gentlePulse 2s infinite ease-in-out;
+    }
+
+    @keyframes gentlePulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.7; }
+    }
+
+    /* ==========================================================================
+       Stage Hero (The 3D Immersive Voice Sanctum)
+       ========================================================================== */
+    .stage-container {
+      position: relative;
+      z-index: 10;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 1.5rem 6.5rem 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* 3D Canvas Stage */
+    .canvas-viewport {
+      width: 100%;
+      max-width: 480px;
+      height: 360px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: grab;
+    }
+
+    .canvas-viewport:active {
+      cursor: grabbing;
+    }
+
+    #threejsCanvas {
+      width: 100%;
+      height: 100%;
+      outline: none;
+    }
+
+    /* Live Receptionist State Indicator */
+    .stage-status-bubble {
+      margin-top: -1rem;
+      margin-bottom: 1.25rem;
+      background: var(--bg-glass);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--glass-shadow);
+      padding: 0.45rem 1.25rem;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-main);
+      animation: floatSubtle 4s ease-in-out infinite;
+    }
+
+    @keyframes floatSubtle {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    /* Floating Captions Card (Transparent, uncluttered) */
+    .captions-deck {
+      width: 100%;
+      max-width: 680px;
+      min-height: 110px;
+      max-height: 160px;
+      overflow-y: auto;
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      box-shadow: var(--glass-shadow);
+      padding: 1.25rem 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      scroll-behavior: smooth;
+    }
+
+    .caption-line {
+      font-size: 1.05rem;
+      line-height: 1.55;
+      color: var(--text-body);
+      animation: fadeInCaption 0.25s ease-out;
+    }
+
+    .caption-line.caller {
+      color: var(--nhs-blue);
+      font-weight: 600;
+    }
+
+    .caption-line.assistant {
+      color: var(--text-main);
+    }
+
+    .caption-line.emergency {
+      color: var(--alert-crimson);
+      font-weight: 700;
+      background: var(--alert-crimson-tint);
+      border-left: 3px solid var(--alert-crimson);
+      padding: 0.5rem 0.85rem;
+      border-radius: 6px;
+    }
+
+    @keyframes fadeInCaption {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ==========================================================================
+       Ergonomic Floating Bottom Dock
+       ========================================================================== */
+    .bottom-floating-dock {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 40;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      width: 90%;
+      max-width: 780px;
+    }
+
+    /* Scenario Pills Horizon */
+    .scenario-pill-strip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      background: var(--bg-glass);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      padding: 0.4rem 0.65rem;
+      border-radius: 9999px;
+      box-shadow: var(--pill-shadow);
+    }
+
+    .chip-action {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
       padding: 0.35rem 0.75rem;
       border-radius: 9999px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      font-family: 'JetBrains Mono', monospace;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.15s ease;
       white-space: nowrap;
     }
 
-    .badge-status-online {
-      background: var(--calm-mint-tint);
-      color: var(--calm-mint);
-      border: 1px solid rgba(16, 185, 129, 0.25);
+    .chip-action:hover {
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border-color: var(--border-subtle);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
     }
 
-    .badge-status-pulse {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background-color: currentColor;
-      box-shadow: 0 0 8px currentColor;
-      animation: pulseDot 2s infinite ease-in-out;
+    .chip-action.chip-red {
+      color: var(--alert-crimson);
     }
 
-    @keyframes pulseDot {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.4); opacity: 0.6; }
+    .chip-action.chip-red:hover {
+      background: var(--alert-crimson-tint);
+      border-color: var(--alert-crimson-border);
     }
 
-    /* Theme Toggle Switch */
-    .theme-toggle-btn {
-      background: var(--bg-surface-subtle);
-      border: 1px solid var(--border-light);
-      color: var(--text-muted);
-      padding: 0.45rem 0.85rem;
-      border-radius: 8px;
-      font-size: 0.85rem;
+    /* Primary Action Hub */
+    .primary-audio-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--glass-shadow);
+      padding: 0.65rem 1rem;
+      border-radius: 24px;
+      width: 100%;
+    }
+
+    .mic-hero-btn {
+      background: var(--nhs-blue);
+      color: white;
+      border: none;
+      border-radius: 16px;
+      padding: 0.75rem 1.4rem;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      box-shadow: 0 4px 14px rgba(0, 94, 184, 0.3);
+      white-space: nowrap;
+    }
+
+    .mic-hero-btn:hover {
+      background: var(--nhs-blue-hover);
+      transform: translateY(-1px);
+    }
+
+    .mic-hero-btn.recording {
+      background: var(--alert-crimson);
+      box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
+    }
+
+    .barge-in-btn {
+      background: var(--bg-subtle);
+      color: var(--text-body);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 0.75rem 1rem;
+      font-size: 0.88rem;
       font-weight: 600;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 0.45rem;
-      transition: all 0.15s ease;
-    }
-
-    .theme-toggle-btn:hover {
-      color: var(--text-heading);
-      border-color: var(--text-subtle);
-    }
-
-    /* ==========================================================================
-       Main Workspace Layout
-       ========================================================================== */
-    .workspace-wrapper {
-      max-width: 1540px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 1.5rem 2rem;
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 1.5rem;
-      flex: 1;
-      align-items: start;
-    }
-
-    @media (max-width: 1024px) {
-      .workspace-wrapper {
-        grid-template-columns: 1fr;
-        padding: 1rem;
-      }
-    }
-
-    /* Card Panels */
-    .panel-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-light);
-      border-radius: 16px;
-      box-shadow: var(--card-shadow);
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-      position: relative;
-    }
-
-    .panel-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--border-light);
-      padding-bottom: 0.85rem;
-    }
-
-    .panel-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--text-heading);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .panel-subtitle {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    /* ==========================================================================
-       3D Animated Calm Orb & Voice Console
-       ========================================================================== */
-    .voice-hub-hero {
-      background: linear-gradient(180deg, var(--bg-surface-subtle) 0%, var(--bg-surface) 100%);
-      border: 1px solid var(--border-light);
-      border-radius: 14px;
-      padding: 1.75rem 1.25rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1.25rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .canvas-container {
-      width: 180px;
-      height: 180px;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    #pulseOrbCanvas {
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      filter: drop-shadow(0 8px 24px var(--orb-halo-color));
-      transition: transform 0.1s ease-out;
-    }
-
-    .voice-state-tag {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.25rem 0.75rem;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-light);
-      border-radius: 20px;
-    }
-
-    /* Button Controls */
-    .action-controls-row {
-      display: flex;
-      gap: 0.75rem;
-      width: 100%;
-      max-width: 480px;
-      justify-content: center;
-    }
-
-    .btn {
-      padding: 0.65rem 1.2rem;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 0.88rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      border: none;
-      transition: all 0.15s ease;
-      user-select: none;
       white-space: nowrap;
     }
 
-    .btn-primary {
-      background: var(--nhs-blue);
-      color: #FFFFFF;
-      box-shadow: 0 2px 8px rgba(0, 94, 184, 0.25);
+    .barge-in-btn:hover {
+      background: var(--alert-crimson-tint);
+      color: var(--alert-crimson);
+      border-color: var(--alert-crimson-border);
     }
 
-    .btn-primary:hover {
-      background: var(--nhs-blue-hover);
-      transform: translateY(-1px);
-    }
-
-    .btn-danger {
-      background: var(--alert-crimson);
-      color: #FFFFFF;
-    }
-
-    .btn-danger:hover {
-      background: #B91C1C;
-      transform: translateY(-1px);
-    }
-
-    .btn-secondary {
-      background: var(--bg-surface);
-      color: var(--text-body);
-      border: 1px solid var(--border-light);
-    }
-
-    .btn-secondary:hover {
-      background: var(--bg-surface-subtle);
-      color: var(--text-heading);
-    }
-
-    /* Quick Test Scenario Chips */
-    .scenarios-section {
-      display: flex;
-      flex-direction: column;
-      gap: 0.65rem;
-    }
-
-    .scenarios-label {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .chips-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    .scenario-chip {
-      background: var(--bg-surface-subtle);
-      border: 1px solid var(--border-light);
-      color: var(--text-body);
-      font-size: 0.82rem;
-      font-weight: 500;
-      padding: 0.45rem 0.85rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.15s ease;
+    .inline-text-box {
+      flex: 1;
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 0 0.85rem;
     }
 
-    .scenario-chip:hover {
-      background: var(--bg-surface);
-      border-color: var(--nhs-blue);
-      color: var(--nhs-blue);
-      transform: translateY(-1px);
-    }
-
-    .scenario-chip.emergency {
-      border-color: var(--alert-crimson-border);
-      color: var(--alert-crimson);
-      background: var(--alert-crimson-tint);
-    }
-
-    .scenario-chip.emergency:hover {
-      background: var(--alert-crimson);
-      color: #FFFFFF;
-      border-color: var(--alert-crimson);
-    }
-
-    /* Manual Text Query Input */
-    .input-bar-group {
-      display: flex;
-      gap: 0.5rem;
+    .inline-input {
       width: 100%;
-    }
-
-    .text-input-field {
-      flex: 1;
-      background: var(--bg-surface-subtle);
-      border: 1px solid var(--border-light);
-      border-radius: 10px;
-      color: var(--text-heading);
-      padding: 0.75rem 1rem;
+      border: none;
+      background: transparent;
+      padding: 0.75rem 0;
+      color: var(--text-main);
       font-size: 0.92rem;
-      font-family: inherit;
       outline: none;
-      transition: border-color 0.15s ease, background 0.15s ease;
-    }
-
-    .text-input-field:focus {
-      background: var(--bg-surface);
-      border-color: var(--border-focus);
-      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+      font-family: inherit;
     }
 
     /* ==========================================================================
-       Dialogue & Streaming Conversation Feed
+       Clinical Telemetry & Safety Auditor Drawer (Slide-Out Inspector)
        ========================================================================== */
-    .dialogue-stream {
-      background: var(--bg-surface-subtle);
-      border: 1px solid var(--border-light);
-      border-radius: 12px;
-      padding: 1rem;
-      min-height: 220px;
-      max-height: 320px;
+    .inspector-drawer {
+      position: fixed;
+      top: 0;
+      right: -480px;
+      width: 460px;
+      height: 100vh;
+      background: var(--bg-glass-card);
+      backdrop-filter: blur(24px);
+      border-left: 1px solid var(--border-subtle);
+      box-shadow: -10px 0 35px rgba(0, 0, 0, 0.12);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       overflow-y: auto;
+      padding: 1.75rem;
+      gap: 1.5rem;
+    }
+
+    .inspector-drawer.open {
+      right: 0;
+    }
+
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(2px);
+      z-index: 90;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 1rem;
+    }
+
+    .drawer-header h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .close-drawer-btn {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close-drawer-btn:hover {
+      color: var(--text-main);
+    }
+
+    /* Inspector Cards */
+    .inspector-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.25rem;
       display: flex;
       flex-direction: column;
       gap: 0.85rem;
-      scroll-behavior: smooth;
     }
 
-    .speech-bubble {
-      padding: 0.85rem 1.1rem;
-      border-radius: 12px;
-      max-width: 86%;
-      font-size: 0.92rem;
-      line-height: 1.55;
-      position: relative;
-    }
-
-    .bubble-caller {
-      align-self: flex-end;
-      background: var(--nhs-blue);
-      color: #FFFFFF;
-      border-bottom-right-radius: 3px;
-    }
-
-    .bubble-assistant {
-      align-self: flex-start;
-      background: var(--bg-surface);
-      color: var(--text-heading);
-      border: 1px solid var(--border-light);
-      border-bottom-left-radius: 3px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-    }
-
-    .bubble-emergency-alert {
-      align-self: flex-start;
-      background: var(--alert-crimson-tint);
-      border: 1px solid var(--alert-crimson-border);
-      color: var(--alert-crimson);
-      font-weight: 600;
-      border-left: 4px solid var(--alert-crimson);
-    }
-
-    /* ==========================================================================
-       Right Column: Telemetry, Safety Status & Booking Dispatch
-       ========================================================================== */
-    /* Deterministic Safety Card */
-    .safety-banner {
-      background: var(--calm-mint-tint);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      border-radius: 12px;
-      padding: 1rem 1.25rem;
+    .inspector-card-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-main);
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
-    .safety-banner.tripped {
-      background: var(--alert-crimson-tint);
-      border-color: var(--alert-crimson);
-    }
-
-    .safety-meta h3 {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--text-heading);
-    }
-
-    .safety-meta p {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-    }
-
     /* Latency Waterfall */
-    .waterfall-stack {
+    .drawer-waterfall {
       display: flex;
       flex-direction: column;
-      gap: 0.85rem;
+      gap: 0.75rem;
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.8rem;
     }
 
-    .waterfall-item {
+    .waterfall-row {
       display: grid;
-      grid-template-columns: 150px 1fr 75px;
+      grid-template-columns: 140px 1fr 65px;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.5rem;
     }
 
-    .bar-track {
-      background: var(--bg-surface-subtle);
-      border: 1px solid var(--border-light);
+    .bar-bg {
+      background: var(--bg-surface);
       height: 8px;
       border-radius: 4px;
       overflow: hidden;
+      border: 1px solid var(--border-subtle);
     }
 
-    .bar-indicator {
+    .bar-fill {
       height: 100%;
       background: var(--calm-teal);
       border-radius: 4px;
       transition: width 0.3s ease;
     }
 
-    .bar-indicator.good {
+    .bar-fill.pass {
       background: var(--calm-mint);
     }
 
-    .stage-val {
-      text-align: right;
-      font-weight: 600;
-      color: var(--text-heading);
+    /* Emergency Safety Trigger Box in Drawer */
+    .safety-status-box {
+      background: var(--calm-mint-tint);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      font-size: 0.84rem;
     }
 
-    .total-e2e-box {
-      border-top: 1px solid var(--border-light);
-      padding-top: 0.85rem;
-      margin-top: 0.35rem;
+    .safety-status-box.tripped {
+      background: var(--alert-crimson-tint);
+      border-color: var(--alert-crimson-border);
+      color: var(--alert-crimson);
     }
 
-    /* Calendar Booking Card */
-    .booking-card-body {
-      background: var(--bg-surface-subtle);
-      border: 1px solid var(--border-light);
-      border-radius: 12px;
-      padding: 1.15rem;
-      font-size: 0.88rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .booking-badge-confirmed {
-      color: var(--calm-mint);
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.88rem;
-    }
-
-    /* Subtle footer */
-    footer {
-      border-top: 1px solid var(--border-light);
-      padding: 1rem 2rem;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    /* JSON Appointment Card */
+    .booking-json-box {
       background: var(--bg-surface);
-      margin-top: auto;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--text-body);
+      line-height: 1.5;
     }
   </style>
 </head>
 <body>
 
+  <!-- Ambient Backdrop Halo -->
+  <div class="ambient-glow" id="ambientGlow"></div>
+
   <!-- ========================================================================
-       Top Navigation Header
+       Top Navigation Island
        ======================================================================== -->
   <header>
-    <div class="header-left">
-      <div class="nhs-pill">NHS</div>
-      <div class="practice-info">
+    <div class="brand-island">
+      <div class="nhs-badge">NHS</div>
+      <div class="brand-titles">
         <h1>St. Jude Medical Centre</h1>
         <p>
-          <span>TriagePulse-AI Voice Receptionist</span>
+          <span>AI Voice Receptionist</span>
           <span>•</span>
-          <span style="color: var(--calm-teal); font-weight: 600;">Calm Clinical Horizon</span>
+          <span style="color: var(--calm-teal); font-weight: 600;">Autonomous GP Triage</span>
         </p>
       </div>
     </div>
 
-    <div class="header-right">
-      <div id="safetyReflexBadge" class="badge badge-status-online">
-        <span class="badge-status-pulse"></span>
-        <span>REFLEX GATE: ARMED (0% FN)</span>
+    <div class="header-actions">
+      <div class="pill-btn" style="pointer-events: none;">
+        <span class="pulse-dot"></span>
+        <span id="connStatusText">Line 1 Active</span>
       </div>
-      <div id="connectionStatusBadge" class="badge badge-status-online">
-        <span>WS: CONNECTING</span>
-      </div>
-      <button class="theme-toggle-btn" onclick="toggleTheme()" title="Switch Light / Dark Theme">
-        <span id="themeIcon">🌙</span>
-        <span id="themeText">Dark</span>
+
+      <!-- Clinical Telemetry & Safety Inspector Trigger Button -->
+      <button class="pill-btn pill-telemetry-toggle" onclick="toggleDrawer(true)" title="Open Clinical Telemetry & Safety Gate Audit">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span id="headerLatencySnippet">Telemetry: 118ms</span>
+      </button>
+
+      <!-- Theme Switcher -->
+      <button class="pill-btn" onclick="toggleTheme()" title="Switch Light / Dark Theme">
+        <span id="themeEmoji">🌙</span>
+        <span id="themeLabel">Dark</span>
       </button>
     </div>
   </header>
 
   <!-- ========================================================================
-       Main Grid Workspace
+       Immersive Voice Stage (Centered 3D Organism & Captions)
        ======================================================================== -->
-  <main class="workspace-wrapper">
+  <main class="stage-container">
 
-    <!-- LEFT COLUMN: Voice Receptionist Console & Dialogue -->
-    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-      
-      <!-- Voice Hub Card -->
-      <section class="panel-card">
-        <div class="panel-header">
-          <div class="panel-title">
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-            <span>Autonomous Voice Receptionist</span>
-          </div>
-          <span class="panel-subtitle">Target: Sub-800ms Latency</span>
-        </div>
-
-        <!-- 3D Calm Animated Canvas -->
-        <div class="voice-hub-hero">
-          <div class="canvas-container" id="canvasContainer" title="Interactive 3D Pulse Horizon (Tilt cursor to rotate)">
-            <canvas id="pulseOrbCanvas" width="180" height="180"></canvas>
-          </div>
-
-          <div id="voiceStateTag" class="voice-state-tag">
-            <span class="badge-status-pulse" style="background: var(--calm-teal); color: var(--calm-teal);"></span>
-            <span id="voiceStateLabel">Listening for Patient...</span>
-          </div>
-
-          <!-- Primary Voice Controls -->
-          <div class="action-controls-row">
-            <button id="btnMicToggle" class="btn btn-primary" onclick="toggleMicrophone()">
-              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 0-4 4v7a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-              <span>Enable Microphone</span>
-            </button>
-            <button id="btnBargeIn" class="btn btn-danger" onclick="triggerBargeIn()">
-              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
-              <span>Barge-In (Interrupt)</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Scenario Quick Simulator -->
-        <div class="scenarios-section">
-          <span class="scenarios-label">Clinical Scenario Simulator:</span>
-          <div class="chips-grid">
-            <button class="scenario-chip emergency" onclick="sendScenario('I have severe crushing chest pain and feel dizzy')">
-              🚨 Chest Pain (Cardiac)
-            </button>
-            <button class="scenario-chip emergency" onclick="sendScenario('My mother collapsed on the floor and is unresponsive')">
-              🚨 Collapse / Syncope
-            </button>
-            <button class="scenario-chip" onclick="sendScenario('I would like to book a routine appointment with Dr. Davies for next Tuesday morning')">
-              📅 Routine Doctor Booking
-            </button>
-            <button class="scenario-chip" onclick="sendScenario('What are your surgery opening hours on Thursday?')">
-              🕒 Surgery Opening Hours
-            </button>
-            <button class="scenario-chip" onclick="sendScenario('How do I request a repeat prescription for my blood pressure?')">
-              💊 Repeat Prescriptions
-            </button>
-            <button class="scenario-chip" onclick="sendScenario('Can I book a phlebotomy blood test with the nurse?')">
-              💉 Blood Test Clinic
-            </button>
-          </div>
-        </div>
-
-        <!-- Text Input Fallback -->
-        <div class="input-bar-group">
-          <input type="text" id="manualInput" class="text-input-field" placeholder="Type your patient inquiry (or use voice/scenarios above)..." onkeydown="if(event.key==='Enter') sendManualInput()" />
-          <button class="btn btn-secondary" onclick="sendManualInput()">Send</button>
-        </div>
-      </section>
-
-      <!-- Live Dialogue Stream -->
-      <section class="panel-card">
-        <div class="panel-header">
-          <div class="panel-title">
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            <span>Live Consultation Stream</span>
-          </div>
-          <span class="panel-subtitle">Streaming Voice Turns</span>
-        </div>
-
-        <div id="dialogueContainer" class="dialogue-stream">
-          <div class="speech-bubble bubble-assistant">
-            Good morning, St. Jude Medical Centre. How may I assist you with your booking or clinical inquiry today?
-          </div>
-        </div>
-      </section>
-
+    <!-- 3D Three.js Fluid Harmonic Sphere -->
+    <div class="canvas-viewport" id="canvasViewport" title="Interactive 3D Harmonic Horizon (Rotate with mouse)">
+      <canvas id="threejsCanvas"></canvas>
     </div>
 
-    <!-- RIGHT COLUMN: Safety Reflex, Telemetry Waterfall & Booking Dispatch -->
-    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-      
-      <!-- Tier 1 Deterministic Safety Reflex Status -->
-      <div id="safetyBannerBox" class="safety-banner">
-        <div class="safety-meta">
-          <h3 id="safetyBannerHeading">Tier 1 Safety Reflex Armed</h3>
-          <p id="safetyBannerSub">Deterministic pre-LLM regex scanner • 0% False Negatives</p>
-        </div>
-        <div id="safetyBadgePill" class="badge badge-status-online" style="font-size: 0.74rem;">
-          ACTIVE (0.3ms)
-        </div>
+    <!-- Live Stage Receptionist State Pill -->
+    <div class="stage-status-bubble" id="stageStatusBubble">
+      <span class="pulse-dot" id="statePulseDot" style="background: var(--calm-teal);"></span>
+      <span id="receptionistStatusText">Listening for patient inquiry...</span>
+    </div>
+
+    <!-- Real-Time Dialogue Captions Deck -->
+    <div class="captions-deck" id="captionsDeck">
+      <div class="caption-line assistant" id="initialGreeting">
+        "Good morning, St. Jude Medical Centre. I am the practice AI voice receptionist. How may I assist you with your appointment or health inquiry today?"
       </div>
-
-      <!-- Real-Time Latency Waterfall Card -->
-      <section class="panel-card">
-        <div class="panel-header">
-          <div class="panel-title">
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span>Stage Latency Waterfall</span>
-          </div>
-          <span id="e2eTargetStatus" class="badge badge-status-online">SUB-800MS PASS</span>
-        </div>
-
-        <div class="waterfall-stack">
-          <div class="waterfall-item">
-            <span>Perception: STT</span>
-            <div class="bar-track"><div id="barSTT" class="bar-indicator" style="width: 25%;"></div></div>
-            <span id="valSTT" class="stage-val">89 ms</span>
-          </div>
-
-          <div class="waterfall-item">
-            <span>Safety Reflex</span>
-            <div class="bar-track"><div id="barSafety" class="bar-indicator good" style="width: 3%;"></div></div>
-            <span id="valSafety" class="stage-val">0.3 ms</span>
-          </div>
-
-          <div class="waterfall-item">
-            <span>RAG Policy</span>
-            <div class="bar-track"><div id="barRAG" class="bar-indicator" style="width: 6%;"></div></div>
-            <span id="valRAG" class="stage-val">0.3 ms</span>
-          </div>
-
-          <div class="waterfall-item">
-            <span>LLM First Token</span>
-            <div class="bar-track"><div id="barLLM" class="bar-indicator" style="width: 30%;"></div></div>
-            <span id="valLLM" class="stage-val">28 ms</span>
-          </div>
-
-          <div class="waterfall-item">
-            <span>TTS First Byte</span>
-            <div class="bar-track"><div id="barTTS" class="bar-indicator" style="width: 30%;"></div></div>
-            <span id="valTTS" class="stage-val">28 ms</span>
-          </div>
-
-          <div class="total-e2e-box">
-            <div class="waterfall-item" style="font-weight: 700; font-size: 0.88rem;">
-              <span>TOTAL VOICE E2E</span>
-              <div class="bar-track" style="height: 10px;"><div id="barTotal" class="bar-indicator good" style="width: 40%;"></div></div>
-              <span id="valTotal" class="stage-val" style="color: var(--calm-teal);">118 ms</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Structured Function-Calling JSON & Appointment Dispatch -->
-      <section class="panel-card">
-        <div class="panel-header">
-          <div class="panel-title">
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            <span>Appointment Dispatcher</span>
-          </div>
-          <span class="panel-subtitle">EMIS / SystmOne JSON</span>
-        </div>
-
-        <div id="bookingResultCard" class="booking-card-body">
-          <div style="color: var(--text-muted); font-size: 0.82rem;">
-            No appointments booked in current turn. Say or choose <em>"Routine Doctor Booking"</em> above to test structured extraction.
-          </div>
-        </div>
-      </section>
-
     </div>
 
   </main>
 
   <!-- ========================================================================
-       Footer & Compliance Notes
+       Ergonomic Floating Call Dock (Bottom)
        ======================================================================== -->
-  <footer>
-    <div>
-      <strong>TriagePulse-AI</strong> • NHS England GP Voice Receptionist System • QuantumLoopAI Benchmark Demo
+  <div class="bottom-floating-dock">
+
+    <!-- Quick Scenario Triage Horizon -->
+    <div class="scenario-pill-strip">
+      <button class="chip-action chip-red" onclick="triggerScenario('I have severe crushing chest pain and feel dizzy')">
+        🚨 Chest Pain
+      </button>
+      <button class="chip-action chip-red" onclick="triggerScenario('My husband collapsed on the floor and is unresponsive')">
+        🚨 Unresponsive Collapse
+      </button>
+      <button class="chip-action" onclick="triggerScenario('I would like to book a routine appointment with Dr. Davies for next Tuesday morning')">
+        📅 Routine Doctor Booking
+      </button>
+      <button class="chip-action" onclick="triggerScenario('What are your surgery opening hours on Thursday?')">
+        🕒 Surgery Hours
+      </button>
+      <button class="chip-action" onclick="triggerScenario('How do I request a repeat prescription for my blood pressure tablets?')">
+        💊 Repeat Prescriptions
+      </button>
+      <button class="chip-action" onclick="triggerScenario('Can I schedule a blood test with the nurse?')">
+        💉 Blood Clinic
+      </button>
     </div>
-    <div>
-      Caldicott Principles & GDPR Compliant • Zero Persistent PHI Audio • UK Sovereign Architecture
+
+    <!-- Audio Interaction Controls -->
+    <div class="primary-audio-bar">
+      <button id="btnToggleMic" class="mic-hero-btn" onclick="toggleMicrophone()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 0-4 4v7a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        <span id="micBtnText">Enable Voice</span>
+      </button>
+
+      <button id="btnBargeIn" class="barge-in-btn" onclick="triggerBargeIn()" title="Cancel playback instantly (Mid-Speech Barge-in)">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+        <span>Barge-In</span>
+      </button>
+
+      <div class="inline-text-box">
+        <input type="text" id="manualTextInput" class="inline-input" placeholder="Type a message or click a scenario pill..." onkeydown="if(event.key==='Enter') sendTypedQuery()" />
+      </div>
     </div>
-  </footer>
+
+  </div>
 
   <!-- ========================================================================
-       Client Logic & 3D Calm Horizon Canvas Engine
+       Slide-Out Clinical Audit & Telemetry Drawer
+       ======================================================================== -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer(false)"></div>
+  <aside class="inspector-drawer" id="inspectorDrawer">
+    <div class="drawer-header">
+      <h2>
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        <span>Clinical Audit & Latency Inspector</span>
+      </h2>
+      <button class="close-drawer-btn" onclick="toggleDrawer(false)">✕</button>
+    </div>
+
+    <!-- Tier 1 Reflex Safety Gate -->
+    <div class="inspector-card">
+      <div class="inspector-card-title">
+        <span>Tier 1 Deterministic Reflex Gate</span>
+        <span class="badge" style="background: var(--calm-mint-tint); color: var(--calm-mint); font-size: 0.72rem; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 700;">0% FALSE NEGATIVES</span>
+      </div>
+      <div id="safetyStatusCard" class="safety-status-box">
+        <div style="font-weight: 700; margin-bottom: 0.2rem;" id="safetyCardHeader">Reflex Gate Armed • Sub-1ms Scan</div>
+        <div style="color: var(--text-muted); font-size: 0.78rem;" id="safetyCardSub">Deterministic regex scanner actively monitoring running dialogue buffer for acute NHS 111 red flags.</div>
+      </div>
+    </div>
+
+    <!-- Nanosecond Latency Waterfall -->
+    <div class="inspector-card">
+      <div class="inspector-card-title">
+        <span>Stage Latency Waterfall</span>
+        <span id="sub800Badge" class="badge" style="background: var(--calm-mint-tint); color: var(--calm-mint); font-size: 0.72rem; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 700;">TARGET MET</span>
+      </div>
+
+      <div class="drawer-waterfall">
+        <div class="waterfall-row">
+          <span>Perception: STT</span>
+          <div class="bar-bg"><div id="dBarSTT" class="bar-fill" style="width: 28%;"></div></div>
+          <span id="dValSTT" style="text-align: right; font-weight: 600;">89 ms</span>
+        </div>
+        <div class="waterfall-row">
+          <span>Safety Reflex</span>
+          <div class="bar-bg"><div id="dBarSafety" class="bar-fill pass" style="width: 3%;"></div></div>
+          <span id="dValSafety" style="text-align: right; font-weight: 600;">0.3 ms</span>
+        </div>
+        <div class="waterfall-row">
+          <span>RAG Policy Retrieval</span>
+          <div class="bar-bg"><div id="dBarRAG" class="bar-fill" style="width: 5%;"></div></div>
+          <span id="dValRAG" style="text-align: right; font-weight: 600;">0.3 ms</span>
+        </div>
+        <div class="waterfall-row">
+          <span>LLM TTFT</span>
+          <div class="bar-bg"><div id="dBarLLM" class="bar-fill" style="width: 32%;"></div></div>
+          <span id="dValLLM" style="text-align: right; font-weight: 600;">28 ms</span>
+        </div>
+        <div class="waterfall-row">
+          <span>TTS First Audio</span>
+          <div class="bar-bg"><div id="dBarTTS" class="bar-fill" style="width: 32%;"></div></div>
+          <span id="dValTTS" style="text-align: right; font-weight: 600;">28 ms</span>
+        </div>
+
+        <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.65rem; margin-top: 0.25rem;">
+          <div class="waterfall-row" style="font-weight: 700; font-size: 0.88rem;">
+            <span>TOTAL VOICE E2E</span>
+            <div class="bar-bg" style="height: 10px;"><div id="dBarTotal" class="bar-fill pass" style="width: 42%;"></div></div>
+            <span id="dValTotal" style="text-align: right; color: var(--calm-teal);">118 ms</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Structured Appointment Booking JSON -->
+    <div class="inspector-card">
+      <div class="inspector-card-title">
+        <span>Structured Appointment Dispatch</span>
+        <span style="font-size: 0.72rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">EMIS / SystmOne JSON</span>
+      </div>
+      <div id="drawerBookingJSON" class="booking-json-box">
+        No active booking. Click "Routine Doctor Booking" to trigger function-calling schema extraction.
+      </div>
+    </div>
+  </aside>
+
+  <!-- ========================================================================
+       JavaScript Engine: Three.js 3D Acoustic Sphere + WebSocket Gateway
        ======================================================================== -->
   <script>
     /* --------------------------------------------------------------------------
-       Theme Toggle & Persistence
+       Theme Toggle & State Persistence
        -------------------------------------------------------------------------- */
     function initTheme() {
-      const savedTheme = localStorage.getItem("triagepulse_theme") || "light";
-      applyTheme(savedTheme);
+      const saved = localStorage.getItem("triagepulse_theme") || "light";
+      applyTheme(saved);
     }
 
     function toggleTheme() {
@@ -859,181 +842,236 @@
 
     function applyTheme(theme) {
       document.documentElement.setAttribute("data-theme", theme);
-      const icon = document.getElementById("themeIcon");
-      const text = document.getElementById("themeText");
+      const emoji = document.getElementById("themeEmoji");
+      const label = document.getElementById("themeLabel");
       if (theme === "dark") {
-        icon.textContent = "☀️";
-        text.textContent = "Light";
+        emoji.textContent = "☀️";
+        label.textContent = "Light";
       } else {
-        icon.textContent = "🌙";
-        text.textContent = "Dark";
+        emoji.textContent = "🌙";
+        label.textContent = "Dark";
       }
+      updateThreeSceneColors(theme);
     }
 
     initTheme();
 
     /* --------------------------------------------------------------------------
-       Interactive 3D Pulse Horizon Canvas Engine
+       Inspector Drawer Control
        -------------------------------------------------------------------------- */
-    const canvas = document.getElementById("pulseOrbCanvas");
-    const ctx = canvas.getContext("2d");
-    let mouseX = 0, mouseY = 0;
-    let targetTiltX = 0, targetTiltY = 0;
-    let currentTiltX = 0, currentTiltY = 0;
-    let orbState = "idle"; // "idle" | "speaking" | "emergency" | "listening"
-    let animationTime = 0;
-
-    // Track cursor over canvas for 3D perspective tilt
-    const container = document.getElementById("canvasContainer");
-    container.addEventListener("mousemove", (e) => {
-      const rect = container.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-      targetTiltX = x * 0.8;
-      targetTiltY = y * 0.8;
-    });
-
-    container.addEventListener("mouseleave", () => {
-      targetTiltX = 0;
-      targetTiltY = 0;
-    });
-
-    function render3DOrb() {
-      animationTime += 0.025;
-      currentTiltX += (targetTiltX - currentTiltX) * 0.08;
-      currentTiltY += (targetTiltY - currentTiltY) * 0.08;
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
-      const baseRadius = 54;
-
-      // Dynamic breathing amplitude
-      let breathe = Math.sin(animationTime * 1.5) * 3;
-      if (orbState === "speaking") {
-        breathe = Math.sin(animationTime * 6) * 7;
-      } else if (orbState === "emergency") {
-        breathe = Math.sin(animationTime * 9) * 8;
+    function toggleDrawer(open) {
+      const drawer = document.getElementById("inspectorDrawer");
+      const overlay = document.getElementById("drawerOverlay");
+      if (open) {
+        drawer.classList.add("open");
+        overlay.classList.add("active");
+      } else {
+        drawer.classList.remove("open");
+        overlay.classList.remove("active");
       }
-
-      const radius = baseRadius + breathe;
-
-      // Color selection based on theme & state
-      const isDark = document.documentElement.getAttribute("data-theme") === "dark";
-      let primaryColor = isDark ? "rgba(20, 184, 166, " : "rgba(13, 148, 136, ";
-      let secondaryColor = isDark ? "rgba(2, 132, 199, " : "rgba(0, 94, 184, ";
-
-      if (orbState === "emergency") {
-        primaryColor = "rgba(220, 38, 38, ";
-        secondaryColor = "rgba(239, 68, 68, ";
-      }
-
-      // Outer gentle atmospheric halo
-      const grad = ctx.createRadialGradient(
-        centerX + currentTiltX * 20,
-        centerY + currentTiltY * 20,
-        radius * 0.2,
-        centerX,
-        centerY,
-        radius * 1.5
-      );
-      grad.addColorStop(0, primaryColor + "0.35)");
-      grad.addColorStop(0.5, secondaryColor + "0.15)");
-      grad.addColorStop(1, "rgba(0,0,0,0)");
-
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, radius * 1.5, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Draw 3D Perspective Latitudinal & Longitudinal Harmonic Rings
-      const numRings = 7;
-      for (let i = 0; i < numRings; i++) {
-        const phi = (i / (numRings - 1)) * Math.PI - Math.PI / 2; // -pi/2 to pi/2
-        const ringRadius = radius * Math.cos(phi);
-        const ringY = centerY + radius * Math.sin(phi) * 0.95 + currentTiltY * 25;
-
-        ctx.beginPath();
-        ctx.ellipse(
-          centerX + currentTiltX * (phi * 15),
-          ringY,
-          Math.max(1, ringRadius),
-          Math.max(1, ringRadius * (0.28 + currentTiltY * 0.15)),
-          currentTiltX * 0.4,
-          0,
-          Math.PI * 2
-        );
-
-        ctx.strokeStyle = primaryColor + (0.15 + (1 - Math.abs(phi) / (Math.PI / 2)) * 0.45) + ")";
-        ctx.lineWidth = 1.2;
-        ctx.stroke();
-      }
-
-      // Draw 3D Meridian Ring
-      ctx.beginPath();
-      ctx.ellipse(
-        centerX + currentTiltX * 10,
-        centerY,
-        Math.max(1, radius * (0.35 + Math.abs(currentTiltX) * 0.2)),
-        radius,
-        currentTiltY * 0.3,
-        0,
-        Math.PI * 2
-      );
-      ctx.strokeStyle = secondaryColor + "0.45)";
-      ctx.lineWidth = 1.4;
-      ctx.stroke();
-
-      // Glowing central core
-      const coreGrad = ctx.createRadialGradient(
-        centerX - 8 + currentTiltX * 12,
-        centerY - 8 + currentTiltY * 12,
-        2,
-        centerX,
-        centerY,
-        radius * 0.65
-      );
-      coreGrad.addColorStop(0, "#FFFFFF");
-      coreGrad.addColorStop(0.3, primaryColor + "0.85)");
-      coreGrad.addColorStop(1, secondaryColor + "0.2)");
-
-      ctx.fillStyle = coreGrad;
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, radius * 0.65, 0, Math.PI * 2);
-      ctx.fill();
-
-      requestAnimationFrame(render3DOrb);
     }
 
-    render3DOrb();
+    /* --------------------------------------------------------------------------
+       Three.js 3D Fluid Harmonic Sphere Engine
+       -------------------------------------------------------------------------- */
+    const canvas = document.getElementById("threejsCanvas");
+    const viewport = document.getElementById("canvasViewport");
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, viewport.clientWidth / viewport.clientHeight, 0.1, 100);
+    camera.position.z = 6.2;
+
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    renderer.setSize(viewport.clientWidth, viewport.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // Create high-resolution icosahedron
+    const sphereRadius = 1.95;
+    const geometry = new THREE.IcosahedronGeometry(sphereRadius, 36);
+    
+    // Save base vertex positions
+    const posAttribute = geometry.attributes.position;
+    const basePositions = [];
+    for (let i = 0; i < posAttribute.count; i++) {
+      basePositions.push(new THREE.Vector3(posAttribute.getX(i), posAttribute.getY(i), posAttribute.getZ(i)));
+    }
+
+    // Modern translucent holographic material
+    const material = new THREE.MeshStandardMaterial({
+      color: 0x0D9488,
+      wireframe: true,
+      roughness: 0.25,
+      metalness: 0.15,
+      transparent: true,
+      opacity: 0.85,
+    });
+
+    const sphereMesh = new THREE.Mesh(geometry, material);
+    scene.add(sphereMesh);
+
+    // Subtle inner glowing core
+    const coreGeo = new THREE.SphereGeometry(1.2, 24, 24);
+    const coreMat = new THREE.MeshBasicMaterial({
+      color: 0x005EB8,
+      transparent: true,
+      opacity: 0.18,
+    });
+    const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+    scene.add(coreMesh);
+
+    // Floating tranquil ambient particle halo
+    const particleCount = 140;
+    const particleGeo = new THREE.BufferGeometry();
+    const particlePos = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount * 3; i += 3) {
+      const r = 2.4 + Math.random() * 1.5;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = (Math.random() - 0.5) * Math.PI;
+      particlePos[i] = r * Math.cos(phi) * Math.cos(theta);
+      particlePos[i+1] = r * Math.sin(phi);
+      particlePos[i+2] = r * Math.cos(phi) * Math.sin(theta);
+    }
+    particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePos, 3));
+    const particleMat = new THREE.PointsMaterial({
+      color: 0x0D9488,
+      size: 0.045,
+      transparent: true,
+      opacity: 0.5,
+    });
+    const particleField = new THREE.Points(particleGeo, particleMat);
+    scene.add(particleField);
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
+    scene.add(ambientLight);
+
+    const pointLight = new THREE.PointLight(0x38BDF8, 2.0, 50);
+    pointLight.position.set(5, 5, 5);
+    scene.add(pointLight);
+
+    const pointLight2 = new THREE.PointLight(0x10B981, 1.5, 50);
+    pointLight2.position.set(-5, -3, 3);
+    scene.add(pointLight2);
+
+    function updateThreeSceneColors(theme) {
+      if (theme === "dark") {
+        material.color.setHex(0x14B8A6);
+        coreMat.color.setHex(0x0284C7);
+        coreMat.opacity = 0.35;
+        particleMat.color.setHex(0x38BDF8);
+        ambientLight.color.setHex(0x334455);
+      } else {
+        material.color.setHex(0x0D9488);
+        coreMat.color.setHex(0x005EB8);
+        coreMat.opacity = 0.18;
+        particleMat.color.setHex(0x0D9488);
+        ambientLight.color.setHex(0xffffff);
+      }
+    }
+
+    // Interactive mouse rotation with smooth damping
+    let targetRotX = 0, targetRotY = 0;
+    let mouseIsDown = false;
+    let prevMouseX = 0, prevMouseY = 0;
+
+    viewport.addEventListener("mousedown", (e) => {
+      mouseIsDown = true;
+      prevMouseX = e.clientX;
+      prevMouseY = e.clientY;
+    });
+
+    window.addEventListener("mouseup", () => { mouseIsDown = false; });
+
+    window.addEventListener("mousemove", (e) => {
+      if (mouseIsDown) {
+        const deltaX = e.clientX - prevMouseX;
+        const deltaY = e.clientY - prevMouseY;
+        targetRotY += deltaX * 0.008;
+        targetRotX += deltaY * 0.008;
+        prevMouseX = e.clientX;
+        prevMouseY = e.clientY;
+      }
+    });
+
+    // Acoustic Organism State Machine
+    let stageMode = "idle"; // "idle" | "speaking" | "emergency" | "listening"
+    let clock = 0;
+
+    function animateThree() {
+      requestAnimationFrame(animateThree);
+      clock += 0.02;
+
+      // Smooth rotation
+      sphereMesh.rotation.y += (targetRotY - sphereMesh.rotation.y) * 0.05 + 0.003;
+      sphereMesh.rotation.x += (targetRotX - sphereMesh.rotation.x) * 0.05;
+      particleField.rotation.y += 0.0015;
+
+      // Dynamic harmonic wave displacement
+      const positions = sphereMesh.geometry.attributes.position;
+      let waveFreq = 1.6;
+      let waveSpeed = 1.8;
+      let waveAmp = 0.08;
+
+      if (stageMode === "speaking") {
+        waveFreq = 3.2;
+        waveSpeed = 4.2;
+        waveAmp = 0.24;
+      } else if (stageMode === "emergency") {
+        waveFreq = 5.0;
+        waveSpeed = 6.0;
+        waveAmp = 0.35;
+      } else if (stageMode === "listening") {
+        waveFreq = 2.4;
+        waveSpeed = 2.8;
+        waveAmp = 0.14;
+      }
+
+      for (let i = 0; i < positions.count; i++) {
+        const base = basePositions[i];
+        const normal = base.clone().normalize();
+        
+        // Complex harmonic wave equation
+        const wave = Math.sin(base.x * waveFreq + clock * waveSpeed)
+                   * Math.cos(base.y * waveFreq + clock * waveSpeed)
+                   * Math.sin(base.z * waveFreq + clock * 0.5);
+
+        const newPos = base.clone().add(normal.multiplyScalar(wave * waveAmp));
+        positions.setXYZ(i, newPos.x, newPos.y, newPos.z);
+      }
+      positions.needsUpdate = true;
+
+      renderer.render(scene, camera);
+    }
+
+    animateThree();
+
+    window.addEventListener("resize", () => {
+      camera.aspect = viewport.clientWidth / viewport.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(viewport.clientWidth, viewport.clientHeight);
+    });
 
     /* --------------------------------------------------------------------------
-       WebSocket Connection & Turn Orchestration
+       WebSocket Gateway & Real-Time Client Logic
        -------------------------------------------------------------------------- */
     let ws = null;
     let audioCtx = null;
     let isMicActive = false;
 
-    function connectWebSocket() {
+    function initWebSocket() {
       const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
       const wsUrl = `${protocol}//${window.location.host}/ws/audio`;
       ws = new WebSocket(wsUrl);
 
-      const statusBadge = document.getElementById("connectionStatusBadge");
-
       ws.onopen = () => {
-        statusBadge.textContent = "WS: LIVE";
-        statusBadge.className = "badge badge-status-online";
-        document.getElementById("voiceStateLabel").textContent = "Receptionist Ready";
+        document.getElementById("connStatusText").textContent = "Connected • Line 1";
+        document.getElementById("statePulseDot").style.backgroundColor = "var(--calm-mint)";
       };
 
       ws.onclose = () => {
-        statusBadge.textContent = "WS: DISCONNECTED";
-        statusBadge.className = "badge badge-status-online";
-        statusBadge.style.borderColor = "var(--alert-crimson)";
-        statusBadge.style.color = "var(--alert-crimson)";
-        setTimeout(connectWebSocket, 2000);
+        document.getElementById("connStatusText").textContent = "Reconnecting...";
+        document.getElementById("statePulseDot").style.backgroundColor = "var(--alert-crimson)";
+        setTimeout(initWebSocket, 2000);
       };
 
       ws.onmessage = (event) => {
@@ -1041,71 +1079,72 @@
           const payload = JSON.parse(event.data);
           handleServerPacket(payload);
         } else {
-          // Binary audio chunk received
-          orbState = "speaking";
+          // Play received audio
+          stageMode = "speaking";
           playBinaryAudioChunk(event.data);
         }
       };
     }
 
     function handleServerPacket(data) {
-      const dialogue = document.getElementById("dialogueContainer");
+      const captions = document.getElementById("captionsDeck");
+      const statusText = document.getElementById("receptionistStatusText");
 
       if (data.type === "transcript") {
-        const bubble = document.createElement("div");
-        bubble.className = "speech-bubble bubble-caller";
-        bubble.textContent = data.text;
-        dialogue.appendChild(bubble);
-        dialogue.scrollTop = dialogue.scrollHeight;
-        orbState = "listening";
-        document.getElementById("voiceStateLabel").textContent = "Processing Inquiry...";
+        appendCaption(data.text, "caller");
+        stageMode = "listening";
+        statusText.textContent = "Processing patient inquiry...";
       } else if (data.type === "safety_alert") {
-        orbState = "emergency";
-        const banner = document.getElementById("safetyBannerBox");
-        banner.className = "safety-banner tripped";
-        document.getElementById("safetyBannerHeading").textContent = `🚨 Hard Interrupt Triggered (${data.category.toUpperCase()})`;
-        document.getElementById("safetyBannerSub").textContent = `Pre-LLM Reflex bypassed LLM in ${data.latency_ms}ms • Directing to 999/A&E`;
+        stageMode = "emergency";
+        material.color.setHex(0xDC2626);
+        coreMat.color.setHex(0xEF4444);
+        coreMat.opacity = 0.5;
 
-        const alertBubble = document.createElement("div");
-        alertBubble.className = "speech-bubble bubble-emergency-alert";
-        alertBubble.innerHTML = `<strong>🚨 EMERGENCY DIRECTIVE (${data.category.toUpperCase()}):</strong> ${data.instruction} <div style="font-size: 0.75rem; margin-top: 0.35rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">[Deterministic Match Latency: ${data.latency_ms}ms]</div>`;
-        dialogue.appendChild(alertBubble);
-        dialogue.scrollTop = dialogue.scrollHeight;
-        document.getElementById("voiceStateLabel").textContent = "Emergency Escalated to 999";
+        // Update emergency banner in drawer
+        const safetyCard = document.getElementById("safetyStatusCard");
+        safetyCard.className = "safety-status-box tripped";
+        document.getElementById("safetyCardHeader").textContent = `🚨 Hard Safety Reflex (${data.category.toUpperCase()})`;
+        document.getElementById("safetyCardSub").textContent = `Pre-LLM Match in ${data.latency_ms}ms • Directing to 999 immediately.`;
+
+        appendCaption(`🚨 CRITICAL EMERGENCY DIRECTIVE (${data.category.toUpperCase()}): ${data.instruction}`, "emergency");
+        statusText.textContent = "EMERGENCY: Directing to 999";
       } else if (data.type === "response_completed") {
-        orbState = "idle";
-        const bubble = document.createElement("div");
-        bubble.className = "speech-bubble bubble-assistant";
-        bubble.textContent = data.text;
-        dialogue.appendChild(bubble);
-        dialogue.scrollTop = dialogue.scrollHeight;
-        document.getElementById("voiceStateLabel").textContent = "Listening for Patient...";
+        stageMode = "idle";
+        statusText.textContent = "Listening for patient inquiry...";
+        appendCaption(data.text, "assistant");
 
         if (data.metrics) {
-          updateLatencyWaterfall(data.metrics);
+          renderTelemetryMetrics(data.metrics);
         }
       } else if (data.type === "booking_confirmed") {
         const b = data.booking;
-        document.getElementById("bookingResultCard").innerHTML = `
-          <div class="booking-badge-confirmed">
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <span>APPOINTMENT CONFIRMED [${b.booking_id}]</span>
-          </div>
-          <div><strong>Patient:</strong> ${b.patient_name}</div>
-          <div><strong>Slot:</strong> ${b.slot}</div>
-          <div><strong>Urgency:</strong> <span style="text-transform: uppercase; font-weight: 600; color: var(--calm-teal);">${b.urgency}</span></div>
-          <div><strong>Grounding Confidence:</strong> ${(b.confidence * 100).toFixed(0)}%</div>
-          <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.25rem;"><em>Reason:</em> ${b.symptoms_summary}</div>
+        document.getElementById("drawerBookingJSON").innerHTML = `
+          <div style="color: var(--calm-mint); font-weight: 700; margin-bottom: 0.35rem;">✔ APPOINTMENT CONFIRMED</div>
+          <div>"booking_id": "<strong>${b.booking_id}</strong>",</div>
+          <div>"patient": "<strong>${b.patient_name}</strong>",</div>
+          <div>"slot": "<strong>${b.slot}</strong>",</div>
+          <div>"urgency": "<span style="color: var(--calm-teal); font-weight:700;">${b.urgency.toUpperCase()}</span>",</div>
+          <div>"confidence": ${(b.confidence * 100).toFixed(0)}%,</div>
+          <div style="font-size: 0.74rem; color: var(--text-muted); margin-top: 0.25rem;">"reason": "${b.symptoms_summary}"</div>
         `;
       } else if (data.type === "barge_in") {
-        orbState = "listening";
-        document.getElementById("voiceStateLabel").textContent = "Barge-In: Playback Interrupted";
+        stageMode = "listening";
+        statusText.textContent = "Barge-In: Audio playback aborted";
       } else if (data.type === "telemetry") {
-        updateLatencyWaterfall(data.metrics);
+        renderTelemetryMetrics(data.metrics);
       }
     }
 
-    function updateLatencyWaterfall(m) {
+    function appendCaption(text, type) {
+      const captions = document.getElementById("captionsDeck");
+      const line = document.createElement("div");
+      line.className = `caption-line ${type}`;
+      line.textContent = text;
+      captions.appendChild(line);
+      captions.scrollTop = captions.scrollHeight;
+    }
+
+    function renderTelemetryMetrics(m) {
       const e2e = m.voice_in_to_voice_out_ms || 118;
       const stt = m.stt_latency_ms || 89;
       const safety = m.safety_latency_ms || 0.3;
@@ -1113,48 +1152,51 @@
       const llm = m.llm_ttft_ms || 28;
       const tts = m.tts_ttfb_ms || 28;
 
-      document.getElementById("valSTT").textContent = `${stt} ms`;
-      document.getElementById("valSafety").textContent = `${safety} ms`;
-      document.getElementById("valRAG").textContent = `${rag} ms`;
-      document.getElementById("valLLM").textContent = `${llm} ms`;
-      document.getElementById("valTTS").textContent = `${tts} ms`;
-      document.getElementById("valTotal").textContent = `${e2e} ms`;
+      document.getElementById("headerLatencySnippet").textContent = `E2E: ${e2e}ms`;
 
-      // Animate progress widths
-      document.getElementById("barSTT").style.width = `${Math.min(100, (stt / 400) * 100)}%`;
-      document.getElementById("barSafety").style.width = `${Math.max(3, Math.min(100, (safety / 10) * 100))}%`;
-      document.getElementById("barRAG").style.width = `${Math.max(4, Math.min(100, (rag / 50) * 100))}%`;
-      document.getElementById("barLLM").style.width = `${Math.min(100, (llm / 300) * 100)}%`;
-      document.getElementById("barTTS").style.width = `${Math.min(100, (tts / 300) * 100)}%`;
+      // Drawer metrics
+      document.getElementById("dValSTT").textContent = `${stt} ms`;
+      document.getElementById("dValSafety").textContent = `${safety} ms`;
+      document.getElementById("dValRAG").textContent = `${rag} ms`;
+      document.getElementById("dValLLM").textContent = `${llm} ms`;
+      document.getElementById("dValTTS").textContent = `${tts} ms`;
+      document.getElementById("dValTotal").textContent = `${e2e} ms`;
 
-      const e2eBar = document.getElementById("barTotal");
-      const e2ePct = Math.min(100, (e2e / 800) * 100);
-      e2eBar.style.width = `${e2ePct}%`;
+      // Bar fills
+      document.getElementById("dBarSTT").style.width = `${Math.min(100, (stt / 400) * 100)}%`;
+      document.getElementById("dBarSafety").style.width = `${Math.max(4, Math.min(100, (safety / 10) * 100))}%`;
+      document.getElementById("dBarRAG").style.width = `${Math.max(4, Math.min(100, (rag / 50) * 100))}%`;
+      document.getElementById("dBarLLM").style.width = `${Math.min(100, (llm / 300) * 100)}%`;
+      document.getElementById("dBarTTS").style.width = `${Math.min(100, (tts / 300) * 100)}%`;
 
-      const targetBadge = document.getElementById("e2eTargetStatus");
+      const totalBar = document.getElementById("dBarTotal");
+      const totalPct = Math.min(100, (e2e / 800) * 100);
+      totalBar.style.width = `${totalPct}%`;
+
+      const badge = document.getElementById("sub800Badge");
       if (e2e <= 800) {
-        e2eBar.className = "bar-indicator good";
-        targetBadge.textContent = "SUB-800MS PASS";
-        targetBadge.className = "badge badge-status-online";
+        totalBar.className = "bar-fill pass";
+        badge.textContent = "TARGET MET (SUB-800MS)";
+        badge.style.color = "var(--calm-mint)";
       } else {
-        e2eBar.className = "bar-indicator";
-        e2eBar.style.background = "var(--alert-crimson)";
-        targetBadge.textContent = "TARGET EXCEEDED";
-        targetBadge.style.color = "var(--alert-crimson)";
+        totalBar.className = "bar-fill";
+        totalBar.style.background = "var(--alert-crimson)";
+        badge.textContent = "TARGET EXCEEDED";
+        badge.style.color = "var(--alert-crimson)";
       }
     }
 
-    function sendManualInput() {
-      const input = document.getElementById("manualInput");
+    function triggerScenario(text) {
+      if (!ws) return;
+      ws.send(JSON.stringify({ type: "text_query", text: text }));
+    }
+
+    function sendTypedQuery() {
+      const input = document.getElementById("manualTextInput");
       const text = input.value.trim();
       if (!text || !ws) return;
       ws.send(JSON.stringify({ type: "text_query", text: text }));
       input.value = "";
-    }
-
-    function sendScenario(text) {
-      if (!ws) return;
-      ws.send(JSON.stringify({ type: "text_query", text: text }));
     }
 
     function triggerBargeIn() {
@@ -1176,25 +1218,26 @@
     }
 
     function toggleMicrophone() {
-      const btn = document.getElementById("btnMicToggle");
+      const btn = document.getElementById("btnToggleMic");
+      const text = document.getElementById("micBtnText");
       if (!isMicActive) {
         navigator.mediaDevices.getUserMedia({ audio: true }).then(() => {
           isMicActive = true;
-          btn.className = "btn btn-danger";
-          btn.querySelector("span").textContent = "Mute Microphone";
-          orbState = "listening";
+          btn.classList.add("recording");
+          text.textContent = "Mute Voice";
+          stageMode = "listening";
         }).catch((err) => {
-          alert("Microphone note: " + err.message + "\nYou can seamlessly test all scenarios using the quick buttons or text box!");
+          alert("Microphone info: " + err.message + "\nYou can test all clinical scenarios seamlessly using the scenario pills below!");
         });
       } else {
         isMicActive = false;
-        btn.className = "btn btn-primary";
-        btn.querySelector("span").textContent = "Enable Microphone";
-        orbState = "idle";
+        btn.classList.remove("recording");
+        text.textContent = "Enable Voice";
+        stageMode = "idle";
       }
     }
 
-    window.addEventListener("load", connectWebSocket);
+    window.addEventListener("load", initWebSocket);
   </script>
 </body>
 </html>
