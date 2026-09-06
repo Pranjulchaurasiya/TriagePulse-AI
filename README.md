@@ -113,21 +113,24 @@ CARTESIA_API_KEY=your_cartesia_api_key_here
 
 ### 3. Run Automated Tests & Evals
 ```powershell
-# Run the 100+ case emergency safety evaluation (0% false negatives)
-.\venv\Scripts\pytest eval/test_red_flags.py -v
+# Option A: One-click evaluation suite runner
+.\run_evals.bat
 
-# Run the latency benchmark suite
-.\venv\Scripts\python eval/test_latency.py
-
-# Run all unit and integration tests
-.\venv\Scripts\pytest -v
+# Option B: Run individual suites manually
+.\venv\Scripts\pytest eval/test_red_flags.py -v   # 100+ case emergency safety evaluation (0% FN)
+.\venv\Scripts\python eval/test_latency.py         # Latency benchmark waterfall (50 turns)
+.\venv\Scripts\pytest -v                          # All 131 unit and integration tests
 ```
 
 ### 4. Launch the Interactive Web Console
 ```powershell
-.\venv\Scripts\python -m perception.ws_gateway
+# Option A: One-click launcher
+.\run_server.bat
+
+# Option B: Manual launch via Uvicorn
+.\venv\Scripts\python -m uvicorn perception.ws_gateway:app --host 127.0.0.1 --port 8000 --reload
 ```
-Open **`http://localhost:8000`** in your browser to access the live receptionist console, interactive waveform visualizer, quick scenario buttons, and real-time latency waterfall dashboard.
+Open **`http://127.0.0.1:8000`** in your browser to access the live receptionist console with dark/light mode toggle, precision acoustic meter, real-time voice input/output, and live simulated EHR writes.
 
 ---
 
