@@ -4,6 +4,17 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TriagePulse AI &mdash; Autonomous Clinical Voice Reception & Triage Prototype</title>
+  <script>
+    (function() {
+      try {
+        const saved = localStorage.getItem('triagepulse_theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (saved === 'dark' || (!saved && prefersDark)) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -50,6 +61,40 @@
       --font-serif: 'Newsreader', Georgia, serif;
       --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
+      --nav-bg: rgba(248, 247, 244, 0.95);
+    }
+
+    [data-theme="dark"] {
+      /* Deep Slate & Charcoal Canvas */
+      --bg-canvas: #0F1418;
+      --bg-surface: #182026;
+      --bg-subtle: #202A32;
+      --bg-sunken: #131A20;
+      --nav-bg: rgba(15, 20, 24, 0.95);
+
+      /* Luminescent Clinical Sage & Terracotta */
+      --sage-deep: #4E876E;
+      --sage-dark: #386A55;
+      --sage-mid: #5BA382;
+      --sage-light: #16261F;
+      --sage-border: rgba(78, 135, 110, 0.35);
+
+      --clay-warm: #C87D58;
+      --clay-deep: #E09572;
+      --clay-light: #2A1D17;
+      --clay-border: rgba(200, 125, 88, 0.35);
+
+      /* Clinical Urgency */
+      --triage-p1: #E53E3E;
+      --triage-p2: #DD6B20;
+      --triage-p3: #4E876E;
+
+      /* High-Legibility Dark Typography */
+      --text-headline: #F1F5F9;
+      --text-body: #CBD5E1;
+      --text-muted: #94A3B8;
+      --text-subtle: #64748B;
+      --border-line: #26333D;
     }
 
     html, body {
@@ -103,7 +148,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 32px;
-      background: rgba(248, 247, 244, 0.95);
+      background: var(--nav-bg);
       border-bottom: 1px solid var(--border-line);
       backdrop-filter: blur(10px);
     }
@@ -197,6 +242,92 @@
       background: var(--triage-p1);
       border-color: #9B2C2C;
     }
+    /* Theme Toggle Button */
+    .btn-theme-toggle {
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      border: 1px solid var(--border-line);
+      background: var(--bg-surface);
+      color: var(--text-body);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      padding: 0;
+      flex-shrink: 0;
+    }
+    .btn-theme-toggle:hover {
+      background: var(--bg-subtle);
+      color: var(--text-headline);
+      border-color: var(--sage-deep);
+    }
+    .btn-theme-toggle .theme-icon-sun {
+      display: none;
+    }
+    .btn-theme-toggle .theme-icon-moon {
+      display: block;
+    }
+    [data-theme="dark"] .btn-theme-toggle .theme-icon-sun {
+      display: block;
+    }
+    [data-theme="dark"] .btn-theme-toggle .theme-icon-moon {
+      display: none;
+    }
+
+    [data-theme="dark"] #disclaimer-header {
+      background: #0D1217;
+      border-bottom: 1px solid #1A222A;
+    }
+
+    [data-theme="dark"] #redflag-alert-banner {
+      background: rgba(197, 48, 48, 0.12);
+      border-color: rgba(229, 62, 62, 0.35);
+      border-left-color: var(--triage-p1);
+    }
+    [data-theme="dark"] .redflag-text {
+      color: #FEB2B2;
+    }
+
+    [data-theme="dark"] .btn-mic-toggle.recording {
+      background: rgba(229, 62, 62, 0.15);
+      border-color: rgba(229, 62, 62, 0.4);
+      color: #FEB2B2;
+    }
+
+    [data-theme="dark"] .pipeline-chip.alert {
+      background: rgba(229, 62, 62, 0.15);
+      border-color: rgba(229, 62, 62, 0.4);
+      color: #FEB2B2;
+    }
+
+    .safety-intercept-card {
+      background: #FFF5F5;
+      border: 1px solid #FEB2B2;
+      border-radius: 4px;
+      padding: 10px 12px;
+    }
+    .safety-intercept-card .intercept-title {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--triage-p1);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .safety-intercept-card .intercept-detail {
+      font-size: 11px;
+      color: #9B2C2C;
+    }
+    [data-theme="dark"] .safety-intercept-card {
+      background: rgba(229, 62, 62, 0.12);
+      border-color: rgba(229, 62, 62, 0.35);
+    }
+    [data-theme="dark"] .safety-intercept-card .intercept-detail {
+      color: #FEB2B2;
+    }
+
 
     /* ═══════════════════ 3. HERO & CLINICAL EDITORIAL ═══════════════════ */
     #hero-container {
@@ -487,7 +618,7 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
-      background: #FFFFFF;
+      background: var(--bg-surface);
     }
 
     .msg-group {
@@ -577,7 +708,7 @@
     }
     .chat-input-row input:focus {
       border-color: var(--sage-deep);
-      background: #FFFFFF;
+      background: var(--bg-surface);
     }
     .chat-input-row button {
       background: var(--sage-deep);
@@ -752,6 +883,22 @@
         <span class="capsule-dot" style="background:#CBD5E0;"></span>
         <span>EMIS-Style API (Simulated Webhook)</span>
       </div>
+      <button class="btn-theme-toggle" id="btn-theme" onclick="toggleTheme()" title="Switch dark / light theme" aria-label="Switch dark / light theme">
+        <svg class="theme-icon-sun" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="theme-icon-moon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
       <button class="btn-call-connect" id="btn-call" onclick="toggleCall()">
         <span id="call-text">Connect Patient Line</span>
       </button>
@@ -909,7 +1056,7 @@
 
           <!-- View 2: Safety Intercept Log -->
           <div class="rec-pane" id="pane-safety">
-            <div style="background:#FFFFFF;border:1px solid var(--border-line);border-radius:6px;padding:12px;font-size:11px;color:var(--text-body);line-height:1.5;">
+            <div style="background:var(--bg-surface);border:1px solid var(--border-line);border-radius:6px;padding:12px;font-size:11px;color:var(--text-body);line-height:1.5;">
               <strong>DCB0129 Clinical Safety Design:</strong> Deterministic safety gate evaluates incoming transcript tokens in &lt;5ms. Any match triggers immediate clinical diversion without LLM generation risk.
             </div>
             <div id="safety-log-list" style="display:flex;flex-direction:column;gap:8px;"></div>
@@ -917,7 +1064,7 @@
 
           <!-- View 3: Pipeline Latency -->
           <div class="rec-pane" id="pane-telemetry">
-            <div style="background:#FFFFFF;border:1px solid var(--border-line);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:8px;font-size:11px;">
+            <div style="background:var(--bg-surface);border:1px solid var(--border-line);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:8px;font-size:11px;">
               <div class="ehr-row"><span class="lbl">Voice Activity Detection</span><span class="val">Silero VAD (1.8ms)</span></div>
               <div class="ehr-row"><span class="lbl">Speech Recognition</span><span class="val">Deepgram Nova-2 (64ms)</span></div>
               <div class="ehr-row"><span class="lbl">Safety Intercept Gate</span><span class="val">Deterministic Regex (3.1ms)</span></div>
@@ -979,16 +1126,18 @@
     function drawPrecisionAcoustics(t) {
       ctx.clearRect(0, 0, CW, CH);
 
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
       // 1. Concentric Precision Reference Rings
       ctx.beginPath();
       ctx.arc(CX, CY, 96, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(226, 221, 213, 0.8)";
+      ctx.strokeStyle = isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(226, 221, 213, 0.8)";
       ctx.lineWidth = 1;
       ctx.stroke();
 
       ctx.beginPath();
       ctx.arc(CX, CY, 74, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(226, 221, 213, 0.5)";
+      ctx.strokeStyle = isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(226, 221, 213, 0.5)";
       ctx.setLineDash([2, 4]);
       ctx.stroke();
       ctx.setLineDash([]);
@@ -1031,17 +1180,17 @@
 
       // Precision Palette Fill
       if (systemMode === "speaking") {
-        ctx.fillStyle = "rgba(45, 90, 70, 0.16)";
-        ctx.strokeStyle = "#2D5A46";
+        ctx.fillStyle = isDark ? "rgba(78, 135, 110, 0.25)" : "rgba(45, 90, 70, 0.16)";
+        ctx.strokeStyle = isDark ? "#4E876E" : "#2D5A46";
       } else if (systemMode === "listening") {
-        ctx.fillStyle = "rgba(168, 104, 72, 0.16)";
-        ctx.strokeStyle = "#A86848";
+        ctx.fillStyle = isDark ? "rgba(200, 125, 88, 0.25)" : "rgba(168, 104, 72, 0.16)";
+        ctx.strokeStyle = isDark ? "#C87D58" : "#A86848";
       } else if (systemMode === "reasoning") {
-        ctx.fillStyle = "rgba(192, 86, 33, 0.16)";
-        ctx.strokeStyle = "#C05621";
+        ctx.fillStyle = isDark ? "rgba(221, 107, 32, 0.25)" : "rgba(192, 86, 33, 0.16)";
+        ctx.strokeStyle = isDark ? "#DD6B20" : "#C05621";
       } else {
-        ctx.fillStyle = "rgba(45, 90, 70, 0.08)";
-        ctx.strokeStyle = "rgba(45, 90, 70, 0.6)";
+        ctx.fillStyle = isDark ? "rgba(78, 135, 110, 0.12)" : "rgba(45, 90, 70, 0.08)";
+        ctx.strokeStyle = isDark ? "rgba(78, 135, 110, 0.7)" : "rgba(45, 90, 70, 0.6)";
       }
 
       ctx.fill();
@@ -1073,6 +1222,18 @@
     renderLoop();
 
     // System Mode Controller
+    
+    function toggleTheme() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      if (isDark) {
+        document.documentElement.removeAttribute('data-theme');
+        try { localStorage.setItem('triagepulse_theme', 'light'); } catch (e) {}
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        try { localStorage.setItem('triagepulse_theme', 'dark'); } catch (e) {}
+      }
+    }
+
     function setSystemMode(mode) {
       systemMode = mode;
       const chip = document.getElementById("meter-chip");
@@ -1175,15 +1336,12 @@
 
       const log = document.getElementById("safety-log-list");
       const item = document.createElement("div");
-      item.style.background = "#FFF5F5";
-      item.style.border = "1px solid #FEB2B2";
-      item.style.borderRadius = "4px";
-      item.style.padding = "10px 12px";
+      item.className = "safety-intercept-card";
       item.innerHTML = `
-        <div style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--triage-p1);text-transform:uppercase;margin-bottom:2px;">
+        <div class="intercept-title">
           Deterministic Intercept &middot; ${new Date().toLocaleTimeString()}
         </div>
-        <div style="font-size:11px;color:#9B2C2C;">${escapeHtml(detail)}</div>
+        <div class="intercept-detail">${escapeHtml(detail)}</div>
       `;
       log.prepend(item);
     }
