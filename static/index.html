@@ -209,23 +209,6 @@
       text-align: center;
     }
 
-    .hero-eyebrow-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: 4px;
-      background: var(--clay-light);
-      border: 1px solid var(--clay-border);
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--clay-deep);
-      margin-bottom: 16px;
-    }
-
     .hero-heading {
       font-family: var(--font-serif);
       font-size: 40px;
@@ -387,15 +370,6 @@
       padding: 24px;
     }
 
-    .section-eyebrow-center {
-      text-align: center;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--clay-warm);
-      margin-bottom: 6px;
-    }
     .section-headline-serif {
       text-align: center;
       font-family: var(--font-serif);
@@ -424,10 +398,9 @@
       border-top: 3px solid var(--sage-deep);
     }
     .pillar-tag {
-      font-family: var(--font-mono);
-      font-size: 10px;
+      font-family: var(--font-sans);
+      font-size: 11px;
       font-weight: 600;
-      text-transform: uppercase;
       color: var(--clay-deep);
       margin-bottom: 8px;
     }
@@ -450,15 +423,14 @@
       background: var(--bg-subtle);
       border: 1px solid var(--border-line);
       border-radius: 4px;
-      padding: 7px 10px;
-      font-size: 11px;
+      padding: 8px 12px;
+      font-size: 12px;
       font-weight: 600;
       color: var(--text-headline);
       cursor: pointer;
-      text-align: left;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      text-align: center;
+      display: block;
+      width: 100%;
       transition: background 0.15s ease;
     }
     .btn-test-action:hover {
@@ -603,11 +575,9 @@
     .rec-tab {
       flex: 1;
       padding: 12px 8px;
-      font-size: 11px;
-      font-family: var(--font-mono);
+      font-size: 12px;
+      font-family: var(--font-sans);
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
       text-align: center;
       color: var(--text-muted);
       cursor: pointer;
@@ -761,14 +731,10 @@
 
   <!-- 3. HERO SECTION (EDITORIAL NEWSREADER HEADLINE) -->
   <main id="hero-container">
-    <div class="hero-eyebrow-tag">
-      <span>Evaluation Benchmark</span>
-      <span>&middot;</span>
-      <span>Autonomous 8 AM Rush Management</span>
-    </div>
+
 
     <h1 class="hero-heading">
-      Clinical voice reception &amp; <em>deterministic safety triage</em> for primary care.
+      Clinical voice reception and deterministic safety triage for primary care.
     </h1>
 
     <p class="hero-description">
@@ -821,47 +787,43 @@
 
   <!-- 4. FOUR CLINICAL ARCHITECTURE PILLARS -->
   <section id="architecture-section">
-    <div class="section-eyebrow-center">System Architecture</div>
+    
     <div class="section-headline-serif">Four engineering layers for clinical reliability</div>
 
     <div class="pillars-container">
       <div class="pillar-box highlight">
-        <span class="pillar-tag">01 &middot; Safety Gate</span>
+        <span class="pillar-tag">Safety triage gate</span>
         <h3 class="pillar-title">Tier 1 Red-Flag Intercept</h3>
         <p class="pillar-body">Deterministic pre-LLM regex evaluation designed to immediately divert acute emergencies (cardiac, stroke, sepsis) to emergency services.</p>
         <button class="btn-test-action" onclick="runPreset('emergency')">
-          <span>Test Emergency Scenario</span>
-          <span>&rarr;</span>
+          <span>Simulate acute emergency</span>
         </button>
       </div>
 
       <div class="pillar-box">
-        <span class="pillar-tag">02 &middot; Policy RAG</span>
+        <span class="pillar-tag">Clinical policy RAG</span>
         <h3 class="pillar-title">Grounded NICE Guidelines</h3>
         <p class="pillar-body">Hybrid retrieval over 47 local GP surgery policies and NICE clinical guidance to prevent ungrounded diagnostic speculation.</p>
         <button class="btn-test-action" onclick="runPreset('booking')">
-          <span>Test GP Booking Scenario</span>
-          <span>&rarr;</span>
+          <span>Simulate appointment booking</span>
         </button>
       </div>
 
       <div class="pillar-box">
-        <span class="pillar-tag">03 &middot; Structured Booking</span>
+        <span class="pillar-tag">Appointment booking</span>
         <h3 class="pillar-title">EMIS-Style Appointment Write</h3>
         <p class="pillar-body">Autonomous slot extraction verifying practitioner schedules and generating valid HL7/FHIR appointment write payloads.</p>
         <button class="btn-test-action" onclick="runPreset('prescription')">
-          <span>Test Prescription Scenario</span>
-          <span>&rarr;</span>
+          <span>Simulate repeat prescription</span>
         </button>
       </div>
 
       <div class="pillar-box">
-        <span class="pillar-tag">04 &middot; Streaming Pipeline</span>
+        <span class="pillar-tag">Voice pipeline</span>
         <h3 class="pillar-title">Sub-800ms Turn Pipeline</h3>
-        <p class="pillar-body">Silero VAD + Deepgram Nova-2 streaming STT + GPT-4o Mini with Grounding Gate + ElevenLabs streaming synthesis.</p>
+        <p class="pillar-body">Silero VAD + Deepgram Nova-2 STT + Groq LLaMA 3.3 70B + ElevenLabs / Cartesia streaming synthesis.</p>
         <button class="btn-test-action" onclick="switchRecordTab('telemetry', document.querySelectorAll('.rec-tab')[2])">
-          <span>View Pipeline Spec</span>
-          <span>&rarr;</span>
+          <span>Inspect pipeline telemetry</span>
         </button>
       </div>
     </div>
@@ -874,7 +836,7 @@
       <div class="chat-section">
         <div class="chat-header">
           <span class="chat-header-title">Live Clinical Dialogue</span>
-          <span class="chat-header-meta">Patient: John Davies (NHS: 485 921 0023)</span>
+          <span class="chat-header-meta">Patient: John Davies (Demo Patient · Ref: DEMO-001)</span>
         </div>
 
         <div class="chat-body-scroll" id="chat-container">
@@ -897,9 +859,9 @@
       <!-- Right: Simulated EHR Ledger & Safety Reflex -->
       <div class="records-section">
         <div class="records-tabs-bar">
-          <div class="rec-tab active" onclick="switchRecordTab('emis', this)">Simulated EHR Write</div>
-          <div class="rec-tab" onclick="switchRecordTab('safety', this)">Safety Intercept Log</div>
-          <div class="rec-tab" onclick="switchRecordTab('telemetry', this)">Pipeline Latency</div>
+          <div class="rec-tab active" onclick="switchRecordTab('emis', this)">Simulated EHR write</div>
+          <div class="rec-tab" onclick="switchRecordTab('safety', this)">Safety intercept log</div>
+          <div class="rec-tab" onclick="switchRecordTab('telemetry', this)">Turn latency</div>
         </div>
 
         <div class="records-content-scroll">
@@ -926,7 +888,7 @@
               <div class="ehr-row"><span class="lbl">Speech Recognition</span><span class="val">Deepgram Nova-2 (64ms)</span></div>
               <div class="ehr-row"><span class="lbl">Safety Intercept Gate</span><span class="val">Deterministic Regex (3.1ms)</span></div>
               <div class="ehr-row"><span class="lbl">Clinical Policy Retrieval</span><span class="val">BM25 Hybrid RAG (42ms)</span></div>
-              <div class="ehr-row"><span class="lbl">Reasoning Engine</span><span class="val">GPT-4o Mini (108ms)</span></div>
+              <div class="ehr-row"><span class="lbl">Reasoning Engine</span><span class="val">Groq LLaMA 3.3 70B (108ms)</span></div>
               <div class="ehr-row"><span class="lbl">Speech Synthesis</span><span class="val">ElevenLabs Flash (85ms)</span></div>
               <div class="ehr-row" style="border-top:1px solid var(--border-line);padding-top:6px;margin-top:4px;">
                 <span class="lbl">Measured p95 Turn Latency</span>
@@ -950,7 +912,7 @@
       <span class="pipeline-arrow">&rarr;</span>
       <div class="pipeline-chip" id="pc-rag"><span class="dot"></span><span>NICE RAG</span><span class="pipeline-ms">42ms</span></div>
       <span class="pipeline-arrow">&rarr;</span>
-      <div class="pipeline-chip" id="pc-llm"><span class="dot"></span><span>GPT-4o Mini</span><span class="pipeline-ms">108ms</span></div>
+      <div class="pipeline-chip" id="pc-llm"><span class="dot"></span><span>Groq LLaMA 3.3</span><span class="pipeline-ms">108ms</span></div>
       <span class="pipeline-arrow">&rarr;</span>
       <div class="pipeline-chip" id="pc-tts"><span class="dot"></span><span>ElevenLabs TTS</span><span class="pipeline-ms">85ms</span></div>
     </div>
@@ -1164,7 +1126,7 @@
           <span>EMIS-Style Write Dispatched</span>
           <span>#FHIR-${Math.floor(100000 + Math.random()*900000)}</span>
         </div>
-        <div class="ehr-row"><span class="lbl">Patient Name</span><span class="val">John Davies (NHS: 485 921 0023)</span></div>
+        <div class="ehr-row"><span class="lbl">Patient Name</span><span class="val">John Davies (Demo Patient · Ref: DEMO-001)</span></div>
         <div class="ehr-row"><span class="lbl">Clinician Schedule</span><span class="val">${escapeHtml(clinician)}</span></div>
         <div class="ehr-row"><span class="lbl">Reserved Slot</span><span class="val">${escapeHtml(slot)}</span></div>
         <div class="ehr-row"><span class="lbl">Clinical Indication</span><span class="val">${escapeHtml(indication)}</span></div>
