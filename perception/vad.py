@@ -25,7 +25,6 @@ class VoiceActivityDetector:
         self.sample_rate = sample_rate
         self.frame_duration_ms = frame_duration_ms
         self.frame_size = int(sample_rate * (frame_duration_ms / 1000.0))  # e.g., 480 samples = 960 bytes
-        self.bytes_per_frame = self.frame_size * 2  # 16-bit PCM = 2 bytes per sample
         self.energy_threshold = energy_threshold
         self.silence_timeout_ms = silence_timeout_ms
         self.speech_lead_ms = speech_lead_ms
@@ -102,9 +101,3 @@ class VoiceActivityDetector:
             "barge_in_triggered": barge_in_triggered,
             "rms": rms,
         }
-
-    def reset(self) -> None:
-        """Reset internal speech state."""
-        self.is_speaking = False
-        self.silence_frames_count = 0
-        self.speech_frames_count = 0

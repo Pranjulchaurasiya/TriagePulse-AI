@@ -1430,6 +1430,13 @@
       setSystemMode("reasoning");
       setPipelineStep(2);
 
+      // If live WebSocket is connected, dispatch to backend
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: "text_input", text }));
+        return;
+      }
+
+      // Offline simulation fallback only when disconnected
       const t = text.toLowerCase();
       if (t.includes("chest") || t.includes("breath") || t.includes("heart") || t.includes("pain")) {
         setTimeout(() => {
@@ -1451,10 +1458,6 @@
           setPipelineStep(5);
           appendMessage("agent", "Thank you for contacting St. Jude Medical Practice. I have logged your enquiry and routed it to our clinical administrative team.");
         }, 600);
-      }
-
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ type: "text_input", text }));
       }
     }
 
@@ -1557,7 +1560,13 @@
       setSystemMode("reasoning");
       setPipelineStep(2);
 
-      // Check red flags locally if offline
+      // If live WebSocket is connected, dispatch to backend
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: "text_input", text: clean }));
+        return;
+      }
+
+      // Offline simulation fallback only when disconnected
       const t = clean.toLowerCase();
       if (t.includes("chest") || t.includes("breath") || t.includes("heart") || t.includes("pain") || t.includes("stroke") || t.includes("collapse")) {
         setTimeout(() => {
@@ -1585,10 +1594,6 @@
           appendMessage("agent", genReply);
           speakVoiceOutput(genReply);
         }, 600);
-      }
-
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ type: "text_input", text: clean }));
       }
     }
 
@@ -1627,10 +1632,28 @@
             const data = JSON.parse(e.data);
             if (data.type === "safety_trigger" || data.type === "safety_alert") {
               triggerSafetyIntercept(data.instruction || data.message || ("Immediate 999 alert: " + (data.category || "Acute Emergency")));
+              setSystemMode("speaking");
+              setPipelineStep(5);
+              if (data.instruction) speakVoiceOutput(data.instruction);
             }
-            else if (data.type === "assistant_response") { appendMessage("agent", data.text); setSystemMode("speaking"); speakVoiceOutput(data.text); }
-            else if (data.type === "booking_dispatch") recordSimulatedEHR(data.slot || "Next Available", "Duty GP", data.reason || "General Consultation");
-            else if (data.type === "telemetry" && data.p95_ms) document.getElementById("metric-p95").textContent = data.p95_ms + "ms";
+            else if (data.type === "response_completed" || data.type === "assistant_response") {
+              appendMessage("agent", data.text);
+              setSystemMode("speaking");
+              speakVoiceOutput(data.text);
+              if (data.metrics && data.metrics.voice_in_to_voice_out_ms) {
+                document.getElementById("metric-p95").textContent = data.metrics.voice_in_to_voice_out_ms + "ms";
+              }
+            }
+            else if (data.type === "booking_confirmed" || data.type === "booking_dispatch") {
+              const b = data.booking || {};
+              recordSimulatedEHR(b.slot || "Next Available Routine Slot", "Dr. A. Patel (GP Partner)", b.symptoms_summary || "General Consultation");
+            }
+            else if (data.type === "telemetry") {
+              const m = data.metrics || {};
+              if (m.voice_in_to_voice_out_ms) {
+                document.getElementById("metric-p95").textContent = m.voice_in_to_voice_out_ms + "ms";
+              }
+            }
           } catch(err) {}
         };
       } catch(e) {}

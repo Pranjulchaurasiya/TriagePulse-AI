@@ -98,11 +98,6 @@ async def get_telemetry():
     return {"history": telemetry_history[-50:]}
 
 
-@app.get("/api/bookings")
-async def get_bookings():
-    return {"bookings": booking_extractor.confirmed_bookings}
-
-
 class ClientSession:
     """Manages state for an active caller connection."""
 
@@ -174,10 +169,9 @@ async def websocket_audio_endpoint(websocket: WebSocket):
                 # Stream audio to STT
                 await session.stt.send_audio_chunk(raw_frame)
 
-                # If speech completed, finalize turn
+                # If speech completed, mark turn boundary
                 if vad_result["speech_ended"]:
-                    logger.info(f"User speech ended in session {session_id}. Processing turn.")
-                    asyncio.create_task(process_turn(session, user_audio_ended=True))
+                    logger.debug(f"User speech ended in session {session_id}.")
 
             # Handle JSON control packets (sanitized and validated)
             elif "text" in message and message["text"]:
@@ -218,15 +212,6 @@ async def process_turn_from_text(session: ClientSession, text: str) -> None:
     telemetry.mark_stt_final()
 
     await execute_pipeline_reasoning(session, text, telemetry)
-
-
-async def process_turn(session: ClientSession, user_audio_ended: bool = True) -> None:
-    """Execute pipeline turn driven by streaming audio VAD offset."""
-    telemetry = TurnTelemetry()
-    telemetry.mark_user_speech_end()
-    # In live mode with Deepgram, final transcript comes from STT event loop.
-    # In mock mode, we finalize with last captured audio representation
-    telemetry.mark_stt_final()
 
 
 async def execute_pipeline_reasoning(
