@@ -11,6 +11,9 @@ import time
 import uuid
 from pathlib import Path
 from typing import Any, Dict, Optional
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
@@ -188,7 +191,7 @@ async def websocket_audio_endpoint(websocket: WebSocket):
                     continue
 
                 msg_type = payload.get("type")
-                if msg_type == "text_query":
+                if msg_type in ("text_query", "text_input"):
                     # Truncate input string safely to prevent memory bloat
                     query_text = payload.get("text", "").strip()[:2000]
                     if query_text:
