@@ -1,0 +1,23 @@
+name: Keep Render Service Warm
+
+on:
+  schedule:
+    # Runs every 14 minutes to prevent Render free-tier idle spin-down (sleeps at 15m)
+    - cron: '*/14 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping-health:
+    name: Ping Health Endpoint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping TriagePulse-AI Gateway
+        run: |
+          echo "Pinging https://triagepulse-ai.onrender.com/api/health..."
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://triagepulse-ai.onrender.com/api/health)
+          echo "Received HTTP Status: $STATUS"
+          if [ "$STATUS" -eq 200 ]; then
+            echo "Render service is awake and healthy."
+          else
+            echo "Warning: Received unexpected status $STATUS"
+          fi

@@ -7,10 +7,13 @@
 [![FHIR Interoperability](https://img.shields.io/badge/Interoperability-HL7%20FHIR%20R4%20UK%20Core-orange.svg?style=flat)](reasoning/booking_extractor.py)
 [![VoIP Telephony](https://img.shields.io/badge/VoIP-ITU--T%20G.711%20A--law%20SIP-blueviolet.svg?style=flat)](perception/sip_bridge.py)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Render-brightgreen?style=flat&logo=render&logoColor=white)](https://triagepulse-ai.onrender.com/)
 
 **Autonomous clinical voice reception, deterministic safety triage, and HL7 FHIR scheduling for NHS GP surgeries.**
 
 Architected specifically to solve the high-concurrency 8:00 AM telephone rush in UK primary care, operating under a strict **sub-800ms conversational turn SLA** with zero-LLM deterministic emergency interception and token-level clinical hallucination gating.
+
+🌐 **Live Interactive Console**: [https://triagepulse-ai.onrender.com](https://triagepulse-ai.onrender.com)
 
 ---
 
