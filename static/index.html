@@ -546,6 +546,35 @@
       background: var(--bg-canvas);
       outline: none;
     }
+        .btn-mic-toggle {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-line);
+      border-radius: 4px;
+      padding: 0 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-headline);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .btn-mic-toggle:hover {
+      background: var(--bg-sunken);
+      border-color: var(--sage-deep);
+    }
+    .btn-mic-toggle.recording {
+      background: #FFF5F5;
+      border-color: #FEB2B2;
+      color: var(--triage-p1);
+    }
+    .btn-mic-toggle .mic-pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
     .chat-input-row input:focus {
       border-color: var(--sage-deep);
       background: #FFFFFF;
@@ -850,7 +879,12 @@
 
         <div class="chat-input-row">
           <form onsubmit="handleUserInput(event)">
-            <input type="text" id="consult-input" placeholder="Type a patient symptom or consultation enquiry..." autocomplete="off"/>
+            <input type="text" id="consult-input" placeholder="Type or click Speak to talk into your microphone..." autocomplete="off"/>
+            <button type="button" class="btn-mic-toggle" id="btn-mic" onclick="toggleVoiceInput()" title="Click to speak into microphone">
+              <span class="mic-pulse-dot"></span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+              <span id="mic-text">Speak</span>
+            </button>
             <button type="submit">Send</button>
           </form>
         </div>
@@ -1083,7 +1117,7 @@
         setSystemMode("idle");
         setPipelineStep(-1);
         document.getElementById("redflag-alert-banner").style.display = "none";
-        if (ws) { ws.close(); ws = null; }
+        if (ws) { ws.close(); ws = null; } if (window.speechSynthesis) window.speechSynthesis.cancel(); if (isListening && speechRecognition) { speechRecognition.stop(); isListening = false; updateMicButtonState(false); }
       } else {
         isConnected = true;
         triageSessionCount++;
@@ -1167,7 +1201,9 @@
           triggerSafetyIntercept(text);
           setSystemMode("speaking");
           setPipelineStep(5);
-          appendMessage("agent", "I am very concerned about your chest symptoms. Please remain seated and calm. Because chest pain can indicate a cardiac event, I am initiating an immediate 999 clinical transfer. Please stay on the line.");
+          const emMsg = "I am very concerned about your chest symptoms. Please remain seated and calm. Because chest pain can indicate a cardiac event, I am initiating an immediate 999 clinical transfer. Please stay on the line.";
+          appendMessage("agent", emMsg);
+          speakVoiceOutput(emMsg);
         }, 400);
       } else if (type === "booking") {
         const text = "I'd like to book an appointment with Dr. Patel for my recurring migraines.";
@@ -1179,7 +1215,9 @@
           setSystemMode("speaking");
           setPipelineStep(5);
           recordSimulatedEHR("Thursday, 10:30 AM", "Dr. A. Patel (GP Partner)", "Migraine clinical assessment");
-          appendMessage("agent", "I have accessed Dr. Patel's clinic schedule and reserved Thursday at 10:30 AM for your migraine assessment. A confirmation SMS has been dispatched to your mobile.");
+          const bkMsg = "I have accessed Dr. Patel's clinic schedule and reserved Thursday at 10:30 AM for your migraine assessment. A confirmation SMS has been dispatched to your mobile.";
+          appendMessage("agent", bkMsg);
+          speakVoiceOutput(bkMsg);
           switchRecordTab('emis', document.querySelectorAll('.rec-tab')[0]);
         }, 700);
       } else if (type === "prescription") {
@@ -1191,7 +1229,9 @@
         setTimeout(() => {
           setSystemMode("speaking");
           setPipelineStep(5);
-          appendMessage("agent", "I have verified your medication record for Atorvastatin 20mg and routed an electronic request to the practice clinical pharmacist for routine approval.");
+          const rxMsg = "I have verified your medication record for Atorvastatin 20mg and routed an electronic request to the practice clinical pharmacist for routine approval.";
+          appendMessage("agent", rxMsg);
+          speakVoiceOutput(rxMsg);
         }, 650);
       }
     }
@@ -1236,6 +1276,165 @@
       }
     }
 
+    
+    // ══════════════════════════════════════════════════════════════════════
+    // BROWSER MICROPHONE (STT) & VOICE AUDIO PLAYBACK (TTS)
+    // ══════════════════════════════════════════════════════════════════════
+    let speechRecognition = null;
+    let isListening = false;
+
+    // Initialize Web Speech API for native browser microphone input
+    const SpeechAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechAPI) {
+      speechRecognition = new SpeechAPI();
+      speechRecognition.continuous = false;
+      speechRecognition.interimResults = true;
+      speechRecognition.lang = "en-GB";
+
+      speechRecognition.onstart = () => {
+        isListening = true;
+        updateMicButtonState(true);
+        setSystemMode("listening");
+      };
+
+      speechRecognition.onresult = (event) => {
+        let interimText = "";
+        let finalText = "";
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalText += event.results[i][0].transcript;
+          } else {
+            interimText += event.results[i][0].transcript;
+          }
+        }
+        const inputField = document.getElementById("consult-input");
+        if (finalText) {
+          inputField.value = finalText;
+          // When final sentence recognized, submit query
+          submitSpokenUtterance(finalText);
+        } else if (interimText) {
+          inputField.value = interimText;
+        }
+      };
+
+      speechRecognition.onerror = (event) => {
+        console.warn("Speech recognition notice:", event.error);
+        isListening = false;
+        updateMicButtonState(false);
+        if (event.error === "not-allowed") {
+          alert("Microphone permission was not granted. Please allow microphone access in your browser settings to speak.");
+        }
+      };
+
+      speechRecognition.onend = () => {
+        isListening = false;
+        updateMicButtonState(false);
+      };
+    }
+
+    function toggleVoiceInput() {
+      if (!speechRecognition) {
+        alert("Your browser does not support native speech recognition. Please use Google Chrome or Microsoft Edge for voice input, or type your query in the input box.");
+        return;
+      }
+
+      if (isListening) {
+        speechRecognition.stop();
+        isListening = false;
+        updateMicButtonState(false);
+      } else {
+        if (!isConnected) toggleCall();
+        try {
+          speechRecognition.start();
+        } catch(err) {
+          console.warn("Could not start speech recognition:", err);
+        }
+      }
+    }
+
+    function updateMicButtonState(active) {
+      const btn = document.getElementById("btn-mic");
+      const label = document.getElementById("mic-text");
+      if (!btn || !label) return;
+      if (active) {
+        btn.classList.add("recording");
+        label.textContent = "Listening...";
+      } else {
+        btn.classList.remove("recording");
+        label.textContent = "Speak";
+      }
+    }
+
+    function submitSpokenUtterance(text) {
+      const clean = text.trim();
+      if (!clean) return;
+      document.getElementById("consult-input").value = "";
+
+      if (!isConnected) toggleCall();
+      appendMessage("caller", clean);
+      setSystemMode("reasoning");
+      setPipelineStep(2);
+
+      // Check red flags locally if offline
+      const t = clean.toLowerCase();
+      if (t.includes("chest") || t.includes("breath") || t.includes("heart") || t.includes("pain") || t.includes("stroke") || t.includes("collapse")) {
+        setTimeout(() => {
+          triggerSafetyIntercept(clean);
+          setSystemMode("speaking");
+          setPipelineStep(5);
+          const alertReply = "Please remain calm and seated. Given the acute nature of your symptoms, I am initiating our Tier 1 emergency safety protocol to connect you with ambulance services.";
+          appendMessage("agent", alertReply);
+          speakVoiceOutput(alertReply);
+        }, 400);
+      } else if (t.includes("book") || t.includes("appointment") || t.includes("doctor") || t.includes("patel") || t.includes("headache") || t.includes("migraine")) {
+        setTimeout(() => {
+          setSystemMode("speaking");
+          setPipelineStep(5);
+          recordSimulatedEHR("Thursday, 10:30 AM", "Dr. A. Patel", "Routine Clinical Review");
+          const bookReply = "I have accessed Dr. Patel's clinic schedule and reserved Thursday at 10:30 AM for your assessment. A confirmation SMS has been dispatched to your mobile.";
+          appendMessage("agent", bookReply);
+          speakVoiceOutput(bookReply);
+        }, 700);
+      } else {
+        setTimeout(() => {
+          setSystemMode("speaking");
+          setPipelineStep(5);
+          const genReply = "Thank you for contacting St. Jude Medical Practice. I have logged your enquiry and routed it to our clinical administrative team.";
+          appendMessage("agent", genReply);
+          speakVoiceOutput(genReply);
+        }, 600);
+      }
+
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: "text_input", text: clean }));
+      }
+    }
+
+    // Voice Playback Synthesis (Hearing Assistant Speak Aloud)
+    function speakVoiceOutput(text) {
+      if (!("speechSynthesis" in window)) return;
+      window.speechSynthesis.cancel(); // Abort previous turn for instant barge-in
+
+      const cleanText = text.replace(/[*_#]/g, "").trim();
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.lang = "en-GB";
+      utterance.rate = 1.0;
+
+      // Select natural British voice if available
+      const voices = window.speechSynthesis.getVoices();
+      const ukVoice = voices.find(v => v.lang.includes("en-GB") || v.name.includes("UK") || v.name.includes("British") || v.name.includes("Natural"));
+      if (ukVoice) utterance.voice = ukVoice;
+
+      utterance.onstart = () => {
+        setSystemMode("speaking");
+        setPipelineStep(5);
+      };
+      utterance.onend = () => {
+        setSystemMode("idle");
+      };
+      window.speechSynthesis.speak(utterance);
+    }
+
     function connectWebSocket() {
       const proto = location.protocol === "https:" ? "wss" : "ws";
       try {
@@ -1247,7 +1446,7 @@
             if (data.type === "safety_trigger" || data.type === "safety_alert") {
               triggerSafetyIntercept(data.instruction || data.message || ("Immediate 999 alert: " + (data.category || "Acute Emergency")));
             }
-            else if (data.type === "assistant_response") { appendMessage("agent", data.text); setSystemMode("speaking"); }
+            else if (data.type === "assistant_response") { appendMessage("agent", data.text); setSystemMode("speaking"); speakVoiceOutput(data.text); }
             else if (data.type === "booking_dispatch") recordSimulatedEHR(data.slot || "Next Available", "Duty GP", data.reason || "General Consultation");
             else if (data.type === "telemetry" && data.p95_ms) document.getElementById("metric-p95").textContent = data.p95_ms + "ms";
           } catch(err) {}
