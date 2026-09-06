@@ -38,6 +38,16 @@ class GroundingGate:
     def __init__(self, min_confidence_threshold: float = 0.65):
         self.min_confidence_threshold = min_confidence_threshold
 
+    def audit_clause(self, clause: str) -> Optional[str]:
+        """Fast synchronous check on an individual streaming clause (< 0.05ms).
+        Returns violation description if an unauthorized medical/prescribing claim is detected.
+        """
+        for pattern in self.UNAUTHORIZED_CLINICAL_PATTERNS:
+            match = pattern.search(clause)
+            if match:
+                return f"Unauthorized assertion: '{match.group(0)}'"
+        return None
+
     def audit(
         self,
         llm_response: str,

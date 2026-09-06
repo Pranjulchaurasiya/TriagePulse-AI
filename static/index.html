@@ -1314,17 +1314,41 @@
     function recordSimulatedEHR(slot, clinician, indication) {
       document.getElementById("emis-empty-notice").style.display = "none";
       const container = document.getElementById("ehr-booking-list");
+      const fhirId = Math.floor(100000 + Math.random()*900000);
       const card = document.createElement("div");
       card.className = "ehr-record-card";
       card.innerHTML = `
         <div class="ehr-record-top">
           <span>EMIS-Style Write Dispatched</span>
-          <span>#FHIR-${Math.floor(100000 + Math.random()*900000)}</span>
+          <span>#FHIR-${fhirId}</span>
         </div>
         <div class="ehr-row"><span class="lbl">Patient Name</span><span class="val">John Davies (Demo Patient · Ref: DEMO-001)</span></div>
         <div class="ehr-row"><span class="lbl">Clinician Schedule</span><span class="val">${escapeHtml(clinician)}</span></div>
         <div class="ehr-row"><span class="lbl">Reserved Slot</span><span class="val">${escapeHtml(slot)}</span></div>
         <div class="ehr-row"><span class="lbl">Clinical Indication</span><span class="val">${escapeHtml(indication)}</span></div>
+        <details style="margin-top:8px;border-top:1px dashed var(--border-line);padding-top:6px;">
+          <summary style="font-size:10px;font-family:var(--font-mono);color:var(--sage-deep);cursor:pointer;font-weight:600;">+ View HL7 FHIR R4 Appointment Schema</summary>
+          <pre style="margin-top:6px;padding:8px;background:var(--bg-subtle);border-radius:4px;font-family:var(--font-mono);font-size:9.5px;overflow-x:auto;color:var(--text-body);line-height:1.4;">{
+  "resourceType": "Appointment",
+  "id": "FHIR-${fhirId}",
+  "meta": {
+    "profile": ["https://fhir.hl7.org.uk/StructureDefinition/UKCore-Appointment"]
+  },
+  "status": "booked",
+  "serviceCategory": [{
+    "coding": [{
+      "system": "http://snomed.info/sct",
+      "code": "70281004",
+      "display": "General practice service"
+    }]
+  }],
+  "description": "${escapeHtml(indication)}",
+  "participant": [
+    { "actor": { "reference": "Patient/DEMO-001", "display": "John Davies" }, "status": "accepted" },
+    { "actor": { "reference": "Practitioner/GP-PATEL-01", "display": "${escapeHtml(clinician)}" }, "status": "accepted" }
+  ]
+}</pre>
+        </details>
       `;
       container.prepend(card);
     }
