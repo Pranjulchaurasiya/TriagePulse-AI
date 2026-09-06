@@ -3,324 +3,244 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EMMA &mdash; NHS Clinical Voice Receptionist | TriagePulse</title>
+  <title>EMMA &mdash; The Clinical Voice Evaluation & Triage Layer for NHS Primary Care</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    /* ═══════════════════════════════════════════════════════════════
-       EMMA · NHS Clinical Voice Receptionist
-       Solid Enterprise Design: No Floating, No Glows, No Text Effects
-       ═══════════════════════════════════════════════════════════════ */
+    /* ══════════════════════════════════════════════════════════════════════
+       HUME AI DESIGN SYSTEM TRANSLATION · NHS CLINICAL VOICE RECEPTIONIST
+       Warm Porcelain Palette · Editorial Typography · 4-Pillar Grid
+       ══════════════════════════════════════════════════════════════════════ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      /* Solid Enterprise Colors */
-      --nhs-blue: #005EB8;
-      --nhs-dark-blue: #003087;
-      --nhs-bright-blue: #0072CE;
-      --nhs-cyan: #00A3E0;
-      
-      /* Grounded Solid Surfaces */
-      --bg-main: #0B1120;
-      --bg-header: #070B14;
-      --bg-panel: #0F172A;
-      --bg-card: #141E33;
-      --bg-input: #111A2E;
-      
-      /* Clinical Status Indicators (Flat, Non-Glowing) */
-      --triage-emergency: #EF4444;  /* Red: 999 Immediate */
-      --triage-urgent: #F59E0B;     /* Amber: Same-Day GP */
-      --triage-routine: #10B981;    /* Green: Routine */
-      
-      /* Crisp High-Contrast Text */
-      --text-title: #FFFFFF;
-      --text-main: #F1F5F9;
-      --text-muted: #94A3B8;
-      --text-subtle: #64748B;
-      
-      /* Solid Structured Borders */
-      --border-light: #1E293B;
-      --border-panel: #334155;
-      
-      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      /* Hume AI Signature Warm Porcelain Surfaces */
+      --bg-canvas: #FAF8F5;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #F3EFEA;
+      --bg-card-hover: #F8F5F0;
+
+      /* Hume Emotional Pastel Accents (Clinical Translation) */
+      --pastel-purple: #F3EFFE;
+      --accent-purple: #7C3AED;
+      --pastel-amber: #FEF7EE;
+      --accent-amber: #D97706;
+      --pastel-mint: #ECFDF5;
+      --accent-mint: #059669;
+      --pastel-blue: #EFF6FF;
+      --accent-blue: #005EB8; /* NHS Trust Blue */
+      --accent-cyan: #00A3E0; /* NHS Cyan */
+
+      /* Text Hierarchy */
+      --text-ink: #111827;
+      --text-body: #4B5563;
+      --text-muted: #6B7280;
+      --text-subtle: #9CA3AF;
+
+      /* Hairline Borders */
+      --border-hairline: rgba(0, 0, 0, 0.08);
+      --border-focus: rgba(0, 94, 184, 0.4);
+
+      /* Typography */
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
     }
 
     html, body {
-      height: 100%;
-      background-color: var(--bg-main);
-      color: var(--text-main);
+      min-height: 100%;
+      background-color: var(--bg-canvas);
+      color: var(--text-ink);
       font-family: var(--font-sans);
-      overflow: hidden;
+      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Fixed Application Grid Structure */
-    #app-container {
-      height: 100vh;
-      display: grid;
-      grid-template-rows: 56px 1fr 54px;
-      grid-template-columns: 340px 1fr 380px;
-    }
-
-    /* ═══════════ 1. HEADER (GROUNDED & CLEAN) ═══════════ */
-    #clinical-header {
-      grid-column: 1 / -1;
+    /* ═══════════════════ 1. TOP NAVIGATION ═══════════════════ */
+    #navbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      height: 64px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 24px;
-      background: var(--bg-header);
-      border-bottom: 1px solid var(--border-light);
+      padding: 0 36px;
+      background: rgba(250, 248, 245, 0.94);
+      border-bottom: 1px solid var(--border-hairline);
     }
 
-    .brand-group {
+    .brand-cluster {
       display: flex;
       align-items: center;
       gap: 12px;
     }
-    .nhs-badge {
-      background: var(--nhs-blue);
+    .nhs-pill-mark {
+      background: var(--accent-blue);
       color: #FFFFFF;
-      font-weight: 700;
+      font-weight: 800;
       font-size: 13px;
       padding: 3px 8px;
-      border-radius: 3px;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
     }
-    .surgery-meta {
+    .surgery-title-block {
       display: flex;
       flex-direction: column;
     }
-    .surgery-name {
+    .surgery-title-block .name {
       font-size: 13px;
-      font-weight: 600;
-      color: var(--text-title);
+      font-weight: 700;
+      color: var(--text-ink);
+      letter-spacing: -0.01em;
     }
-    .surgery-region {
+    .surgery-title-block .sub {
       font-size: 11px;
       color: var(--text-muted);
     }
 
-    .system-badges {
+    .nav-links {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 28px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-body);
     }
-    .flat-badge {
+    .nav-links span {
+      cursor: pointer;
+      transition: color 0.15s ease;
+    }
+    .nav-links span:hover {
+      color: var(--accent-blue);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .status-pill {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 4px 10px;
-      border-radius: 4px;
+      padding: 5px 12px;
+      border-radius: 9999px;
       font-size: 11px;
-      font-weight: 500;
-      border: 1px solid var(--border-light);
-      background: var(--bg-panel);
+      font-weight: 600;
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-surface);
+      color: var(--text-body);
     }
-    .badge-dot {
+    .status-dot {
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: currentColor;
+      background: var(--accent-mint);
     }
 
-    .telemetry-summary {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-    .summary-item {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-    }
-    .summary-label {
-      font-size: 10px;
-      color: var(--text-subtle);
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-    .summary-val {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-main);
-    }
-    .summary-val.cyan { color: var(--nhs-cyan); }
-    .summary-val.red { color: var(--triage-emergency); }
-
-    /* ═══════════ 2. LEFT SIDEBAR: INBOUND LINE ═══════════ */
-    #intake-sidebar {
-      grid-column: 1;
-      grid-row: 2;
-      border-right: 1px solid var(--border-light);
-      background: var(--bg-panel);
-      display: flex;
-      flex-direction: column;
-      padding: 16px;
-      gap: 16px;
-      overflow-y: auto;
-    }
-
-    .solid-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-light);
-      border-radius: 6px;
-      padding: 14px;
-    }
-
-    .card-header {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .caller-box {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px;
-      border-radius: 4px;
-      background: var(--bg-main);
-      border: 1px solid var(--border-light);
-      margin-bottom: 12px;
-    }
-    .caller-initials {
-      width: 36px;
-      height: 36px;
-      border-radius: 4px;
-      background: var(--nhs-blue);
+    .btn-connect-pill {
+      background: var(--text-ink);
       color: #FFFFFF;
-      font-weight: 600;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .caller-text {
-      display: flex;
-      flex-direction: column;
-    }
-    .caller-name {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-title);
-    }
-    .caller-id {
-      font-size: 11px;
-      font-family: var(--font-mono);
-      color: var(--text-muted);
-    }
-
-    .btn-action {
-      width: 100%;
-      padding: 10px 14px;
-      border-radius: 4px;
       border: none;
+      border-radius: 9999px;
+      padding: 8px 18px;
       font-size: 12px;
       font-weight: 600;
       cursor: pointer;
       display: flex;
       align-items: center;
-      justify-content: center;
       gap: 8px;
+      transition: opacity 0.15s ease;
     }
-    .btn-action.connect {
-      background: var(--nhs-blue);
-      color: #FFFFFF;
+    .btn-connect-pill:hover {
+      opacity: 0.88;
     }
-    .btn-action.connect:hover {
-      background: var(--nhs-bright-blue);
-    }
-    .btn-action.disconnect {
-      background: var(--triage-emergency);
-      color: #FFFFFF;
+    .btn-connect-pill.active {
+      background: #DC2626;
     }
 
-    .preset-list {
+    /* ═══════════════════ 2. HERO SECTION ═══════════════════ */
+    #hero-section {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 48px 24px 32px;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .eyebrow-pill {
+      display: inline-flex;
+      align-items: center;
       gap: 8px;
-    }
-    .preset-button {
-      background: var(--bg-main);
-      border: 1px solid var(--border-light);
-      border-radius: 4px;
-      padding: 8px 10px;
-      text-align: left;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-    .preset-button:hover {
-      border-color: var(--nhs-cyan);
-    }
-    .preset-type {
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-    .type-red { color: var(--triage-emergency); }
-    .type-amber { color: var(--triage-urgent); }
-    .type-green { color: var(--triage-routine); }
-    .preset-desc {
+      padding: 6px 14px;
+      border-radius: 9999px;
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-surface);
+      font-family: var(--font-mono);
       font-size: 11px;
-      color: var(--text-muted);
-      line-height: 1.4;
-    }
-
-    /* ═══════════ 3. CENTER: CLINICAL STAGE (GROUNDED) ═══════════ */
-    #consultation-stage {
-      grid-column: 2;
-      grid-row: 2;
-      background: var(--bg-main);
-      display: flex;
-      flex-direction: column;
-      border-right: 1px solid var(--border-light);
-    }
-
-    /* Emergency Alert Bar (Standard Grounded Alert Banner) */
-    #emergency-alert-bar {
-      display: none;
-      background: #450A0A;
-      border-bottom: 2px solid var(--triage-emergency);
-      padding: 10px 20px;
-      color: #FEE2E2;
-      font-size: 12px;
-      align-items: center;
-      gap: 12px;
-    }
-    .alert-tag {
-      background: var(--triage-emergency);
-      color: #FFFFFF;
-      font-weight: 700;
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 3px;
+      font-weight: 600;
       text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-body);
+      margin-bottom: 20px;
+    }
+    .eyebrow-tag {
+      background: #E0E7FF;
+      color: #3730A3;
+      padding: 2px 7px;
+      border-radius: 9999px;
+      font-size: 10px;
     }
 
-    /* Center Visualizer Area (Clean Flat Frame) */
-    .visualizer-container {
-      flex: 1;
+    .hero-title {
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      max-width: 860px;
+      margin-bottom: 16px;
+      color: var(--text-ink);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #005EB8 0%, #0284C7 50%, #7C3AED 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text-body);
+      max-width: 680px;
+      margin-bottom: 32px;
+    }
+
+    /* Wide Hume-Style Showcase Visualizer Card */
+    .showcase-card {
+      width: 100%;
+      max-width: 980px;
+      height: 380px;
+      background: linear-gradient(135deg, #FDFBFA 0%, #F5EFEB 100%);
+      border: 1px solid var(--border-hairline);
+      border-radius: 24px;
+      position: relative;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      position: relative;
+      overflow: hidden;
+      margin-bottom: 36px;
     }
+
     #voice-orb-canvas {
-      width: 380px;
-      height: 380px;
+      width: 360px;
+      height: 360px;
+      pointer-events: none;
     }
-    .visualizer-overlay {
+
+    .showcase-overlay {
       position: absolute;
       top: 50%;
       left: 50%;
@@ -328,230 +248,445 @@
       text-align: center;
       pointer-events: none;
     }
-    .status-text-badge {
-      display: inline-block;
-      background: var(--bg-panel);
-      border: 1px solid var(--border-light);
-      border-radius: 3px;
-      padding: 3px 10px;
+    .voice-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid var(--border-hairline);
+      border-radius: 9999px;
+      padding: 4px 12px;
+      font-family: var(--font-mono);
       font-size: 10px;
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
-      color: var(--nhs-cyan);
+      letter-spacing: 0.08em;
+      color: var(--accent-blue);
       margin-bottom: 6px;
     }
-    .visualizer-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text-title);
+    .showcase-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-ink);
     }
-    .visualizer-subtitle {
+    .showcase-subtext {
       font-size: 12px;
       color: var(--text-muted);
       margin-top: 2px;
     }
 
-    /* Docked Grounded Input Bar (Directly Anchored at Bottom) */
-    .grounded-input-dock {
-      background: var(--bg-panel);
-      border-top: 1px solid var(--border-light);
-      padding: 10px 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .grounded-input-dock form {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    /* Red Flag Urgent Banner (Within Hero) */
+    #emergency-alert-strip {
+      display: none;
       width: 100%;
+      max-width: 980px;
+      background: #FEF2F2;
+      border: 1px solid #FCA5A5;
+      border-radius: 12px;
+      padding: 14px 20px;
+      margin-bottom: 24px;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
     }
-    .grounded-input-dock input {
-      flex: 1;
-      background: var(--bg-input);
-      border: 1px solid var(--border-light);
+    .alert-pill-label {
+      background: #DC2626;
+      color: #FFFFFF;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
       border-radius: 4px;
-      padding: 8px 12px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .alert-text-body {
       font-size: 12px;
-      color: var(--text-main);
-      outline: none;
+      color: #991B1B;
+      line-height: 1.4;
+    }
+
+    /* Social Proof / Clinical Telemetry Strip */
+    .metrics-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+      padding: 16px 0;
+      width: 100%;
+      border-top: 1px solid var(--border-hairline);
+      border-bottom: 1px solid var(--border-hairline);
+    }
+    .metric-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .metric-num {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-ink);
+    }
+    .metric-caption {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ═══════════════════ 3. FOUR-PILLAR CAPABILITY GRID ═══════════════════ */
+    #capabilities-section {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    .section-eyebrow {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .section-headline {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-ink);
+      margin-bottom: 32px;
+    }
+
+    .four-pillar-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .pillar-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: 16px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.15s ease;
+    }
+    .pillar-card:hover {
+      border-color: rgba(0, 0, 0, 0.16);
+    }
+    .pillar-card.card-purple { background: var(--pastel-purple); }
+    .pillar-card.card-amber { background: var(--pastel-amber); }
+    .pillar-card.card-mint { background: var(--pastel-mint); }
+    .pillar-card.card-blue { background: var(--pastel-blue); }
+
+    .pillar-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 12px;
+    }
+    .pillar-heading {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--text-ink);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .pillar-desc {
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--text-body);
+      margin-bottom: 18px;
+      flex: 1;
+    }
+
+    .preset-trigger-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-ink);
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.15s ease;
+    }
+    .preset-trigger-btn:hover {
+      background: var(--bg-subtle);
+    }
+
+    /* ═══════════════════ 4. INTERACTIVE CLINICAL WORKSPACE ═══════════════════ */
+    #workspace-section {
+      max-width: 1180px;
+      margin: 0 auto 64px;
+      padding: 0 24px;
+    }
+
+    .workspace-frame {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: 20px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+    }
+
+    /* Left: Live Consultation Dialogue */
+    .dialogue-pane {
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border-hairline);
+      background: #FFFFFF;
+    }
+    .dialogue-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-hairline);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .dialogue-header .title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-ink);
+    }
+    .dialogue-header .patient-id {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .dialogue-scroll {
+      height: 380px;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .chat-bubble {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .chat-speaker {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .chat-speaker.emma { color: var(--accent-blue); }
+    .chat-speaker.patient { color: var(--accent-cyan); }
+
+    .chat-card-body {
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.5;
+      max-width: 90%;
+    }
+    .chat-bubble.emma .chat-card-body {
+      background: var(--pastel-blue);
+      color: #1E3A8A;
+      border: 1px solid #BFDBFE;
+      align-self: flex-start;
+    }
+    .chat-bubble.patient .chat-card-body {
+      background: var(--bg-canvas);
+      color: var(--text-ink);
+      border: 1px solid var(--border-hairline);
+      align-self: flex-end;
+    }
+
+    /* Grounded Dialogue Input Bar */
+    .dialogue-input-bar {
+      padding: 14px 18px;
+      border-top: 1px solid var(--border-hairline);
+      background: var(--bg-surface);
+    }
+    .dialogue-input-bar form {
+      display: flex;
+      gap: 8px;
+    }
+    .dialogue-input-bar input {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-hairline);
+      font-size: 12px;
       font-family: var(--font-sans);
+      color: var(--text-ink);
+      outline: none;
+      background: var(--bg-canvas);
     }
-    .grounded-input-dock input:focus {
-      border-color: var(--nhs-blue);
+    .dialogue-input-bar input:focus {
+      border-color: var(--accent-blue);
+      background: #FFFFFF;
     }
-    .btn-send-text {
-      background: var(--nhs-blue);
+    .dialogue-input-bar button {
+      background: var(--text-ink);
       color: #FFFFFF;
       border: none;
-      border-radius: 4px;
-      padding: 8px 16px;
+      border-radius: 8px;
+      padding: 0 16px;
       font-size: 12px;
       font-weight: 600;
       cursor: pointer;
     }
-    .btn-send-text:hover {
-      background: var(--nhs-bright-blue);
-    }
 
-    /* ═══════════ 4. RIGHT SIDEBAR: CLINICAL LOG ═══════════ */
-    #clinical-drawer {
-      grid-column: 3;
-      grid-row: 2;
-      background: var(--bg-panel);
+    /* Right: EMIS EHR Record & Clinical Safety Drawer */
+    .records-pane {
+      background: var(--bg-canvas);
       display: flex;
       flex-direction: column;
     }
-
-    .tab-bar {
+    .records-tabs {
       display: flex;
-      background: var(--bg-header);
-      border-bottom: 1px solid var(--border-light);
+      border-bottom: 1px solid var(--border-hairline);
+      background: var(--bg-surface);
     }
-    .tab-item {
+    .record-tab-btn {
       flex: 1;
-      padding: 11px 8px;
+      padding: 14px 12px;
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
       text-align: center;
       color: var(--text-muted);
       cursor: pointer;
       border-bottom: 2px solid transparent;
     }
-    .tab-item.active {
-      color: var(--nhs-cyan);
-      border-bottom-color: var(--nhs-cyan);
-      background: var(--bg-panel);
+    .record-tab-btn.active {
+      color: var(--accent-blue);
+      border-bottom-color: var(--accent-blue);
+      background: var(--bg-canvas);
     }
 
-    .tab-content-area {
-      flex: 1;
+    .records-scroll {
+      height: 440px;
       overflow-y: auto;
-      padding: 14px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
 
-    .tab-pane { display: none; }
-    .tab-pane.active { display: flex; flex-direction: column; gap: 10px; }
+    .tab-view-container { display: none; }
+    .tab-view-container.active { display: flex; flex-direction: column; gap: 12px; }
 
-    .chat-bubble {
+    .emis-card-record {
+      background: var(--bg-surface);
+      border: 1px solid #A7F3D0;
+      border-radius: 10px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 8px;
     }
-    .chat-sender {
+    .emis-badge-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #E5E7EB;
+      padding-bottom: 8px;
+    }
+    .emis-tag {
+      font-family: var(--font-mono);
       font-size: 10px;
       font-weight: 700;
+      color: var(--accent-mint);
       text-transform: uppercase;
-      color: var(--text-muted);
     }
-    .chat-sender.patient { color: var(--nhs-cyan); }
-    .chat-sender.emma { color: #38BDF8; }
-
-    .chat-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-light);
-      border-radius: 4px;
-      padding: 10px 12px;
+    .emis-row-item {
+      display: flex;
+      justify-content: space-between;
       font-size: 12px;
-      line-height: 1.5;
     }
-    .chat-bubble.patient .chat-card {
-      border-left: 3px solid var(--nhs-cyan);
-    }
-    .chat-bubble.emma .chat-card {
-      border-left: 3px solid var(--nhs-blue);
-    }
+    .emis-row-item .label { color: var(--text-muted); }
+    .emis-row-item .val { font-weight: 600; color: var(--text-ink); }
 
-    .emis-card {
-      background: var(--bg-card);
-      border: 1px solid var(--triage-routine);
-      border-radius: 4px;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      font-size: 11px;
-    }
-    .emis-header {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--triage-routine);
-      text-transform: uppercase;
-      border-bottom: 1px solid var(--border-light);
-      padding-bottom: 6px;
-      margin-bottom: 4px;
-    }
-    .emis-row {
-      display: flex;
-      justify-content: space-between;
-    }
-    .emis-label { color: var(--text-muted); }
-    .emis-val { font-weight: 600; color: var(--text-main); }
-
-    /* ═══════════ 5. FOOTER: PIPELINE STATUS (GROUNDED) ═══════════ */
-    #pipeline-footer {
-      grid-column: 1 / -1;
-      grid-row: 3;
-      background: var(--bg-header);
-      border-top: 1px solid var(--border-light);
+    /* ═══════════════════ 5. FOOTER TELEMETRY ═══════════════════ */
+    #footer-telemetry {
+      border-top: 1px solid var(--border-hairline);
+      background: var(--bg-surface);
+      padding: 18px 36px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 24px;
     }
 
-    .pipeline-strip {
+    .pipe-node-list {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
-    .pipe-badge {
+    .node-pill {
       display: flex;
       align-items: center;
       gap: 6px;
       padding: 4px 10px;
-      border-radius: 3px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-light);
+      border-radius: 9999px;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-hairline);
       font-size: 11px;
       font-weight: 500;
       color: var(--text-muted);
     }
-    .pipe-dot {
-      width: 6px;
-      height: 6px;
+    .node-dot {
+      width: 5px;
+      height: 5px;
       border-radius: 50%;
       background: var(--text-subtle);
     }
-    .pipe-badge.active {
-      border-color: var(--nhs-cyan);
-      color: var(--text-main);
+    .node-pill.active {
+      border-color: #93C5FD;
+      color: var(--accent-blue);
+      background: var(--pastel-blue);
     }
-    .pipe-badge.active .pipe-dot {
-      background: var(--nhs-cyan);
+    .node-pill.active .node-dot {
+      background: var(--accent-blue);
     }
-    .pipe-badge.alert {
-      border-color: var(--triage-emergency);
-      color: var(--triage-emergency);
+    .node-pill.alert {
+      border-color: #FCA5A5;
+      color: #DC2626;
+      background: #FEF2F2;
     }
-    .pipe-badge.alert .pipe-dot {
-      background: var(--triage-emergency);
+    .node-pill.alert .node-dot {
+      background: #DC2626;
     }
-    .pipe-ms {
+    .node-ms {
       font-family: var(--font-mono);
       font-size: 10px;
+      opacity: 0.85;
     }
-    .pipe-separator {
+    .node-arrow {
       color: var(--text-subtle);
       font-size: 10px;
     }
 
-    .footer-compliance {
+    .governance-footer-text {
       font-size: 11px;
-      color: var(--text-subtle);
+      color: var(--text-muted);
       display: flex;
       gap: 12px;
     }
@@ -559,229 +694,270 @@
 </head>
 <body>
 
-  <div id="app-container">
-
-    <!-- 1. HEADER (LOCKED SOLID THEME, NO TOGGLE BUTTON) -->
-    <header id="clinical-header">
-      <div class="brand-group">
-        <div class="nhs-badge">NHS</div>
-        <div class="surgery-meta">
-          <span class="surgery-name">Elmwood Medical Centre &middot; Voice Triage</span>
-          <span class="surgery-region">NHS Primary Care Trust &middot; Integrated Care Board</span>
-        </div>
+  <!-- 1. TOP NAVBAR -->
+  <nav id="navbar">
+    <div class="brand-cluster">
+      <div class="nhs-pill-mark">NHS</div>
+      <div class="surgery-title-block">
+        <span class="name">Elmwood Medical Centre &middot; Voice Triage</span>
+        <span class="sub">Integrated Care Board (ICB) &middot; Primary Care NHS Trust</span>
       </div>
+    </div>
 
-      <div class="system-badges">
-        <div class="flat-badge" style="color:var(--nhs-cyan);">
-          <span class="badge-dot"></span>
-          <span>EMIS Web Connected</span>
-        </div>
-        <div class="flat-badge" style="color:var(--triage-routine);">
-          <span class="badge-dot"></span>
-          <span>DCB0129 Clinical Safety Verified</span>
-        </div>
+    <div class="nav-links">
+      <span>Evaluation Layer</span>
+      <span>NICE Guidelines</span>
+      <span>EMIS Web Sync</span>
+      <span>DCB0129 Safety</span>
+    </div>
+
+    <div class="nav-actions">
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        <span>EMIS Live</span>
       </div>
+      <button class="btn-connect-pill" id="btn-call-action" onclick="toggleCall()">
+        <span id="call-label">Connect Patient Line</span>
+      </button>
+    </div>
+  </nav>
 
-      <div class="telemetry-summary">
-        <div class="summary-item">
-          <span class="summary-label">p95 Latency</span>
-          <span class="summary-val cyan" id="stat-p95">124.8ms</span>
-        </div>
-        <div class="summary-item">
-          <span class="summary-label">Consultations</span>
-          <span class="summary-val" id="stat-calls">0</span>
-        </div>
-        <div class="summary-item">
-          <span class="summary-label">999 Triggers</span>
-          <span class="summary-val red" id="stat-reflexes">0</span>
-        </div>
+  <!-- 2. HERO SECTION -->
+  <section id="hero-section">
+    <div class="eyebrow-pill">
+      <span class="eyebrow-tag">DCB0129 Verified</span>
+      <span>The Evaluation Layer for Clinical Voice AI</span>
+    </div>
+
+    <h1 class="hero-title">
+      The empathic clinical triage and voice evaluation layer for <span class="gradient-text">NHS Primary Care</span>
+    </h1>
+
+    <p class="hero-subtitle">
+      Automating the 8 AM GP telephone rush with clinical empathy, deterministic zero-LLM safety reflex routing (&lt;5ms), and direct EMIS Web appointment allocation.
+    </p>
+
+    <!-- Emergency Red-Flag Alert Banner (Appears on acute symptom detection) -->
+    <div id="emergency-alert-strip">
+      <span class="alert-pill-label">Tier 1 Red Flag</span>
+      <span class="alert-text-body">Acute symptoms detected. Immediate 999 clinical transfer initiated. Patient instructed to remain calm and seated.</span>
+    </div>
+
+    <!-- Wide Hume-Style Showcase Card -->
+    <div class="showcase-card">
+      <canvas id="voice-orb-canvas" width="360" height="360"></canvas>
+      <div class="showcase-overlay">
+        <div class="voice-badge" id="voice-state-badge">Standing By</div>
+        <div class="showcase-title">EMMA Clinical Voice</div>
+        <div class="showcase-subtext" id="voice-subtext">Awaiting patient audio connection</div>
       </div>
-    </header>
+    </div>
 
-    <!-- 2. LEFT SIDEBAR: INBOUND PATIENT CALLER -->
-    <aside id="intake-sidebar">
-      <div class="solid-card">
-        <div class="card-header">
-          <span>Inbound Patient Line</span>
-          <span style="color:var(--triage-routine);font-size:10px;">LINE ACTIVE</span>
-        </div>
-        <div class="caller-box">
-          <div class="caller-initials">JD</div>
-          <div class="caller-text">
-            <span class="caller-name">John Davies</span>
-            <span class="caller-id">NHS: 485 921 0023 &middot; Age 68</span>
-          </div>
-        </div>
-        <button class="btn-action connect" id="btn-call" onclick="toggleCall()">
-          <span id="call-text">Connect Patient Line</span>
+    <!-- Social Proof / Clinical Telemetry Strip -->
+    <div class="metrics-row">
+      <div class="metric-col">
+        <span class="metric-num" id="tele-p95">124.8ms</span>
+        <span class="metric-caption">p95 Latency (&lt;800ms SLA)</span>
+      </div>
+      <div class="metric-col">
+        <span class="metric-num">&lt; 5ms</span>
+        <span class="metric-caption">Deterministic Safety Reflex</span>
+      </div>
+      <div class="metric-col">
+        <span class="metric-num">47</span>
+        <span class="metric-caption">NICE Clinical Policies</span>
+      </div>
+      <div class="metric-col">
+        <span class="metric-num" id="tele-calls">0</span>
+        <span class="metric-caption">Consultations Triaged</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. FOUR-PILLAR CAPABILITY GRID (Hume 01/02/03/04 Structure) -->
+  <section id="capabilities-section">
+    <div class="section-eyebrow">Clinical Architecture</div>
+    <div class="section-headline">Four capabilities. One clinical foundation.</div>
+
+    <div class="four-pillar-grid">
+      <!-- 01: Triage -->
+      <div class="pillar-card card-purple">
+        <span class="pillar-num">01 &middot; Triage</span>
+        <h3 class="pillar-heading">Deterministic Safety Gate</h3>
+        <p class="pillar-desc">Sub-5ms regex and rule evaluation intercepting acute cardiac, stroke, and anaphylactic emergencies before LLM inference.</p>
+        <button class="preset-trigger-btn" onclick="triggerPreset('emergency')">
+          <span>Test Emergency Tier 1</span>
+          <span>&rarr;</span>
         </button>
       </div>
 
-      <div class="solid-card">
-        <div class="card-header">
-          <span>Triage Presets</span>
+      <!-- 02: Simulate -->
+      <div class="pillar-card card-amber">
+        <span class="pillar-num">02 &middot; Simulate</span>
+        <h3 class="pillar-heading">GP Appointment Booking</h3>
+        <p class="pillar-desc">Conversational slot negotiation with verified clinical slots allocated directly in EMIS Web schedule.</p>
+        <button class="preset-trigger-btn" onclick="triggerPreset('booking')">
+          <span>Test Booking Tier 3</span>
+          <span>&rarr;</span>
+        </button>
+      </div>
+
+      <!-- 03: Transcribe -->
+      <div class="pillar-card card-mint">
+        <span class="pillar-num">03 &middot; Transcribe</span>
+        <h3 class="pillar-heading">Repeat Prescriptions</h3>
+        <p class="pillar-desc">Medication reconciliation matching repeat prescriptions to the patient's existing electronic health record.</p>
+        <button class="preset-trigger-btn" onclick="triggerPreset('prescription')">
+          <span>Test Medication Tier 2</span>
+          <span>&rarr;</span>
+        </button>
+      </div>
+
+      <!-- 04: Sync -->
+      <div class="pillar-card card-blue">
+        <span class="pillar-num">04 &middot; Sync</span>
+        <h3 class="pillar-heading">EMIS Live Integration</h3>
+        <p class="pillar-desc">Two-way electronic health record synchronization with instant SMS appointment confirmation dispatched to the patient.</p>
+        <button class="preset-trigger-btn" onclick="switchRecordTab('emis', document.querySelectorAll('.record-tab-btn')[0])">
+          <span>View EMIS Records</span>
+          <span>&rarr;</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. INTERACTIVE CLINICAL WORKSPACE -->
+  <section id="workspace-section">
+    <div class="workspace-frame">
+      <!-- Left: Dialogue Pane -->
+      <div class="dialogue-pane">
+        <div class="dialogue-header">
+          <span class="title">Live Clinical Dialogue</span>
+          <span class="patient-id">John Davies &middot; NHS: 485 921 0023</span>
         </div>
-        <div class="preset-list">
-          <div class="preset-button" onclick="runPreset('emergency')">
-            <span class="preset-type type-red">Emergency &middot; Tier 1</span>
-            <span class="preset-desc">Severe chest pressure spreading to left arm</span>
-          </div>
-          <div class="preset-button" onclick="runPreset('booking')">
-            <span class="preset-type type-green">Appointment &middot; Tier 3</span>
-            <span class="preset-desc">Book slot with Dr. Patel for persistent migraine</span>
-          </div>
-          <div class="preset-button" onclick="runPreset('prescription')">
-            <span class="preset-type type-amber">Prescription &middot; Tier 2</span>
-            <span class="preset-desc">Repeat prescription for Atorvastatin 20mg</span>
-          </div>
-        </div>
-      </div>
 
-      <div class="solid-card" style="flex:1;">
-        <div class="card-header">
-          <span>System Specifications</span>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;font-size:11px;color:var(--text-muted);">
-          <div style="display:flex;justify-content:space-between;">
-            <span>Safety Reflex Gating</span>
-            <span style="color:var(--triage-routine);font-family:var(--font-mono);font-weight:600;">3.2ms (Zero-LLM)</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;">
-            <span>Clinical Knowledge</span>
-            <span style="color:var(--text-main);font-family:var(--font-mono);">47 NICE Policies</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;">
-            <span>EHR System</span>
-            <span style="color:var(--text-main);font-family:var(--font-mono);">EMIS Web v8.4</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;">
-            <span>Audio Latency SLA</span>
-            <span style="color:var(--text-main);font-family:var(--font-mono);">&lt; 800ms</span>
-          </div>
-        </div>
-      </div>
-    </aside>
-
-    <!-- 3. CENTER: CLINICAL STAGE -->
-    <main id="consultation-stage">
-      <!-- Grounded Alert Bar for Emergency Red Flags -->
-      <div id="emergency-alert-bar">
-        <span class="alert-tag">Tier 1 Red Flag</span>
-        <span>Acute symptoms detected. Immediate 999 clinical transfer initiated. Patient instructed to stay seated.</span>
-      </div>
-
-      <!-- Center Voice Visualizer (Grounded Frame) -->
-      <div class="visualizer-container">
-        <canvas id="voice-orb-canvas" width="380" height="380"></canvas>
-        <div class="visualizer-overlay">
-          <div class="status-text-badge" id="orb-status">Standing By</div>
-          <div class="visualizer-title">EMMA Clinical Voice</div>
-          <div class="visualizer-subtitle" id="orb-sub">Awaiting patient audio connection</div>
-        </div>
-      </div>
-
-      <!-- Grounded Docked Input Bar (Flat, Attached at Bottom) -->
-      <div class="grounded-input-dock">
-        <form onsubmit="handleInput(event)">
-          <input type="text" id="user-input" placeholder="Type a patient clinical symptom or enquiry..." autocomplete="off"/>
-          <button type="submit" class="btn-send-text">Send Enquiry</button>
-        </form>
-      </div>
-    </main>
-
-    <!-- 4. RIGHT SIDEBAR: CONSULTATION LOG -->
-    <aside id="clinical-drawer">
-      <div class="tab-bar">
-        <div class="tab-item active" onclick="setTab('transcript', this)">Consultation</div>
-        <div class="tab-item" onclick="setTab('emis', this)">EMIS Booking</div>
-        <div class="tab-item" onclick="setTab('safety', this)">Safety Log</div>
-      </div>
-
-      <div class="tab-content-area">
-        <!-- Pane 1: Transcript -->
-        <div class="tab-pane active" id="pane-transcript">
+        <div class="dialogue-scroll" id="dialogue-container">
           <div class="chat-bubble emma">
-            <span class="chat-sender emma">EMMA &middot; Clinical Receptionist</span>
-            <div class="chat-card">
-              Good morning, Elmwood Medical Centre. I am EMMA, your clinical AI receptionist. How can I assist you with your health enquiry or appointment today?
+            <span class="chat-speaker emma">EMMA &middot; Clinical Receptionist</span>
+            <div class="chat-card-body">
+              Good morning, Elmwood Medical Centre. I am EMMA, your clinical AI voice receptionist. How can I assist you with your health query or appointment today?
             </div>
           </div>
         </div>
 
-        <!-- Pane 2: EMIS Booking -->
-        <div class="tab-pane" id="pane-emis">
-          <div id="emis-empty" style="text-align:center;padding:24px 0;color:var(--text-subtle);font-size:11px;">
-            No bookings recorded for this session.
-          </div>
-          <div id="emis-records"></div>
-        </div>
-
-        <!-- Pane 3: Safety Log -->
-        <div class="tab-pane" id="pane-safety">
-          <div class="solid-card" style="font-size:11px;color:var(--text-muted);line-height:1.5;">
-            Zero-LLM deterministic safety gates scan every patient utterance in real-time under NHS DCB0129 clinical guidelines.
-          </div>
-          <div id="safety-log-entries" style="display:flex;flex-direction:column;gap:8px;"></div>
+        <div class="dialogue-input-bar">
+          <form onsubmit="handleSendText(event)">
+            <input type="text" id="chat-input" placeholder="Type a patient symptom or consultation enquiry..." autocomplete="off"/>
+            <button type="submit">Send</button>
+          </form>
         </div>
       </div>
-    </aside>
 
-    <!-- 5. FOOTER: PIPELINE STATUS -->
-    <footer id="pipeline-footer">
-      <div class="pipeline-strip">
-        <div class="pipe-badge" id="pb-vad"><span class="pipe-dot"></span><span>Silero VAD</span><span class="pipe-ms">1.8ms</span></div>
-        <span class="pipe-separator">&rarr;</span>
-        <div class="pipe-badge" id="pb-stt"><span class="pipe-dot"></span><span>Deepgram Nova-2</span><span class="pipe-ms">64ms</span></div>
-        <span class="pipe-separator">&rarr;</span>
-        <div class="pipe-badge" id="pb-safe"><span class="pipe-dot"></span><span>Safety Gate</span><span class="pipe-ms">3.1ms</span></div>
-        <span class="pipe-separator">&rarr;</span>
-        <div class="pipe-badge" id="pb-rag"><span class="pipe-dot"></span><span>NICE RAG</span><span class="pipe-ms">42ms</span></div>
-        <span class="pipe-separator">&rarr;</span>
-        <div class="pipe-badge" id="pb-llm"><span class="pipe-dot"></span><span>GPT-4o Mini</span><span class="pipe-ms">108ms</span></div>
-        <span class="pipe-separator">&rarr;</span>
-        <div class="pipe-badge" id="pb-tts"><span class="pipe-dot"></span><span>ElevenLabs TTS</span><span class="pipe-ms">85ms</span></div>
+      <!-- Right: EMIS EHR Records & Safety Log -->
+      <div class="records-pane">
+        <div class="records-tabs">
+          <div class="record-tab-btn active" onclick="switchRecordTab('emis', this)">EMIS Booking</div>
+          <div class="record-tab-btn" onclick="switchRecordTab('safety', this)">Safety Reflex</div>
+          <div class="record-tab-btn" onclick="switchRecordTab('telemetry', this)">Telemetry</div>
+        </div>
+
+        <div class="records-scroll">
+          <!-- View 1: EMIS Booking -->
+          <div class="tab-view-container active" id="tab-emis">
+            <div id="emis-empty-msg" style="padding:40px 20px;text-align:center;color:var(--text-muted);font-size:12px;">
+              No bookings confirmed yet.<br>Click "Test Booking Tier 3" above to simulate an EMIS slot allocation.
+            </div>
+            <div id="emis-card-container"></div>
+          </div>
+
+          <!-- View 2: Safety Log -->
+          <div class="tab-view-container" id="tab-safety">
+            <div style="background:#FFFFFF;border:1px solid var(--border-hairline);border-radius:10px;padding:14px;font-size:12px;color:var(--text-body);line-height:1.5;">
+              Zero-LLM deterministic gates scan each patient utterance for acute symptoms under <strong>NHS DCB0129</strong> risk management protocols.
+            </div>
+            <div id="safety-log-entries" style="display:flex;flex-direction:column;gap:8px;"></div>
+          </div>
+
+          <!-- View 3: Telemetry -->
+          <div class="tab-view-container" id="tab-telemetry">
+            <div style="background:#FFFFFF;border:1px solid var(--border-hairline);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px;font-size:12px;">
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted);">VAD Model</span><span style="font-weight:600;">Silero v4</span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted);">STT Model</span><span style="font-weight:600;">Deepgram Nova-2</span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted);">Clinical Safety Reflex</span><span style="font-weight:600;color:var(--accent-mint);">Sub-5ms Zero-LLM</span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted);">Clinical Knowledge Base</span><span style="font-weight:600;">47 NICE Policies</span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted);">LLM Model</span><span style="font-weight:600;">GPT-4o Mini (Grounding Gate)</span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted);">TTS Engine</span><span style="font-weight:600;">ElevenLabs Streaming</span></div>
+            </div>
+          </div>
+        </div>
       </div>
+    </div>
+  </section>
 
-      <div class="footer-compliance">
-        <span>DCB0129 / DCB0160 Clinical Risk Compliant</span>
-        <span>&middot;</span>
-        <span>EMIS Web Partner API</span>
-      </div>
-    </footer>
+  <!-- 5. BOTTOM PIPELINE TELEMETRY -->
+  <footer id="footer-telemetry">
+    <div class="pipe-node-list">
+      <div class="node-pill" id="np-vad"><span class="node-dot"></span><span>Silero VAD</span><span class="node-ms">1.8ms</span></div>
+      <span class="node-arrow">&rarr;</span>
+      <div class="node-pill" id="np-stt"><span class="node-dot"></span><span>Deepgram Nova-2</span><span class="node-ms">64ms</span></div>
+      <span class="node-arrow">&rarr;</span>
+      <div class="node-pill" id="np-safety"><span class="node-dot"></span><span>Safety Gate</span><span class="node-ms">3.1ms</span></div>
+      <span class="node-arrow">&rarr;</span>
+      <div class="node-pill" id="np-rag"><span class="node-dot"></span><span>NICE RAG</span><span class="node-ms">42ms</span></div>
+      <span class="node-arrow">&rarr;</span>
+      <div class="node-pill" id="np-llm"><span class="node-dot"></span><span>GPT-4o Mini</span><span class="node-ms">108ms</span></div>
+      <span class="node-arrow">&rarr;</span>
+      <div class="node-pill" id="np-tts"><span class="node-dot"></span><span>ElevenLabs TTS</span><span class="node-ms">85ms</span></div>
+    </div>
 
-  </div>
+    <div class="governance-footer-text">
+      <span>NHS Digital Standards Compliant (DCB0129 / DCB0160)</span>
+      <span>&middot;</span>
+      <span>EMIS Web Partner Integration</span>
+    </div>
+  </footer>
 
-  <!-- ═══════════════════════════════════════════════════════════════
-       CLEAN, NON-DISTRACTING AUDIO LOGIC
-       ═══════════════════════════════════════════════════════════════ -->
+  <!-- ══════════════════════════════════════════════════════════════════════
+       HUME-STYLE FLUID HARMONIC AUDIO SPHERE (Canvas 2D, Iridescent Pastels)
+       ══════════════════════════════════════════════════════════════════════ -->
   <script>
     const cvs = document.getElementById("voice-orb-canvas");
     const ctx = cvs.getContext("2d");
     const CW = cvs.width, CH = cvs.height, CX = CW / 2, CY = CH / 2;
 
-    let voiceMode = "idle";
-    let isConnected = false;
-    let callCount = 0;
+    let voiceMode = "idle"; // idle | listening | reasoning | speaking
+    let callConnected = false;
+    let consultationCount = 0;
     let reflexCount = 0;
-    let tick = 0;
+    let timeTick = 0;
     let ws = null;
 
-    // Harmonic wave parameters
+    // Harmonic wave parameters (Hume multi-harmonic fluid dynamics)
     const W_COUNT = 8;
     const waveOffsets = Array.from({length: W_COUNT}, (_, i) => i * (Math.PI * 2 / W_COUNT));
+    const waveSpeeds = Array.from({length: W_COUNT}, () => 0.008 + Math.random() * 0.006);
 
-    function drawCleanOrb(t) {
+    function renderHumeFluidOrb(t) {
       ctx.clearRect(0, 0, CW, CH);
 
-      // Clean Solid Fluid Waves (No fuzzy blur, no glow)
-      const baseR = 85;
+      // Base radius
+      const baseR = 88;
       const points = [];
+
       for (let i = 0; i < W_COUNT; i++) {
         const rad = (i / W_COUNT) * Math.PI * 2;
-        let d = Math.sin(waveOffsets[i] + t * 1.5) * 6 + Math.cos(waveOffsets[i] * 1.5 + t) * 4;
-        if (voiceMode === "speaking") d += Math.sin(t * 5 + i) * 12;
-        if (voiceMode === "listening") d += Math.sin(t * 3 + i) * 8;
-        points.push({ x: CX + Math.cos(rad) * (baseR + d), y: CY + Math.sin(rad) * (baseR + d) });
+        let deformation = Math.sin(waveOffsets[i] + t * 1.4) * 7 + Math.cos(waveOffsets[i] * 1.5 + t * 0.9) * 5;
+
+        if (voiceMode === "speaking") {
+          deformation += Math.sin(t * 5 + i) * 14;
+        } else if (voiceMode === "listening") {
+          deformation += Math.sin(t * 3.5 + i) * 9;
+        } else if (voiceMode === "reasoning") {
+          deformation += Math.cos(t * 4 + i) * 7;
+        }
+
+        const r = Math.max(65, baseR + deformation);
+        points.push({ x: CX + Math.cos(rad) * r, y: CY + Math.sin(rad) * r });
       }
 
       ctx.beginPath();
@@ -790,6 +966,7 @@
         const p1 = points[i];
         const p2 = points[(i + 1) % W_COUNT];
         const p3 = points[(i + 2) % W_COUNT];
+
         if (i === 0) ctx.moveTo(p1.x, p1.y);
         ctx.bezierCurveTo(
           p1.x + (p2.x - p0.x) / 6, p1.y + (p2.y - p0.y) / 6,
@@ -799,218 +976,250 @@
       }
       ctx.closePath();
 
-      // Clean Solid Gradient Fill
-      const grad = ctx.createLinearGradient(CX - 80, CY - 80, CX + 80, CY + 80);
+      // Hume Iridescent Pastel Fluid Gradient
+      const grad = ctx.createLinearGradient(CX - 90, CY - 90, CX + 90, CY + 90);
       if (voiceMode === "speaking") {
-        grad.addColorStop(0, "#0072CE");
-        grad.addColorStop(1, "#003087");
+        grad.addColorStop(0, "#93C5FD"); // Soft Azure
+        grad.addColorStop(0.5, "#C4B5FD"); // Pastel Violet
+        grad.addColorStop(1, "#FBCFE8"); // Warm Blush
       } else if (voiceMode === "listening") {
-        grad.addColorStop(0, "#00A3E0");
-        grad.addColorStop(1, "#005EB8");
+        grad.addColorStop(0, "#BAE6FD"); // Calm Cyan
+        grad.addColorStop(0.5, "#A7F3D0"); // Soft Mint
+        grad.addColorStop(1, "#DDD6FE"); // Lavender
       } else if (voiceMode === "reasoning") {
-        grad.addColorStop(0, "#6366F1");
-        grad.addColorStop(1, "#312E81");
+        grad.addColorStop(0, "#DDD6FE");
+        grad.addColorStop(0.5, "#FDE68A");
+        grad.addColorStop(1, "#FBCFE8");
       } else {
-        grad.addColorStop(0, "#005EB8");
-        grad.addColorStop(1, "#0F172A");
+        // Resting Empathic Palette
+        grad.addColorStop(0, "#BFDBFE");
+        grad.addColorStop(0.5, "#E0E7FF");
+        grad.addColorStop(1, "#DDD6FE");
       }
+
       ctx.fillStyle = grad;
       ctx.fill();
 
-      // Solid Crisp Outline
-      ctx.strokeStyle = "#38BDF8";
+      // Delicate Crisp Outline
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
       ctx.lineWidth = 1.5;
       ctx.stroke();
+
+      // Outer Acoustic Ripple on Speech
+      if (voiceMode === "speaking" || voiceMode === "listening") {
+        ctx.beginPath();
+        ctx.arc(CX, CY, 130 + Math.sin(t * 3) * 6, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(147, 197, 253, 0.4)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
     }
 
-    function orbLoop() {
-      tick += 0.015;
-      drawCleanOrb(tick);
-      requestAnimationFrame(orbLoop);
+    function orbAnimationLoop() {
+      timeTick += 0.015;
+      for (let i = 0; i < W_COUNT; i++) waveOffsets[i] += waveSpeeds[i];
+      renderHumeFluidOrb(timeTick);
+      requestAnimationFrame(orbAnimationLoop);
     }
-    orbLoop();
+    orbAnimationLoop();
 
-    function setMode(mode) {
+    // Operational Mode Switcher
+    function setVoiceMode(mode) {
       voiceMode = mode;
-      const badge = document.getElementById("orb-status");
-      const sub = document.getElementById("orb-sub");
+      const badge = document.getElementById("voice-state-badge");
+      const sub = document.getElementById("voice-subtext");
 
       if (mode === "listening") {
         badge.textContent = "Patient Speaking";
-        sub.textContent = "Processing speech with Deepgram Nova-2";
+        badge.style.color = "#0284C7";
+        sub.textContent = "Capturing speech with Deepgram Nova-2";
       } else if (mode === "reasoning") {
         badge.textContent = "Clinical Reasoning";
-        sub.textContent = "Verifying NICE policies & red-flag safety";
+        badge.style.color = "#D97706";
+        sub.textContent = "Evaluating NICE policies & red-flag safety gates";
       } else if (mode === "speaking") {
         badge.textContent = "EMMA Advising";
-        sub.textContent = "Streaming natural clinical guidance";
+        badge.style.color = "#7C3AED";
+        sub.textContent = "Streaming natural empathic guidance";
       } else {
         badge.textContent = "Standing By";
+        badge.style.color = "var(--accent-blue)";
         sub.textContent = "Awaiting patient audio connection";
       }
     }
 
-    const PIPE_IDS = ["vad", "stt", "safe", "rag", "llm", "tts"];
-    function setPipeline(step) {
-      PIPE_IDS.forEach((id, i) => {
-        const el = document.getElementById("pb-" + id);
+    // Pipeline Telemetry Progression
+    const PIPELINE_IDS = ["vad", "stt", "safety", "rag", "llm", "tts"];
+    function setPipelineProgress(step) {
+      PIPELINE_IDS.forEach((id, i) => {
+        const el = document.getElementById("np-" + id);
         el.classList.toggle("active", i <= step);
         el.classList.remove("alert");
       });
     }
 
+    // Call Connection Controller
     function toggleCall() {
-      const btn = document.getElementById("btn-call");
-      const text = document.getElementById("call-text");
+      const btn = document.getElementById("btn-call-action");
+      const label = document.getElementById("call-label");
 
-      if (isConnected) {
-        isConnected = false;
-        btn.className = "btn-action connect";
-        text.textContent = "Connect Patient Line";
-        setMode("idle");
-        setPipeline(-1);
-        document.getElementById("emergency-alert-bar").style.display = "none";
+      if (callConnected) {
+        callConnected = false;
+        btn.className = "btn-connect-pill";
+        label.textContent = "Connect Patient Line";
+        setVoiceMode("idle");
+        setPipelineProgress(-1);
+        document.getElementById("emergency-alert-strip").style.display = "none";
         if (ws) { ws.close(); ws = null; }
       } else {
-        isConnected = true;
-        callCount++;
-        document.getElementById("stat-calls").textContent = callCount;
-        btn.className = "btn-action disconnect";
-        text.textContent = "Disconnect Line";
-        setMode("listening");
-        setPipeline(1);
-        setupWebSocket();
+        callConnected = true;
+        consultationCount++;
+        document.getElementById("tele-calls").textContent = consultationCount;
+        btn.className = "btn-connect-pill active";
+        label.textContent = "Terminate Consultation";
+        setVoiceMode("listening");
+        setPipelineProgress(1);
+        initWebSocket();
       }
     }
 
-    function setTab(tab, el) {
-      document.querySelectorAll(".tab-item").forEach(t => t.classList.remove("active"));
-      document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
+    // Drawer Tabs
+    function switchRecordTab(tabId, el) {
+      document.querySelectorAll(".record-tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".tab-view-container").forEach(v => v.classList.remove("active"));
       el.classList.add("active");
-      document.getElementById("pane-" + tab).classList.add("active");
+      document.getElementById("tab-" + tabId).classList.add("active");
     }
 
-    function addChat(speaker, text) {
-      const pane = document.getElementById("pane-transcript");
-      const div = document.createElement("div");
-      div.className = "chat-bubble " + speaker;
+    // Add Dialogue Message
+    function appendChatBubble(speaker, text) {
+      const container = document.getElementById("dialogue-container");
+      const bubble = document.createElement("div");
+      bubble.className = "chat-bubble " + speaker;
       const isEmma = speaker === "emma";
-      div.innerHTML = `
-        <span class="chat-sender ${speaker}">${isEmma ? "EMMA &middot; Clinical Receptionist" : "John Davies &middot; Patient"}</span>
-        <div class="chat-card">${escapeHtml(text)}</div>
+      bubble.innerHTML = `
+        <span class="chat-speaker ${speaker}">${isEmma ? "EMMA &middot; Clinical Receptionist" : "John Davies &middot; Patient"}</span>
+        <div class="chat-card-body">${escapeHtml(text)}</div>
       `;
-      pane.appendChild(div);
-      pane.scrollTop = pane.scrollHeight;
+      container.appendChild(bubble);
+      container.scrollTop = container.scrollHeight;
     }
 
-    function addEmisBooking(slot, doctor, reason) {
-      document.getElementById("emis-empty").style.display = "none";
-      const records = document.getElementById("emis-records");
+    // Add EMIS Booking Card
+    function appendEMISCard(slot, doctor, reason) {
+      document.getElementById("emis-empty-msg").style.display = "none";
+      const container = document.getElementById("emis-card-container");
       const card = document.createElement("div");
-      card.className = "emis-card";
+      card.className = "emis-card-record";
       card.innerHTML = `
-        <div class="emis-header">EMIS Electronic Booking Confirmed</div>
-        <div class="emis-row"><span class="emis-label">Patient</span><span class="emis-val">John Davies (NHS: 485 921 0023)</span></div>
-        <div class="emis-row"><span class="emis-label">Practitioner</span><span class="emis-val">${escapeHtml(doctor)}</span></div>
-        <div class="emis-row"><span class="emis-label">Scheduled Slot</span><span class="emis-val">${escapeHtml(slot)}</span></div>
-        <div class="emis-row"><span class="emis-label">Reason</span><span class="emis-val">${escapeHtml(reason)}</span></div>
+        <div class="emis-badge-strip">
+          <span class="emis-tag">EMIS Slot Allocated</span>
+          <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);">#EHR-${Math.floor(100000 + Math.random()*900000)}</span>
+        </div>
+        <div class="emis-row-item"><span class="label">Patient</span><span class="val">John Davies (NHS: 485 921 0023)</span></div>
+        <div class="emis-row-item"><span class="label">Clinician</span><span class="val">${escapeHtml(doctor)}</span></div>
+        <div class="emis-row-item"><span class="label">Time</span><span class="val">${escapeHtml(slot)}</span></div>
+        <div class="emis-row-item"><span class="label">Reason</span><span class="val">${escapeHtml(reason)}</span></div>
       `;
-      records.prepend(card);
+      container.prepend(card);
     }
 
-    function triggerEmergency(details) {
+    // Emergency Trigger
+    function triggerEmergencyProtocol(details) {
       reflexCount++;
-      document.getElementById("stat-reflexes").textContent = reflexCount;
-      document.getElementById("emergency-alert-bar").style.display = "flex";
-      document.getElementById("pb-safe").classList.add("alert");
+      document.getElementById("emergency-alert-strip").style.display = "flex";
+      document.getElementById("np-safety").classList.add("alert");
 
       const log = document.getElementById("safety-log-entries");
-      const item = document.createElement("div");
-      item.className = "solid-card";
-      item.style.borderColor = "var(--triage-emergency)";
-      item.innerHTML = `
-        <div style="font-weight:700;color:var(--triage-emergency);font-size:10px;text-transform:uppercase;margin-bottom:4px;">
-          Tier 1 999 Trigger &middot; ${new Date().toLocaleTimeString()}
+      const entry = document.createElement("div");
+      entry.style.background = "#FEF2F2";
+      entry.style.border = "1px solid #FCA5A5";
+      entry.style.borderRadius = "8px";
+      entry.style.padding = "10px 12px";
+      entry.innerHTML = `
+        <div style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:#DC2626;text-transform:uppercase;margin-bottom:2px;">
+          Tier 1 Emergency Reflex &middot; ${new Date().toLocaleTimeString()}
         </div>
-        <div style="font-size:11px;color:#FCA5A5;">${escapeHtml(details)}</div>
+        <div style="font-size:11px;color:#991B1B;">${escapeHtml(details)}</div>
       `;
-      log.prepend(item);
+      log.prepend(entry);
     }
 
-    function runPreset(type) {
-      if (!isConnected) toggleCall();
+    // Presets
+    function triggerPreset(type) {
+      if (!callConnected) toggleCall();
 
       if (type === "emergency") {
-        const text = "I'm having severe heavy chest pressure spreading down my left arm and breathlessness.";
-        addChat("patient", text);
-        setMode("reasoning");
-        setPipeline(2);
+        const text = "I'm having severe crushing chest pressure spreading to my left arm, and feeling short of breath.";
+        appendChatBubble("patient", text);
+        setVoiceMode("reasoning");
+        setPipelineProgress(2);
 
         setTimeout(() => {
-          triggerEmergency(text);
-          setMode("speaking");
-          setPipeline(5);
-          addChat("emma", "I am very concerned about your symptoms. Please remain calm and seated. Because chest pain can indicate a cardiac event, I am initiating an immediate 999 transfer. Please stay on the line.");
+          triggerEmergencyProtocol(text);
+          setVoiceMode("speaking");
+          setPipelineProgress(5);
+          appendChatBubble("emma", "I am very concerned about your chest symptoms. Please remain seated and calm. Because chest pain can indicate a cardiac emergency, I am initiating an immediate 999 clinical transfer. Please stay on this line.");
         }, 500);
       } else if (type === "booking") {
-        const text = "I'd like to book an appointment with Dr. Patel for my recurring migraines.";
-        addChat("patient", text);
-        setMode("reasoning");
-        setPipeline(3);
+        const text = "I'd like to book an appointment with Dr. Patel for persistent migraine headaches.";
+        appendChatBubble("patient", text);
+        setVoiceMode("reasoning");
+        setPipelineProgress(3);
 
         setTimeout(() => {
-          setMode("speaking");
-          setPipeline(5);
-          addEmisBooking("Thursday, 10:30 AM", "Dr. A. Patel (GP Partner)", "Migraine clinical review");
-          addChat("emma", "I have accessed Dr. Patel's clinic schedule in EMIS and reserved Thursday at 10:30 AM. A confirmation text has been dispatched to your mobile.");
-          setTab("emis", document.querySelectorAll(".tab-item")[1]);
+          setVoiceMode("speaking");
+          setPipelineProgress(5);
+          appendEMISCard("Thursday, 10:30 AM", "Dr. A. Patel (GP Partner)", "Migraine Clinical Review");
+          appendChatBubble("emma", "I have accessed Dr. Patel's clinic schedule in EMIS and provisionally reserved Thursday at 10:30 AM for your migraine assessment. An electronic confirmation SMS has been dispatched to your mobile.");
+          switchRecordTab('emis', document.querySelectorAll('.record-tab-btn')[0]);
         }, 800);
       } else if (type === "prescription") {
         const text = "Can I request a repeat prescription for Atorvastatin 20mg?";
-        addChat("patient", text);
-        setMode("reasoning");
-        setPipeline(3);
+        appendChatBubble("patient", text);
+        setVoiceMode("reasoning");
+        setPipelineProgress(3);
 
         setTimeout(() => {
-          setMode("speaking");
-          setPipeline(5);
-          addChat("emma", "I have located your prescription for Atorvastatin 20mg and routed an electronic repeat request to the practice clinical pharmacist for 48-hour approval.");
+          setVoiceMode("speaking");
+          setPipelineProgress(5);
+          appendChatBubble("emma", "I can confirm your repeat prescription for Atorvastatin 20mg is on record. I have routed an electronic request to the practice clinical pharmacist for 48-hour approval.");
         }, 700);
       }
     }
 
-    function handleInput(e) {
+    function handleSendText(e) {
       e.preventDefault();
-      const input = document.getElementById("user-input");
+      const input = document.getElementById("chat-input");
       const text = input.value.trim();
       if (!text) return;
       input.value = "";
 
-      if (!isConnected) toggleCall();
-      addChat("patient", text);
-      setMode("reasoning");
-      setPipeline(2);
+      if (!callConnected) toggleCall();
+      appendChatBubble("patient", text);
+      setVoiceMode("reasoning");
+      setPipelineProgress(2);
 
       const t = text.toLowerCase();
       if (t.includes("chest") || t.includes("breath") || t.includes("heart") || t.includes("pain")) {
         setTimeout(() => {
-          triggerEmergency(text);
-          setMode("speaking");
-          setPipeline(5);
-          addChat("emma", "Please remain calm and seated. Given the acute nature of your symptoms, I am initiating our Tier 1 emergency safety protocol to transfer you to ambulance services.");
+          triggerEmergencyProtocol(text);
+          setVoiceMode("speaking");
+          setPipelineProgress(5);
+          appendChatBubble("emma", "Please remain calm and seated. Given the nature of your acute symptoms, I am initiating our Tier 1 emergency safety protocol to transfer you to ambulance services.");
         }, 500);
       } else if (t.includes("book") || t.includes("appointment") || t.includes("doctor") || t.includes("patel")) {
         setTimeout(() => {
-          setMode("speaking");
-          setPipeline(5);
-          addEmisBooking("Friday, 2:15 PM", "Dr. A. Patel", "Routine Clinical Review");
-          addChat("emma", "I have reserved an appointment for you with Dr. Patel on Friday at 2:15 PM in EMIS.");
+          setVoiceMode("speaking");
+          setPipelineProgress(5);
+          appendEMISCard("Friday, 2:15 PM", "Dr. A. Patel", "Routine Clinical Review");
+          appendChatBubble("emma", "I have reserved an appointment for you with Dr. Patel on Friday at 2:15 PM in EMIS.");
         }, 800);
       } else {
         setTimeout(() => {
-          setMode("speaking");
-          setPipeline(5);
-          addChat("emma", "Thank you for contacting Elmwood Medical Centre. I have updated your record and routed your message to the appropriate clinical team.");
+          setVoiceMode("speaking");
+          setPipelineProgress(5);
+          appendChatBubble("emma", "Thank you for contacting Elmwood Medical Centre. I have updated your record and routed your message to the practice clinical team.");
         }, 700);
       }
 
@@ -1019,7 +1228,7 @@
       }
     }
 
-    function setupWebSocket() {
+    function initWebSocket() {
       const proto = location.protocol === "https:" ? "wss" : "ws";
       try {
         ws = new WebSocket(`${proto}://${location.host}/ws/audio`);
@@ -1027,10 +1236,10 @@
           if (typeof e.data !== "string") return;
           try {
             const data = JSON.parse(e.data);
-            if (data.type === "safety_trigger") triggerEmergency(data.message);
-            else if (data.type === "assistant_response") { addChat("emma", data.text); setMode("speaking"); }
-            else if (data.type === "booking_dispatch") addEmisBooking(data.slot || "Next Available", "Duty GP", data.reason || "General Review");
-            else if (data.type === "telemetry" && data.p95_ms) document.getElementById("stat-p95").textContent = data.p95_ms + "ms";
+            if (data.type === "safety_trigger") triggerEmergencyProtocol(data.message);
+            else if (data.type === "assistant_response") { appendChatBubble("emma", data.text); setVoiceMode("speaking"); }
+            else if (data.type === "booking_dispatch") appendEMISCard(data.slot || "Next Available", "Duty GP", data.reason || "General Review");
+            else if (data.type === "telemetry" && data.p95_ms) document.getElementById("tele-p95").textContent = data.p95_ms + "ms";
           } catch(err) {}
         };
       } catch(e) {}
