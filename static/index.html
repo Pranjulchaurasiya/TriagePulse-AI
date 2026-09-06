@@ -1,45 +1,63 @@
 <!DOCTYPE html>
-<html class="light" lang="en" data-theme="light">
+<html lang="en" class="light" data-theme="light">
 <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>St. Jude Medical Centre - Live Receptionist Dashboard (Powered by Stitch)</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TriagePulse-AI | St. Jude Medical Centre NHS Voice Reception</title>
+
+  <!-- Tailwind CSS & Plugins -->
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+  <!-- Google Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+
+  <!-- Three.js for 3D Acoustic Orb -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-  <script id="tailwind-config">
+  <script>
     tailwind.config = {
       darkMode: "class",
       theme: {
         extend: {
           colors: {
-            "nhs-blue": "#005EB8",
-            "nhs-blue-hover": "#004B93",
-            "tranquil-teal": "#0D9488",
-            "tranquil-teal-light": "#F0FDFA",
-            "emergency-red": "#D1192D",
-            "emergency-red-light": "#FEF2F2",
-            "success-green": "#00703C",
-            "warning-yellow": "#F59E0B",
-            "surface-white": "#FFFFFF",
-            "surface-base": "#F0F4F5",
-            "surface-card": "#FFFFFF",
-            "surface-subtle": "#F6FAFB",
-            "surface-border": "#E2E8F0",
-            "slate-text": "#212B32",
-            "slate-muted": "#64748B",
+            nhs: {
+              blue: "#005EB8",
+              dark: "#003F7A",
+              bright: "#0072CE",
+              light: "#E8EDEE",
+            },
+            clinical: {
+              teal: "#0D9488",
+              tealLight: "#CCFBF1",
+              tealDark: "#0F766E",
+              slate: "#1E293B",
+              muted: "#64748B",
+              card: "#FFFFFF",
+              cardDark: "#131E30",
+              bg: "#F8FAFC",
+              bgDark: "#0B1120",
+              border: "#E2E8F0",
+              borderDark: "#1E2E48",
+              red: "#DC2626",
+              redLight: "#FEE2E2",
+              green: "#16A34A",
+              amber: "#D97706",
+            }
           },
           fontFamily: {
-            sans: ["Public Sans", "sans-serif"],
-            mono: ["JetBrains Mono", "monospace"],
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
           },
-          borderRadius: {
-            DEFAULT: "0.5rem",
-            lg: "0.75rem",
-            xl: "1rem",
-            "2xl": "1.5rem",
+          boxShadow: {
+            'subtle': '0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04)',
+            'card': '0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.03)',
+            'card-hover': '0 10px 25px -3px rgba(15, 23, 42, 0.09), 0 4px 10px -2px rgba(15, 23, 42, 0.04)',
+            'glow-teal': '0 0 24px -2px rgba(13, 148, 136, 0.35)',
+            'glow-blue': '0 0 24px -2px rgba(0, 94, 184, 0.35)',
+            'glow-red': '0 0 30px 2px rgba(220, 38, 38, 0.4)',
           }
         }
       }
@@ -47,326 +65,470 @@
   </script>
 
   <style>
-    /* Calm Clinical CSS Variables */
-    :root {
-      --bg-page: #F0F4F5;
-      --bg-surface: #FFFFFF;
-      --border-color: #E2E8F0;
-      --text-main: #212B32;
-      --text-muted: #64748B;
-      --sphere-wire: 0x0D9488;
-      --sphere-core: 0x005EB8;
-    }
-
-    html.dark, html[data-theme="dark"] {
-      --bg-page: #0B111A;
-      --bg-surface: #131B26;
-      --border-color: #243246;
-      --text-main: #F1F5F9;
-      --text-muted: #94A3B8;
-      --sphere-wire: 0x14B8A6;
-      --sphere-core: 0x38BDF8;
+    /* Smooth theme transitions */
+    * {
+      transition: background-color 0.15s ease, border-color 0.15s ease;
     }
 
     body {
-      background-color: var(--bg-page);
-      color: var(--text-main);
-      font-family: 'Public Sans', sans-serif;
-      transition: background-color 0.2s ease, color 0.2s ease;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    .glass-panel {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+    :root {
+      --bg-color: #F8FAFC;
+      --text-color: #0F172A;
+      --card-bg: #FFFFFF;
+      --card-border: #E2E8F0;
+      --subtle-bg: #F1F5F9;
+      --orb-inner: #005EB8;
+      --orb-outer: #0D9488;
+    }
+
+    html.dark, html[data-theme="dark"] {
+      --bg-color: #0B1120;
+      --text-color: #F8FAFC;
+      --card-bg: #131E30;
+      --card-border: #1E2E48;
+      --subtle-bg: #0F172A;
+      --orb-inner: #38BDF8;
+      --orb-outer: #14B8A6;
+    }
+
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.4);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(100, 116, 139, 0.6);
+    }
+
+    /* Audio wave animation */
+    @keyframes barPulse {
+      0%, 100% { height: 6px; opacity: 0.4; }
+      50% { height: 28px; opacity: 1; }
+    }
+    .wave-bar {
+      width: 3px;
+      border-radius: 9999px;
+      background-color: #0D9488;
+      display: inline-block;
+      transition: height 0.1s ease;
+    }
+    .speaking .wave-bar {
+      animation: barPulse 0.8s ease-in-out infinite;
+    }
+    .speaking .wave-bar:nth-child(2) { animation-delay: 0.15s; }
+    .speaking .wave-bar:nth-child(3) { animation-delay: 0.3s; }
+    .speaking .wave-bar:nth-child(4) { animation-delay: 0.45s; }
+    .speaking .wave-bar:nth-child(5) { animation-delay: 0.2s; }
+    .speaking .wave-bar:nth-child(6) { animation-delay: 0.35s; }
+
+    /* Pulse radar ring */
+    @keyframes radarPing {
+      0% { transform: scale(0.85); opacity: 0.7; }
+      50% { transform: scale(1.15); opacity: 0.2; }
+      100% { transform: scale(0.85); opacity: 0.7; }
+    }
+    .radar-ring {
+      animation: radarPing 3.5s ease-in-out infinite;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col md:flex-row overflow-x-hidden">
+
+<body class="flex flex-col min-h-screen selection:bg-teal-500 selection:text-white">
 
   <!-- ========================================================================
-       Left Sidebar Navigation (Stitch Design Pattern)
+       TOP CLINICAL APP BAR
        ======================================================================== -->
-  <nav class="hidden md:flex flex-col h-screen p-5 gap-4 glass-panel w-64 flex-shrink-0 z-40 relative border-r">
-    <div class="mb-4">
-      <div class="flex items-center gap-2 mb-2">
-        <div class="bg-nhs-blue text-white font-extrabold text-sm px-2.5 py-1 rounded">NHS</div>
-        <h1 class="font-bold text-lg text-nhs-blue tracking-tight">TriagePulse-AI</h1>
+  <header class="sticky top-0 z-50 bg-white/90 dark:bg-clinical-cardDark/90 backdrop-blur-md border-b border-clinical-border dark:border-clinical-borderDark px-4 sm:px-8 py-3.5 shadow-subtle flex items-center justify-between">
+    <!-- Left: NHS Branding & Practice Info -->
+    <div class="flex items-center gap-3.5">
+      <div class="bg-nhs-blue text-white font-extrabold text-base tracking-tighter px-3 py-1 rounded-md shadow-sm select-none">
+        NHS
       </div>
-      <p class="text-xs text-tranquil-teal font-semibold flex items-center gap-1.5">
-        <span class="w-2 h-2 rounded-full bg-tranquil-teal animate-ping"></span>
-        GP Receptionist Active
-      </p>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-base font-bold tracking-tight text-slate-900 dark:text-white">
+            St. Jude Medical Centre
+          </h1>
+          <span class="hidden sm:inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            SURGERY OPEN
+          </span>
+        </div>
+        <p class="text-xs text-clinical-muted dark:text-slate-400 font-medium">
+          TriagePulse-AI Receptionist &bull; Line 1 Active &bull; <span class="text-clinical-teal font-semibold">Sub-800ms SLA</span>
+        </p>
+      </div>
     </div>
 
-    <!-- Navigation Items -->
-    <div class="flex flex-col gap-1.5 flex-grow text-sm">
-      <a class="flex items-center gap-3 p-3 bg-tranquil-teal/10 text-tranquil-teal font-bold rounded-lg transition-transform translate-x-1" href="#">
-        <span class="material-symbols-outlined text-lg">record_voice_over</span>
-        <span>Live Reception</span>
-      </a>
-      <a class="flex items-center gap-3 p-3 text-slate-muted hover:bg-slate-100 dark:hover:bg-slate-800 transition-all rounded-lg" href="#scenarios" onclick="triggerScenario('What are your surgery opening hours on Thursday?')">
-        <span class="material-symbols-outlined text-lg">schedule</span>
-        <span>Surgery Hours</span>
-      </a>
-      <a class="flex items-center gap-3 p-3 text-slate-muted hover:bg-slate-100 dark:hover:bg-slate-800 transition-all rounded-lg" href="#scenarios" onclick="triggerScenario('How do I request a repeat prescription for my blood pressure?')">
-        <span class="material-symbols-outlined text-lg">medication</span>
-        <span>Prescriptions</span>
-      </a>
-      <a class="flex items-center gap-3 p-3 text-slate-muted hover:bg-slate-100 dark:hover:bg-slate-800 transition-all rounded-lg" href="#scenarios" onclick="triggerScenario('I would like to book a routine appointment with Dr. Davies next Tuesday morning')">
-        <span class="material-symbols-outlined text-lg">event_available</span>
-        <span>Book Appointment</span>
-      </a>
-    </div>
+    <!-- Right: Telemetry Chips & Theme Switcher -->
+    <div class="flex items-center gap-2.5">
+      <!-- WS Status Badge -->
+      <div class="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-clinical-border dark:border-clinical-borderDark text-xs font-mono font-medium">
+        <span class="w-2 h-2 rounded-full bg-emerald-500" id="wsDot"></span>
+        <span class="text-slate-600 dark:text-slate-300" id="wsStatusText">WS: CONNECTED</span>
+      </div>
 
-    <!-- Emergency Override Button -->
-    <div class="mt-auto flex flex-col gap-2 pt-4 border-t border-slate-200 dark:border-slate-800">
-      <button onclick="triggerScenario('I have severe crushing chest pain and feel dizzy')" class="flex items-center justify-center gap-2 w-full p-3 bg-emergency-red hover:bg-red-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm">
-        <span class="material-symbols-outlined text-sm">emergency</span>
-        <span>Emergency 999 Trigger</span>
+      <!-- Latency Badge -->
+      <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-teal-50 dark:bg-teal-950/50 border border-teal-200 dark:border-teal-800 text-xs font-mono font-semibold text-clinical-teal">
+        <span class="material-symbols-outlined text-sm">speed</span>
+        <span id="turnaroundBadge">118ms (p95)</span>
+      </div>
+
+      <!-- Toggle Clinical Inspector Button -->
+      <button onclick="toggleInspector()" id="btnInspectorToggle" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-clinical-border dark:border-clinical-borderDark hover:border-nhs-blue dark:hover:border-nhs-bright text-xs font-semibold text-slate-700 dark:text-slate-200 hover:text-nhs-blue dark:hover:text-white transition-all bg-white dark:bg-slate-800">
+        <span class="material-symbols-outlined text-base text-clinical-teal">stethoscope</span>
+        <span class="hidden md:inline">Clinical Inspector</span>
       </button>
 
-      <!-- Theme Switcher -->
-      <button onclick="toggleTheme()" class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-muted hover:text-slate-900 dark:hover:text-white transition-all">
-        <span class="flex items-center gap-2">
-          <span id="themeIcon" class="material-symbols-outlined text-sm">dark_mode</span>
-          <span id="themeLabel">Dark Mode</span>
-        </span>
-        <span class="text-[10px] uppercase font-mono px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded">Toggle</span>
+      <!-- Theme Switcher Button -->
+      <button onclick="toggleTheme()" aria-label="Toggle Theme" class="p-2 rounded-lg border border-clinical-border dark:border-clinical-borderDark text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+        <span id="themeIcon" class="material-symbols-outlined text-lg">dark_mode</span>
       </button>
     </div>
-  </nav>
+  </header>
 
   <!-- ========================================================================
-       Main Content Area
+       MAIN WORKSPACE (Balanced Voice Studio + Clinical Diagnostics)
        ======================================================================== -->
-  <div class="flex-grow flex flex-col min-h-screen">
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col lg:flex-row gap-6">
 
-    <!-- Top Navigation Bar -->
-    <header class="flex justify-between items-center px-6 h-18 w-full glass-panel border-b flex-shrink-0">
-      <div class="flex items-center gap-3">
-        <div class="md:hidden bg-nhs-blue text-white font-bold text-xs px-2 py-0.5 rounded">NHS</div>
-        <div>
-          <h2 class="text-base font-bold text-nhs-blue">St. Jude Medical Centre</h2>
-          <p class="text-xs text-slate-muted">Autonomous Clinical Triage • Line 1</p>
-        </div>
-      </div>
+    <!-- ====================================================================
+         LEFT / PRIMARY COLUMN: Conversational Voice Arena
+         ==================================================================== -->
+    <section class="flex-1 flex flex-col gap-5 min-w-0">
 
-      <div class="flex items-center gap-3">
-        <div class="flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 px-3 py-1 rounded-full text-xs font-mono font-semibold">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span id="connBadgeText">WS: LIVE</span>
-        </div>
-        <div class="hidden sm:flex items-center gap-1.5 bg-teal-50 dark:bg-teal-950/40 text-tranquil-teal border border-teal-200 dark:border-teal-800 px-3 py-1 rounded-full text-xs font-mono font-semibold">
-          <span>LATENCY:</span>
-          <span id="headerLatencyText">118ms (p95)</span>
-        </div>
-      </div>
-    </header>
-
-    <!-- Main Workspace (Acoustic Stage & Clinical Right Panel) -->
-    <main class="flex-grow p-5 md:p-6 flex flex-col lg:flex-row gap-6 overflow-hidden">
-
-      <!-- Central Acoustic Soundstage -->
-      <section class="flex-grow flex flex-col glass-panel rounded-2xl p-6 relative overflow-hidden flex-1">
+      <!-- 1. Voice Soundstage & Dynamic Acoustic Orb Card -->
+      <div class="relative bg-white dark:bg-clinical-cardDark rounded-2xl border border-clinical-border dark:border-clinical-borderDark shadow-card overflow-hidden p-6 flex flex-col items-center justify-center min-h-[360px]">
         
-        <!-- Live Call Indicator Pill -->
-        <div class="flex items-center justify-between mb-3">
-          <div class="inline-flex items-center gap-2 bg-teal-50 dark:bg-teal-950/40 text-tranquil-teal px-3 py-1 rounded-full border border-teal-200 dark:border-teal-800 text-xs font-bold tracking-wide">
-            <span class="w-2 h-2 rounded-full bg-tranquil-teal animate-ping"></span>
-            <span id="callStatusBadge">ACTIVE CLINICAL RECEPTION</span>
+        <!-- Subtle Ambient Background Glow -->
+        <div class="absolute inset-0 bg-gradient-to-b from-teal-50/50 via-transparent to-transparent dark:from-teal-950/20 pointer-events-none"></div>
+
+        <!-- Top Stage Status Bar -->
+        <div class="w-full flex items-center justify-between mb-4 z-10">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <span class="w-2 h-2 rounded-full bg-clinical-teal animate-ping"></span>
+            <span id="triageModeText">RECEPTIONIST READY</span>
           </div>
-          <span class="text-xs font-mono text-slate-muted" id="callDuration">00:42</span>
+
+          <!-- Live Call Timer -->
+          <div class="flex items-center gap-1.5 text-xs font-mono font-semibold text-clinical-muted dark:text-slate-400">
+            <span class="material-symbols-outlined text-sm">schedule</span>
+            <span id="sessionTimer">00:48</span>
+          </div>
         </div>
 
-        <!-- 3D Acoustic Sphere Canvas Stage -->
-        <div class="flex-grow flex flex-col items-center justify-center relative py-2">
-          <div class="w-[240px] h-[240px] relative flex items-center justify-center cursor-grab active:cursor-grabbing rounded-full" id="sphereContainer">
-            <canvas id="threeCanvas" class="w-full h-full"></canvas>
+        <!-- 3D Acoustic Sphere Canvas Container -->
+        <div class="relative w-56 h-56 flex items-center justify-center my-2 cursor-pointer select-none" id="orbContainer" title="Click or drag to interact with the acoustic soundstage">
+          <!-- Animated Radar Glow Ring -->
+          <div class="absolute inset-0 rounded-full border border-teal-400/30 dark:border-teal-400/20 radar-ring pointer-events-none"></div>
+          <div class="absolute inset-4 rounded-full bg-gradient-to-br from-teal-500/10 via-nhs-blue/10 to-transparent blur-xl pointer-events-none"></div>
+          
+          <!-- Three.js Canvas -->
+          <canvas id="threeOrbCanvas" class="w-full h-full relative z-10"></canvas>
+        </div>
+
+        <!-- Audio Frequency Waveform Indicator (Reacts to Speech) -->
+        <div id="audioWaveContainer" class="flex items-center justify-center gap-1.5 h-8 my-2 z-10">
+          <div class="wave-bar" style="height: 10px;"></div>
+          <div class="wave-bar" style="height: 18px;"></div>
+          <div class="wave-bar" style="height: 26px;"></div>
+          <div class="wave-bar" style="height: 14px;"></div>
+          <div class="wave-bar" style="height: 22px;"></div>
+          <div class="wave-bar" style="height: 8px;"></div>
+        </div>
+
+        <!-- Real-time Voice Reception Status Line -->
+        <p id="voiceStatusDescription" class="text-xs font-medium text-clinical-muted dark:text-slate-400 text-center tracking-wide z-10 mt-1">
+          Tap the microphone or select a patient inquiry below to begin.
+        </p>
+
+        <!-- Red Flag Alert Floating Banner (Hidden until 999 reflex fires) -->
+        <div id="emergencyBanner" class="hidden absolute top-4 inset-x-6 z-20 bg-red-600 text-white p-3.5 rounded-xl shadow-glow-red flex items-center gap-3 animate-bounce">
+          <span class="material-symbols-outlined text-2xl flex-shrink-0">e911_emergency</span>
+          <div class="flex-1 text-xs">
+            <div class="font-extrabold uppercase tracking-wide">Emergency 999 Override Activated</div>
+            <div class="opacity-90 font-medium">Deterministic Tier 1 safety reflex bypassed LLM. Calling emergency services...</div>
           </div>
-          <p id="receptionistStatus" class="text-xs font-semibold text-slate-muted mt-2 tracking-wide">
-            Listening for patient inquiry...
+        </div>
+      </div>
+
+      <!-- 2. Live Conversation Dialogue Feed -->
+      <div class="bg-white dark:bg-clinical-cardDark rounded-2xl border border-clinical-border dark:border-clinical-borderDark shadow-card p-5 flex flex-col">
+        <div class="flex items-center justify-between pb-3 mb-3 border-b border-clinical-border dark:border-clinical-borderDark">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-base text-clinical-teal">forum</span>
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+              Live Patient Dialogue
+            </h2>
+          </div>
+          <span class="text-[11px] font-mono text-clinical-muted dark:text-slate-400">
+            Real-time Transcription Feed
+          </span>
+        </div>
+
+        <!-- Scrollable Messages Container -->
+        <div id="transcriptBox" class="flex flex-col gap-3.5 max-h-56 min-h-[140px] overflow-y-auto pr-1">
+          
+          <!-- Default Receptionist Welcome Message -->
+          <div class="flex gap-3 items-start">
+            <div class="w-7 h-7 rounded-full bg-nhs-blue text-white flex items-center justify-center font-bold text-[11px] flex-shrink-0 shadow-sm">
+              NHS
+            </div>
+            <div class="flex-1 bg-slate-100 dark:bg-slate-800/80 rounded-2xl rounded-tl-sm p-3 text-xs text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700 leading-relaxed shadow-subtle">
+              <span class="font-bold text-nhs-blue dark:text-nhs-bright block mb-1">AI Receptionist (St. Jude Medical)</span>
+              "Good morning, St. Jude Medical Centre. I am the practice AI voice receptionist. How may I assist you with your appointment, test results, or prescription inquiry today?"
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 3. Quick Clinical Scenario Chips (One-Click Testing) -->
+      <div class="bg-white dark:bg-clinical-cardDark rounded-2xl border border-clinical-border dark:border-clinical-borderDark shadow-card p-4">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-clinical-muted dark:text-slate-400 mb-2.5 flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-sm">tune</span>
+          <span>Simulated Patient Clinical Inquiries</span>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+          <!-- 999 Red Flag Emergencies -->
+          <button onclick="triggerScenario('I have severe crushing chest pain radiating to my left arm and feel dizzy')" class="group text-xs font-semibold px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-600 dark:bg-red-950/40 dark:hover:bg-red-600 text-clinical-red hover:text-white dark:text-red-400 border border-red-200 dark:border-red-800 hover:border-red-600 transition-all flex items-center gap-1.5 shadow-subtle">
+            <span class="material-symbols-outlined text-sm group-hover:scale-110 transition-transform">emergency</span>
+            <span>Crushing Chest Pain</span>
+          </button>
+
+          <button onclick="triggerScenario('My husband collapsed on the floor and is completely unresponsive')" class="group text-xs font-semibold px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-600 dark:bg-red-950/40 dark:hover:bg-red-600 text-clinical-red hover:text-white dark:text-red-400 border border-red-200 dark:border-red-800 hover:border-red-600 transition-all flex items-center gap-1.5 shadow-subtle">
+            <span class="material-symbols-outlined text-sm group-hover:scale-110 transition-transform">warning</span>
+            <span>Unresponsive Collapse</span>
+          </button>
+
+          <!-- Routine Doctor Booking (EMIS Dispatch) -->
+          <button onclick="triggerScenario('I would like to book a routine appointment with Dr. Davies next Tuesday morning for a blood pressure check')" class="group text-xs font-semibold px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-nhs-blue dark:bg-slate-800 dark:hover:bg-nhs-blue text-slate-700 hover:text-white dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-nhs-blue transition-all flex items-center gap-1.5 shadow-subtle">
+            <span class="material-symbols-outlined text-sm group-hover:scale-110 transition-transform">calendar_month</span>
+            <span>Routine GP Booking</span>
+          </button>
+
+          <!-- Surgery Hours (RAG Policy Grounding) -->
+          <button onclick="triggerScenario('What are your surgery opening hours on Thursday evening?')" class="group text-xs font-semibold px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-clinical-teal dark:bg-slate-800 dark:hover:bg-clinical-teal text-slate-700 hover:text-white dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-clinical-teal transition-all flex items-center gap-1.5 shadow-subtle">
+            <span class="material-symbols-outlined text-sm group-hover:scale-110 transition-transform">schedule</span>
+            <span>Surgery Hours</span>
+          </button>
+
+          <!-- Prescription Inquiries (RAG Policy Grounding) -->
+          <button onclick="triggerScenario('How do I order a repeat prescription for my asthma inhaler?')" class="group text-xs font-semibold px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-clinical-teal dark:bg-slate-800 dark:hover:bg-clinical-teal text-slate-700 hover:text-white dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-clinical-teal transition-all flex items-center gap-1.5 shadow-subtle">
+            <span class="material-symbols-outlined text-sm group-hover:scale-110 transition-transform">medication</span>
+            <span>Repeat Prescriptions</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 4. Tactile Bottom Audio & Text Input Dock -->
+      <div class="bg-white dark:bg-clinical-cardDark rounded-2xl border border-clinical-border dark:border-clinical-borderDark shadow-card p-4 flex flex-col sm:flex-row items-center gap-3">
+        
+        <!-- Microphone Toggle Button -->
+        <button id="btnVoiceToggle" onclick="toggleMicrophone()" class="w-full sm:w-auto flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-nhs-blue hover:bg-nhs-bright active:bg-nhs-dark text-white font-bold text-sm shadow-card transition-all flex-shrink-0 cursor-pointer">
+          <span class="material-symbols-outlined text-xl" id="micIcon">mic</span>
+          <span id="micLabel">Enable Voice</span>
+        </button>
+
+        <!-- Mid-Playback Barge-In Button -->
+        <button id="btnBargeIn" onclick="triggerBargeIn()" class="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-slate-100 hover:bg-red-50 dark:bg-slate-800 dark:hover:bg-red-950/40 text-slate-700 hover:text-clinical-red dark:text-slate-300 dark:hover:text-red-400 border border-slate-200 dark:border-slate-700 hover:border-red-300 font-bold text-xs transition-all flex-shrink-0 cursor-pointer">
+          <span class="material-symbols-outlined text-base">pan_tool</span>
+          <span>Barge-In</span>
+        </button>
+
+        <!-- Fallback Text Input for Testing -->
+        <div class="flex-1 w-full flex items-center bg-slate-100 dark:bg-slate-800/90 rounded-xl px-3.5 py-1 border border-slate-200 dark:border-slate-700 focus-within:border-clinical-teal transition-all">
+          <input id="customTextInput" type="text" placeholder="Type a patient inquiry or select a scenario..." class="w-full bg-transparent border-none outline-none text-xs text-slate-900 dark:text-white placeholder:text-slate-400 py-2.5" onkeydown="if(event.key==='Enter') sendCustomText()" />
+          <button onclick="sendCustomText()" class="p-1.5 text-clinical-teal hover:text-teal-700 dark:hover:text-teal-400 transition-colors">
+            <span class="material-symbols-outlined text-lg">send</span>
+          </button>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ====================================================================
+         RIGHT COLUMN: Clinical Oversight & Deterministic Safety Inspector
+         ==================================================================== -->
+    <aside id="clinicalInspectorPanel" class="w-full lg:w-96 flex flex-col gap-5 flex-shrink-0">
+
+      <!-- 1. Tier 1 Deterministic Reflex Card -->
+      <div class="bg-white dark:bg-clinical-cardDark rounded-2xl border border-clinical-border dark:border-clinical-borderDark shadow-card p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-lg text-emerald-600 dark:text-emerald-400">verified_user</span>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+              Tier 1 Safety Reflex
+            </h3>
+          </div>
+          <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
+            0% FN ARMED
+          </span>
+        </div>
+
+        <p class="text-xs text-clinical-muted dark:text-slate-400 leading-relaxed mb-3">
+          Deterministic pre-LLM regex scanner directly intercepting life-threatening clinical emergencies before LLM tokenization.
+        </p>
+
+        <!-- Current Reflex Triage State -->
+        <div id="reflexStatusCard" class="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-bold text-emerald-800 dark:text-emerald-300" id="reflexCategory">Routine / Safe</span>
+            <span class="text-[11px] font-mono text-emerald-700 dark:text-emerald-400 font-semibold" id="reflexLatency"><0.5ms</span>
+          </div>
+          <p class="text-[11px] text-emerald-700/90 dark:text-emerald-400/80" id="reflexDetail">
+            No red flag emergency symptoms detected. Call routed safely to grounded GP policy reasoning.
           </p>
         </div>
-
-        <!-- Real-Time Dialogue Transcription Feed -->
-        <div id="transcriptionFeed" class="h-44 bg-slate-50 dark:bg-slate-900/60 rounded-xl p-4 overflow-y-auto border border-slate-200 dark:border-slate-800 flex flex-col gap-3 text-sm scroll-smooth">
-          <div class="flex gap-3">
-            <div class="w-8 h-8 rounded-full bg-nhs-blue text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">
-              AI
-            </div>
-            <div class="bg-white dark:bg-slate-800 p-3 rounded-xl rounded-tl-none border border-slate-200 dark:border-slate-700 max-w-[85%] shadow-sm text-slate-text dark:text-slate-200">
-              Good morning, St. Jude Medical Centre. I am the practice AI voice receptionist. How may I assist you with your appointment or health inquiry today?
-            </div>
-          </div>
-        </div>
-
-        <!-- Quick Scenario Chips -->
-        <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-wrap gap-2">
-          <button onclick="triggerScenario('I have severe crushing chest pain and feel dizzy')" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-red-50 dark:bg-red-950/40 text-emergency-red border border-red-200 dark:border-red-800 hover:bg-emergency-red hover:text-white transition-all flex items-center gap-1">
-            <span>🚨 Chest Pain</span>
-          </button>
-          <button onclick="triggerScenario('My husband collapsed on the floor and is unresponsive')" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-red-50 dark:bg-red-950/40 text-emergency-red border border-red-200 dark:border-red-800 hover:bg-emergency-red hover:text-white transition-all flex items-center gap-1">
-            <span>🚨 Unresponsive Collapse</span>
-          </button>
-          <button onclick="triggerScenario('I would like to book a routine appointment with Dr. Davies next Tuesday morning')" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:border-nhs-blue transition-all">
-            <span>📅 Routine Booking</span>
-          </button>
-          <button onclick="triggerScenario('What are your surgery opening hours on Thursday?')" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:border-nhs-blue transition-all">
-            <span>🕒 Surgery Hours</span>
-          </button>
-          <button onclick="triggerScenario('How do I request a repeat prescription for my blood pressure?')" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:border-nhs-blue transition-all">
-            <span>💊 Prescriptions</span>
-          </button>
-        </div>
-
-      </section>
-
-      <!-- Right Panel (Clinical Context & Telemetry Audit) -->
-      <aside class="w-full lg:w-88 flex flex-col gap-5 flex-shrink-0">
-        
-        <!-- Patient Context & Safety Reflex Card -->
-        <div class="glass-panel rounded-2xl p-5">
-          <h2 class="text-sm font-bold mb-3 flex items-center gap-2 text-nhs-blue">
-            <span class="material-symbols-outlined text-base">verified_user</span>
-            <span>Deterministic Safety Reflex</span>
-          </h2>
-          
-          <div id="safetyReflexBox" class="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl mb-3">
-            <div class="text-xs font-bold text-emerald-800 dark:text-emerald-300 mb-0.5" id="safetyBoxHead">
-              Tier 1 Armed (0% False Negatives)
-            </div>
-            <p class="text-[11px] text-slate-muted" id="safetyBoxSub">
-              Deterministic pre-LLM regex scanner actively protecting caller safety. Sub-1ms reflex.
-            </p>
-          </div>
-
-          <!-- Structured Booking Dispatch Result -->
-          <div class="text-xs">
-            <span class="text-[11px] text-slate-muted uppercase font-bold tracking-wider block mb-1.5">EMIS / SystmOne Dispatch</span>
-            <div id="bookingResultCard" class="p-3 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-xs">
-              <span class="text-slate-muted">No appointments booked in turn. Click "Routine Booking" to test function calling.</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Latency Audit Waterfall Card -->
-        <div class="glass-panel rounded-2xl p-5 flex-grow">
-          <div class="flex items-center justify-between mb-3">
-            <h3 class="text-sm font-bold flex items-center gap-2 text-slate-text dark:text-slate-200">
-              <span class="material-symbols-outlined text-base text-tranquil-teal">speed</span>
-              <span>Latency Waterfall</span>
-            </h3>
-            <span class="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded">
-              SUB-800MS PASS
-            </span>
-          </div>
-
-          <div class="flex flex-col gap-3 font-mono text-xs">
-            <div>
-              <div class="flex justify-between items-center mb-1">
-                <span class="text-slate-muted text-[11px]">Speech to Text (Nova-2)</span>
-                <span id="sttVal" class="font-bold">89 ms</span>
-              </div>
-              <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                <div id="sttBar" class="bg-tranquil-teal h-full rounded-full transition-all" style="width: 25%"></div>
-              </div>
-            </div>
-
-            <div>
-              <div class="flex justify-between items-center mb-1">
-                <span class="text-slate-muted text-[11px]">Tier 1 Safety Reflex</span>
-                <span id="safetyVal" class="font-bold text-emerald-600">0.3 ms</span>
-              </div>
-              <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                <div id="safetyBar" class="bg-emerald-500 h-full rounded-full transition-all" style="width: 5%"></div>
-              </div>
-            </div>
-
-            <div>
-              <div class="flex justify-between items-center mb-1">
-                <span class="text-slate-muted text-[11px]">RAG Policy Retrieval</span>
-                <span id="ragVal" class="font-bold">0.3 ms</span>
-              </div>
-              <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                <div id="ragBar" class="bg-tranquil-teal h-full rounded-full transition-all" style="width: 6%"></div>
-              </div>
-            </div>
-
-            <div>
-              <div class="flex justify-between items-center mb-1">
-                <span class="text-slate-muted text-[11px]">Groq LLaMA 3.3 TTFT</span>
-                <span id="llmVal" class="font-bold">28 ms</span>
-              </div>
-              <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                <div id="llmBar" class="bg-nhs-blue h-full rounded-full transition-all" style="width: 32%"></div>
-              </div>
-            </div>
-
-            <div>
-              <div class="flex justify-between items-center mb-1">
-                <span class="text-slate-muted text-[11px]">TTS First Byte (Cartesia)</span>
-                <span id="ttsVal" class="font-bold">28 ms</span>
-              </div>
-              <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                <div id="ttsBar" class="bg-nhs-blue h-full rounded-full transition-all" style="width: 32%"></div>
-              </div>
-            </div>
-
-            <div class="pt-2 border-t border-slate-200 dark:border-slate-800">
-              <div class="flex justify-between items-center font-bold text-sm">
-                <span class="text-nhs-blue">TOTAL VOICE E2E</span>
-                <span id="totalVal" class="text-tranquil-teal">118 ms</span>
-              </div>
-              <div class="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden mt-1.5">
-                <div id="totalBar" class="bg-tranquil-teal h-full rounded-full transition-all" style="width: 38%"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </aside>
-
-    </main>
-
-    <!-- Bottom Audio Control Dock -->
-    <footer class="h-20 glass-panel border-t flex items-center justify-center gap-4 px-6 flex-shrink-0 z-50">
-      <button id="btnVoice" onclick="toggleMicrophone()" class="flex items-center gap-2 px-6 py-3 bg-nhs-blue hover:bg-nhs-blue-hover text-white transition-all rounded-xl text-sm font-bold shadow-sm min-h-[46px]">
-        <span class="material-symbols-outlined text-lg">mic</span>
-        <span id="voiceLabel">Enable Voice</span>
-      </button>
-
-      <button id="btnBargeIn" onclick="triggerBargeIn()" class="flex items-center gap-2 px-5 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-950/40 text-slate-700 dark:text-slate-300 hover:text-emergency-red transition-all rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 min-h-[46px]">
-        <span class="material-symbols-outlined text-lg">cancel</span>
-        <span>Barge-In</span>
-      </button>
-
-      <div class="flex-1 max-w-xl flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl px-4 border border-slate-200 dark:border-slate-700 min-h-[46px]">
-        <input id="textInput" type="text" placeholder="Type a message or use voice / quick scenarios above..." class="w-full bg-transparent border-none outline-none text-sm text-slate-text dark:text-white" onkeydown="if(event.key==='Enter') sendTextQuery()" />
       </div>
-    </footer>
 
-  </div>
+      <!-- 2. EMIS / SystmOne Appointment Dispatch Card -->
+      <div class="bg-white dark:bg-clinical-cardDark rounded-2xl border border-clinical-border dark:border-clinical-borderDark shadow-card p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-lg text-nhs-blue dark:text-nhs-bright">calendar_today</span>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+              Appointment Dispatch
+            </h3>
+          </div>
+          <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950 text-nhs-blue dark:text-nhs-bright">
+            EMIS / SYSTMONE
+          </span>
+        </div>
+
+        <div id="bookingCard" class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs font-mono text-slate-600 dark:text-slate-300 space-y-1.5">
+          <div class="text-clinical-muted dark:text-slate-400 font-sans italic">
+            No appointment queued in current interaction.
+          </div>
+          <div class="text-[11px] font-sans text-clinical-muted dark:text-slate-400">
+            Select "Routine GP Booking" to test function calling extraction into structured FHIR/EMIS JSON.
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Real-time Sub-800ms Latency Waterfall Card -->
+      <div class="bg-white dark:bg-clinical-cardDark rounded-2xl border border-clinical-border dark:border-clinical-borderDark shadow-card p-5 flex-1">
+        <div class="flex items-center justify-between mb-3.5">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-lg text-clinical-teal">waterfall_chart</span>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+              Latency Waterfall
+            </h3>
+          </div>
+          <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950 text-clinical-teal">
+            SUB-800MS PASS
+          </span>
+        </div>
+
+        <!-- Metric Bars -->
+        <div class="flex flex-col gap-3 font-mono text-xs">
+          <!-- 1. STT -->
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-clinical-muted dark:text-slate-400 font-sans text-[11px]">Speech to Text (Nova-2)</span>
+              <span id="sttVal" class="font-bold text-slate-700 dark:text-slate-300">89 ms</span>
+            </div>
+            <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+              <div id="sttBar" class="bg-clinical-teal h-full rounded-full transition-all duration-300" style="width: 25%"></div>
+            </div>
+          </div>
+
+          <!-- 2. Safety Gate -->
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-clinical-muted dark:text-slate-400 font-sans text-[11px]">Tier 1 Safety Gate</span>
+              <span id="safetyVal" class="font-bold text-emerald-600 dark:text-emerald-400">0.4 ms</span>
+            </div>
+            <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+              <div id="safetyBar" class="bg-emerald-500 h-full rounded-full transition-all duration-300" style="width: 6%"></div>
+            </div>
+          </div>
+
+          <!-- 3. RAG Retrieval -->
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-clinical-muted dark:text-slate-400 font-sans text-[11px]">RAG Policy Retrieval</span>
+              <span id="ragVal" class="font-bold text-slate-700 dark:text-slate-300">0.3 ms</span>
+            </div>
+            <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+              <div id="ragBar" class="bg-clinical-teal h-full rounded-full transition-all duration-300" style="width: 5%"></div>
+            </div>
+          </div>
+
+          <!-- 4. LLM TTFT -->
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-clinical-muted dark:text-slate-400 font-sans text-[11px]">Groq LLaMA 3.3 TTFT</span>
+              <span id="llmVal" class="font-bold text-slate-700 dark:text-slate-300">28 ms</span>
+            </div>
+            <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+              <div id="llmBar" class="bg-nhs-blue dark:bg-nhs-bright h-full rounded-full transition-all duration-300" style="width: 32%"></div>
+            </div>
+          </div>
+
+          <!-- 5. TTS TTFB -->
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-clinical-muted dark:text-slate-400 font-sans text-[11px]">Cartesia TTS TTFB</span>
+              <span id="ttsVal" class="font-bold text-slate-700 dark:text-slate-300">28 ms</span>
+            </div>
+            <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+              <div id="ttsBar" class="bg-nhs-blue dark:bg-nhs-bright h-full rounded-full transition-all duration-300" style="width: 32%"></div>
+            </div>
+          </div>
+
+          <!-- Total E2E Line -->
+          <div class="pt-2.5 mt-1 border-t border-slate-200 dark:border-slate-700">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-slate-900 dark:text-white font-sans text-xs">TOTAL VOICE TURNAROUND</span>
+              <span id="totalVal" class="font-bold text-clinical-teal text-sm">118 ms</span>
+            </div>
+            <div class="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden mt-1.5">
+              <div id="totalBar" class="bg-gradient-to-r from-clinical-teal to-nhs-blue h-full rounded-full transition-all duration-300" style="width: 38%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+  </main>
 
   <!-- ========================================================================
-       Client Logic: Three.js 3D Acoustic Sphere & Real-Time WebSockets
+       CLIENT APPLICATION SCRIPT: WebSockets, Three.js 3D Orb, Audio, & Telemetry
        ======================================================================== -->
   <script>
-    // Theme Management
+    // -------------------------------------------------------------
+    // 1. Theme Toggle & State Persistence
+    // -------------------------------------------------------------
     function applyTheme(theme) {
       document.documentElement.setAttribute("data-theme", theme);
       if (theme === "dark") {
         document.documentElement.classList.add("dark");
         document.getElementById("themeIcon").textContent = "light_mode";
-        document.getElementById("themeLabel").textContent = "Light Mode";
       } else {
         document.documentElement.classList.remove("dark");
         document.getElementById("themeIcon").textContent = "dark_mode";
-        document.getElementById("themeLabel").textContent = "Dark Mode";
       }
       localStorage.setItem("triagepulse_theme", theme);
-      if (typeof updateThreeTheme === "function") {
-        updateThreeTheme(theme);
+      if (typeof updateOrbTheme === "function") {
+        updateOrbTheme(theme);
       }
     }
 
@@ -375,104 +537,114 @@
       applyTheme(isDark ? "light" : "dark");
     }
 
-    const savedTheme = localStorage.getItem("triagepulse_theme") || "light";
-    applyTheme(savedTheme);
+    const initialTheme = localStorage.getItem("triagepulse_theme") || "light";
+    applyTheme(initialTheme);
+
+    // Inspector toggle for responsive screens
+    function toggleInspector() {
+      const panel = document.getElementById("clinicalInspectorPanel");
+      panel.classList.toggle("hidden");
+    }
 
     // -------------------------------------------------------------
-    // Three.js 3D Acoustic Sphere Engine (Silky 60fps)
+    // 2. Three.js Living 3D Acoustic Orb (Optimized 60 FPS)
     // -------------------------------------------------------------
-    const canvas = document.getElementById("threeCanvas");
-    const container = document.getElementById("sphereContainer");
+    const canvas = document.getElementById("threeOrbCanvas");
+    const container = document.getElementById("orbContainer");
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-    camera.position.z = 5.2;
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 50);
+    camera.position.z = 4.8;
 
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-    renderer.setSize(240, 240);
+    renderer.setSize(224, 224);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // Smooth Icosahedron (detail 2 = 80 faces, instant load, zero lag)
-    const geometry = new THREE.IcosahedronGeometry(1.65, 2);
+    // Outer Harmonic Mesh (Icosahedron detail 2 = 80 faces, ultra smooth, zero DOM lag)
+    const geometry = new THREE.IcosahedronGeometry(1.5, 2);
     const posAttr = geometry.attributes.position;
     const baseVerts = [];
     for (let i = 0; i < posAttr.count; i++) {
       baseVerts.push(new THREE.Vector3(posAttr.getX(i), posAttr.getY(i), posAttr.getZ(i)));
     }
 
-    const sphereMat = new THREE.MeshStandardMaterial({
+    const outerMaterial = new THREE.MeshStandardMaterial({
       color: 0x0D9488,
       wireframe: true,
-      roughness: 0.3,
+      roughness: 0.2,
       metalness: 0.1,
       transparent: true,
-      opacity: 0.9,
+      opacity: 0.85,
     });
-    const sphereMesh = new THREE.Mesh(geometry, sphereMat);
-    scene.add(sphereMesh);
+    const outerMesh = new THREE.Mesh(geometry, outerMaterial);
+    scene.add(outerMesh);
 
-    const coreGeo = new THREE.SphereGeometry(1.0, 16, 16);
-    const coreMat = new THREE.MeshBasicMaterial({
+    // Inner Glowing Core
+    const innerGeo = new THREE.SphereGeometry(0.9, 24, 24);
+    const innerMat = new THREE.MeshBasicMaterial({
       color: 0x005EB8,
       transparent: true,
-      opacity: 0.25,
+      opacity: 0.4,
     });
-    const coreMesh = new THREE.Mesh(coreGeo, coreMat);
-    scene.add(coreMesh);
+    const innerMesh = new THREE.Mesh(innerGeo, innerMat);
+    scene.add(innerMesh);
 
-    const ambient = new THREE.AmbientLight(0xffffff, 1.5);
-    scene.add(ambient);
+    // Dynamic Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.6);
+    scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0x38BDF8, 2.0);
-    dirLight.position.set(4, 4, 4);
-    scene.add(dirLight);
+    const pointLight = new THREE.PointLight(0x38BDF8, 2.5, 10);
+    pointLight.position.set(2, 3, 3);
+    scene.add(pointLight);
 
-    function updateThreeTheme(theme) {
+    function updateOrbTheme(theme) {
       if (theme === "dark") {
-        sphereMat.color.setHex(0x14B8A6);
-        coreMat.color.setHex(0x38BDF8);
+        outerMaterial.color.setHex(0x14B8A6);
+        innerMat.color.setHex(0x38BDF8);
+        pointLight.color.setHex(0x38BDF8);
       } else {
-        sphereMat.color.setHex(0x0D9488);
-        coreMat.color.setHex(0x005EB8);
+        outerMaterial.color.setHex(0x0D9488);
+        innerMat.color.setHex(0x005EB8);
+        pointLight.color.setHex(0x005EB8);
       }
     }
 
-    let rotTargetX = 0, rotTargetY = 0;
-    let isMouseDown = false, lastMouseX = 0, lastMouseY = 0;
+    // Orb Interactive Drag
+    let rotX = 0, rotY = 0;
+    let isDragging = false, prevX = 0, prevY = 0;
 
     container.addEventListener("mousedown", (e) => {
-      isMouseDown = true;
-      lastMouseX = e.clientX;
-      lastMouseY = e.clientY;
+      isDragging = true;
+      prevX = e.clientX;
+      prevY = e.clientY;
     });
-
-    window.addEventListener("mouseup", () => { isMouseDown = false; });
-
+    window.addEventListener("mouseup", () => { isDragging = false; });
     window.addEventListener("mousemove", (e) => {
-      if (isMouseDown) {
-        rotTargetY += (e.clientX - lastMouseX) * 0.01;
-        rotTargetX += (e.clientY - lastMouseY) * 0.01;
-        lastMouseX = e.clientX;
-        lastMouseY = e.clientY;
+      if (isDragging) {
+        rotY += (e.clientX - prevX) * 0.01;
+        rotX += (e.clientY - prevY) * 0.01;
+        prevX = e.clientX;
+        prevY = e.clientY;
       }
     });
 
-    let sphereMode = "idle";
+    let orbState = "idle"; // "idle" | "speaking" | "listening" | "emergency"
     let clock = 0;
 
-    function animateSphere() {
-      requestAnimationFrame(animateSphere);
+    function renderLoop() {
+      requestAnimationFrame(renderLoop);
       clock += 0.025;
 
-      sphereMesh.rotation.y += (rotTargetY - sphereMesh.rotation.y) * 0.05 + 0.005;
-      sphereMesh.rotation.x += (rotTargetX - sphereMesh.rotation.x) * 0.05;
+      outerMesh.rotation.y += (rotY - outerMesh.rotation.y) * 0.05 + 0.006;
+      outerMesh.rotation.x += (rotX - outerMesh.rotation.x) * 0.05;
+      innerMesh.rotation.y -= 0.004;
 
-      let speed = 2.0, amp = 0.08;
-      if (sphereMode === "speaking") { speed = 5.0; amp = 0.25; }
-      else if (sphereMode === "emergency") { speed = 8.0; amp = 0.35; }
-      else if (sphereMode === "listening") { speed = 3.2; amp = 0.14; }
+      let speed = 2.0, amp = 0.07;
+      if (orbState === "speaking") { speed = 5.5; amp = 0.22; }
+      else if (orbState === "emergency") { speed = 8.0; amp = 0.32; }
+      else if (orbState === "listening") { speed = 3.2; amp = 0.12; }
 
-      const positions = sphereMesh.geometry.attributes.position;
+      const positions = outerMesh.geometry.attributes.position;
       for (let i = 0; i < positions.count; i++) {
         const base = baseVerts[i];
         const normal = base.clone().normalize();
@@ -481,185 +653,302 @@
         positions.setXYZ(i, newPos.x, newPos.y, newPos.z);
       }
       positions.needsUpdate = true;
+
       renderer.render(scene, camera);
     }
-    animateSphere();
+    renderLoop();
 
     // -------------------------------------------------------------
-    // Live WebSocket Gateway Orchestration
+    // 3. WebSocket Connection & Voice Pipeline
     // -------------------------------------------------------------
     let ws = null;
-    let audioCtx = null;
-    let isMicOn = false;
+    let isRecording = false;
+    let audioContext = null;
+    let micStream = null;
+    let audioProcessor = null;
 
-    function initWS() {
-      const proto = window.location.protocol === "https:" ? "wss:" : "ws:";
-      ws = new WebSocket(`${proto}//${window.location.host}/ws/audio`);
+    function initWebSocket() {
+      const loc = window.location;
+      const wsProtocol = loc.protocol === "https:" ? "wss:" : "ws:";
+      const wsUrl = `${wsProtocol}//${loc.host}/ws/audio`;
+
+      ws = new WebSocket(wsUrl);
 
       ws.onopen = () => {
-        document.getElementById("connBadgeText").textContent = "WS: LIVE";
+        document.getElementById("wsDot").className = "w-2 h-2 rounded-full bg-emerald-500";
+        document.getElementById("wsStatusText").textContent = "WS: LIVE";
       };
 
       ws.onclose = () => {
-        document.getElementById("connBadgeText").textContent = "WS: RECONNECTING";
-        setTimeout(initWS, 2000);
+        document.getElementById("wsDot").className = "w-2 h-2 rounded-full bg-red-500";
+        document.getElementById("wsStatusText").textContent = "WS: DISCONNECTED";
+        setTimeout(initWebSocket, 2000);
       };
 
-      ws.onmessage = (e) => {
-        if (typeof e.data === "string") {
-          const packet = JSON.parse(e.data);
-          handlePacket(packet);
-        } else {
-          sphereMode = "speaking";
-          playAudio(e.data);
+      ws.onerror = (err) => {
+        console.error("WS Error:", err);
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const msg = JSON.parse(event.data);
+          handleServerMessage(msg);
+        } catch (e) {
+          console.error("Error parsing message:", e);
         }
       };
     }
+    initWebSocket();
 
-    function handlePacket(data) {
-      const feed = document.getElementById("transcriptionFeed");
-      const statusText = document.getElementById("receptionistStatus");
+    // Handle Incoming WebSocket Messages
+    function handleServerMessage(msg) {
+      // 1. Partial User Transcription
+      if (msg.type === "transcript_partial") {
+        setOrbMode("listening");
+        document.getElementById("voiceStatusDescription").textContent = `Listening: "${msg.text}..."`;
+      }
 
-      if (data.type === "transcript") {
-        addMessage(data.text, "caller");
-        sphereMode = "listening";
-        statusText.textContent = "Processing patient inquiry...";
-      } else if (data.type === "safety_alert") {
-        sphereMode = "emergency";
-        sphereMat.color.setHex(0xD1192D);
-        coreMat.color.setHex(0xEF4444);
+      // 2. Final User Transcription
+      if (msg.type === "transcript_final") {
+        appendMessage("patient", msg.text);
+        document.getElementById("voiceStatusDescription").textContent = "Processing clinical triage...";
+      }
 
-        const safetyBox = document.getElementById("safetyReflexBox");
-        safetyBox.className = "p-3 bg-red-50 dark:bg-red-950/40 border border-red-300 dark:border-red-800 rounded-xl mb-3 text-emergency-red";
-        document.getElementById("safetyBoxHead").textContent = `🚨 Hard Safety Reflex (${data.category.toUpperCase()})`;
-        document.getElementById("safetyBoxSub").textContent = `Pre-LLM match in ${data.latency_ms}ms • Directing to 999 immediately.`;
+      // 3. Tier 1 Safety Red Flag Detection (Reflex Trigger)
+      if (msg.type === "safety_trigger") {
+        setOrbMode("emergency");
+        showEmergencyBanner(msg);
+      }
 
-        addMessage(`🚨 CRITICAL EMERGENCY DIRECTIVE (${data.category.toUpperCase()}): ${data.instruction}`, "emergency");
-        statusText.textContent = "EMERGENCY: Directing to 999";
-      } else if (data.type === "response_completed") {
-        sphereMode = "idle";
-        statusText.textContent = "Listening for patient inquiry...";
-        addMessage(data.text, "assistant");
-        if (data.metrics) updateMetrics(data.metrics);
-      } else if (data.type === "booking_confirmed") {
-        const b = data.booking;
-        document.getElementById("bookingResultCard").innerHTML = `
-          <div class="text-emerald-600 font-bold mb-1">✔ APPOINTMENT CONFIRMED</div>
-          <div>"id": "<strong>${b.booking_id}</strong>",</div>
-          <div>"patient": "<strong>${b.patient_name}</strong>",</div>
-          <div>"slot": "<strong>${b.slot}</strong>",</div>
-          <div>"urgency": "<span class="text-tranquil-teal font-bold">${b.urgency.toUpperCase()}</span>",</div>
-          <div>"confidence": ${(b.confidence * 100).toFixed(0)}%</div>
-        `;
-      } else if (data.type === "barge_in") {
-        sphereMode = "listening";
-        statusText.textContent = "Barge-In: Audio playback aborted";
-      } else if (data.type === "telemetry") {
-        updateMetrics(data.metrics);
+      // 4. LLM Token Stream / TTS Playing
+      if (msg.type === "tts_started" || msg.type === "llm_chunk") {
+        setOrbMode("speaking");
+      }
+
+      // 5. Final Assistant Turn
+      if (msg.type === "assistant_response") {
+        appendMessage("assistant", msg.text);
+        setOrbMode("idle");
+        document.getElementById("voiceStatusDescription").textContent = "Receptionist ready. Tap microphone or select an inquiry.";
+      }
+
+      // 6. Structured Booking Dispatch
+      if (msg.type === "booking_dispatch" && msg.booking) {
+        renderBookingCard(msg.booking);
+      }
+
+      // 7. Real-Time Latency Telemetry Waterfall
+      if (msg.type === "telemetry" && msg.stages) {
+        updateTelemetry(msg.stages);
       }
     }
 
-    function addMessage(text, role) {
-      const feed = document.getElementById("transcriptionFeed");
-      const wrapper = document.createElement("div");
+    // Append to Dialogue Feed
+    function appendMessage(sender, text) {
+      const box = document.getElementById("transcriptBox");
+      const div = document.createElement("div");
+      div.className = "flex gap-3 items-start";
 
-      if (role === "caller") {
-        wrapper.className = "flex gap-3 flex-row-reverse";
-        wrapper.innerHTML = `
-          <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center flex-shrink-0 text-xs font-bold">You</div>
-          <div class="bg-nhs-blue text-white p-3 rounded-xl rounded-tr-none max-w-[85%] shadow-sm">${text}</div>
-        `;
-      } else if (role === "emergency") {
-        wrapper.className = "flex gap-3";
-        wrapper.innerHTML = `
-          <div class="w-8 h-8 rounded-full bg-emergency-red text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">999</div>
-          <div class="bg-red-50 dark:bg-red-950/60 text-emergency-red font-bold p-3 rounded-xl rounded-tl-none border border-red-300 dark:border-red-800 max-w-[85%] shadow-sm">${text}</div>
+      if (sender === "patient") {
+        div.innerHTML = `
+          <div class="w-7 h-7 rounded-full bg-clinical-teal text-white flex items-center justify-center font-bold text-[11px] flex-shrink-0 shadow-sm">
+            <span class="material-symbols-outlined text-sm">person</span>
+          </div>
+          <div class="flex-1 bg-teal-50/70 dark:bg-teal-950/40 rounded-2xl rounded-tl-sm p-3 text-xs text-slate-800 dark:text-slate-200 border border-teal-200/60 dark:border-teal-800 leading-relaxed shadow-subtle">
+            <span class="font-bold text-clinical-teal block mb-0.5">Patient Caller</span>
+            "${text}"
+          </div>
         `;
       } else {
-        wrapper.className = "flex gap-3";
-        wrapper.innerHTML = `
-          <div class="w-8 h-8 rounded-full bg-nhs-blue text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">AI</div>
-          <div class="bg-white dark:bg-slate-800 p-3 rounded-xl rounded-tl-none border border-slate-200 dark:border-slate-700 max-w-[85%] shadow-sm text-slate-text dark:text-slate-200">${text}</div>
+        div.innerHTML = `
+          <div class="w-7 h-7 rounded-full bg-nhs-blue text-white flex items-center justify-center font-bold text-[11px] flex-shrink-0 shadow-sm">
+            NHS
+          </div>
+          <div class="flex-1 bg-slate-100 dark:bg-slate-800/80 rounded-2xl rounded-tl-sm p-3 text-xs text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700 leading-relaxed shadow-subtle">
+            <span class="font-bold text-nhs-blue dark:text-nhs-bright block mb-0.5">AI Receptionist</span>
+            "${text}"
+          </div>
         `;
       }
 
-      feed.appendChild(wrapper);
-      feed.scrollTop = feed.scrollHeight;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
     }
 
-    function updateMetrics(m) {
-      const e2e = m.voice_in_to_voice_out_ms || 118;
-      const stt = m.stt_latency_ms || 89;
-      const safety = m.safety_latency_ms || 0.3;
-      const rag = m.rag_latency_ms || 0.3;
-      const llm = m.llm_ttft_ms || 28;
-      const tts = m.tts_ttfb_ms || 28;
+    // Orb & Waveform State Transitions
+    function setOrbMode(mode) {
+      orbState = mode;
+      const wave = document.getElementById("audioWaveContainer");
+      const badge = document.getElementById("triageModeText");
 
-      document.getElementById("headerLatencyText").textContent = `${e2e}ms (p95)`;
-      document.getElementById("sttVal").textContent = `${stt} ms`;
-      document.getElementById("safetyVal").textContent = `${safety} ms`;
-      document.getElementById("ragVal").textContent = `${rag} ms`;
-      document.getElementById("llmVal").textContent = `${llm} ms`;
-      document.getElementById("ttsVal").textContent = `${tts} ms`;
-      document.getElementById("totalVal").textContent = `${e2e} ms`;
-
-      document.getElementById("sttBar").style.width = `${Math.min(100, (stt / 400) * 100)}%`;
-      document.getElementById("safetyBar").style.width = `${Math.max(4, Math.min(100, (safety / 10) * 100))}%`;
-      document.getElementById("ragBar").style.width = `${Math.max(4, Math.min(100, (rag / 50) * 100))}%`;
-      document.getElementById("llmBar").style.width = `${Math.min(100, (llm / 300) * 100)}%`;
-      document.getElementById("ttsBar").style.width = `${Math.min(100, (tts / 300) * 100)}%`;
-      document.getElementById("totalBar").style.width = `${Math.min(100, (e2e / 800) * 100)}%`;
+      if (mode === "speaking") {
+        wave.classList.add("speaking");
+        badge.textContent = "AI RECEPTIONIST SPEAKING";
+        badge.className = "w-2 h-2 rounded-full bg-nhs-bright animate-ping";
+      } else if (mode === "listening") {
+        wave.classList.add("speaking");
+        badge.textContent = "LISTENING TO PATIENT...";
+        badge.className = "w-2 h-2 rounded-full bg-clinical-teal animate-ping";
+      } else if (mode === "emergency") {
+        wave.classList.add("speaking");
+        badge.textContent = "EMERGENCY 999 TRIGGERED";
+        outerMaterial.color.setHex(0xDC2626);
+        innerMat.color.setHex(0xEF4444);
+      } else {
+        wave.classList.remove("speaking");
+        badge.textContent = "RECEPTIONIST READY";
+        updateOrbTheme(document.documentElement.classList.contains("dark") ? "dark" : "light");
+      }
     }
 
-    function triggerScenario(text) {
-      if (ws) ws.send(JSON.stringify({ type: "text_query", text: text }));
+    // Emergency Banner
+    function showEmergencyBanner(msg) {
+      const banner = document.getElementById("emergencyBanner");
+      banner.classList.remove("hidden");
+
+      const card = document.getElementById("reflexStatusCard");
+      card.className = "p-3.5 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-300 dark:border-red-800 shadow-glow-red";
+      document.getElementById("reflexCategory").textContent = `EMERGENCY 999 (${(msg.category || "Red Flag").toUpperCase()})`;
+      document.getElementById("reflexCategory").className = "text-xs font-bold text-clinical-red dark:text-red-400";
+      document.getElementById("reflexDetail").textContent = `Tier 1 Reflex activated in ${msg.reflex_ms || 0.4}ms. Safe prompt bypass executed. Immediate ambulance dispatch protocol initiated.`;
+      document.getElementById("reflexLatency").textContent = `${msg.reflex_ms || 0.4}ms`;
+
+      setTimeout(() => {
+        banner.classList.add("hidden");
+      }, 9000);
     }
 
-    function sendTextQuery() {
-      const input = document.getElementById("textInput");
-      const val = input.value.trim();
-      if (!val || !ws) return;
-      ws.send(JSON.stringify({ type: "text_query", text: val }));
-      input.value = "";
+    // Booking Dispatch Card Render
+    function renderBookingCard(booking) {
+      const card = document.getElementById("bookingCard");
+      card.className = "p-3.5 rounded-xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-mono text-slate-700 dark:text-slate-300 space-y-1.5";
+      card.innerHTML = `
+        <div class="flex items-center justify-between font-bold text-nhs-blue dark:text-nhs-bright">
+          <span>INTENT: ${booking.intent || "DOCTOR_APPOINTMENT"}</span>
+          <span class="text-[10px] bg-blue-100 dark:bg-blue-900 px-1.5 py-0.5 rounded">DISPATCHED</span>
+        </div>
+        <div><span class="text-clinical-muted">Clinician:</span> ${booking.clinician || "Dr. Davies"}</div>
+        <div><span class="text-clinical-muted">Department:</span> ${booking.department || "General Practice"}</div>
+        <div><span class="text-clinical-muted">Slot:</span> ${booking.slot_preference || "Tuesday Morning"}</div>
+        <div><span class="text-clinical-muted">Urgency:</span> ${booking.urgency || "ROUTINE"}</div>
+      `;
     }
 
+    // Telemetry Waterfall Update
+    function updateTelemetry(stages) {
+      const stt = stages.stt_ms || 89;
+      const safety = stages.safety_reflex_ms || 0.4;
+      const rag = stages.rag_ms || 0.3;
+      const llm = stages.llm_ttft_ms || 28;
+      const tts = stages.tts_ttfb_ms || 28;
+      const total = stages.total_e2e_ms || (stt + safety + rag + llm + tts);
+
+      document.getElementById("sttVal").textContent = `${stt.toFixed(1)} ms`;
+      document.getElementById("safetyVal").textContent = `${safety.toFixed(2)} ms`;
+      document.getElementById("ragVal").textContent = `${rag.toFixed(2)} ms`;
+      document.getElementById("llmVal").textContent = `${llm.toFixed(1)} ms`;
+      document.getElementById("ttsVal").textContent = `${tts.toFixed(1)} ms`;
+      document.getElementById("totalVal").textContent = `${total.toFixed(1)} ms`;
+      document.getElementById("turnaroundBadge").textContent = `${total.toFixed(0)}ms (p95)`;
+
+      document.getElementById("sttBar").style.width = `${Math.min(100, (stt / 200) * 100)}%`;
+      document.getElementById("safetyBar").style.width = `${Math.min(100, (safety / 5) * 100)}%`;
+      document.getElementById("ragBar").style.width = `${Math.min(100, (rag / 10) * 100)}%`;
+      document.getElementById("llmBar").style.width = `${Math.min(100, (llm / 100) * 100)}%`;
+      document.getElementById("ttsBar").style.width = `${Math.min(100, (tts / 100) * 100)}%`;
+      document.getElementById("totalBar").style.width = `${Math.min(100, (total / 400) * 100)}%`;
+    }
+
+    // -------------------------------------------------------------
+    // 4. Microphone & Audio Streaming (PCM16 16kHz)
+    // -------------------------------------------------------------
+    async function toggleMicrophone() {
+      if (isRecording) {
+        stopMicrophone();
+      } else {
+        await startMicrophone();
+      }
+    }
+
+    async function startMicrophone() {
+      try {
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1 } });
+        audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+        
+        const source = audioContext.createMediaStreamSource(micStream);
+        audioProcessor = audioContext.createScriptProcessor(2048, 1, 1);
+
+        audioProcessor.onaudioprocess = (e) => {
+          if (!isRecording || !ws || ws.readyState !== WebSocket.OPEN) return;
+          const input = e.inputBuffer.getChannelData(0);
+          // Convert Float32 to Int16 PCM
+          const pcm16 = new Int16Array(input.length);
+          for (let i = 0; i < input.length; i++) {
+            let s = Math.max(-1, Math.min(1, input[i]));
+            pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+          }
+          ws.send(pcm16.buffer);
+        };
+
+        source.connect(audioProcessor);
+        audioProcessor.connect(audioContext.destination);
+
+        isRecording = true;
+        setOrbMode("listening");
+        document.getElementById("micIcon").textContent = "mic_off";
+        document.getElementById("micLabel").textContent = "Stop Voice";
+        document.getElementById("btnVoiceToggle").className = "w-full sm:w-auto flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-clinical-red hover:bg-red-700 text-white font-bold text-sm shadow-card transition-all flex-shrink-0 cursor-pointer";
+        document.getElementById("voiceStatusDescription").textContent = "Microphone live. Speak into your microphone...";
+      } catch (err) {
+        console.error("Microphone error:", err);
+        alert("Microphone access unavailable. You can click any simulated patient scenario or type your inquiry below!");
+      }
+    }
+
+    function stopMicrophone() {
+      isRecording = false;
+      if (micStream) {
+        micStream.getTracks().forEach(t => t.stop());
+        micStream = null;
+      }
+      if (audioProcessor) audioProcessor.disconnect();
+      if (audioContext) audioContext.close();
+
+      setOrbMode("idle");
+      document.getElementById("micIcon").textContent = "mic";
+      document.getElementById("micLabel").textContent = "Enable Voice";
+      document.getElementById("btnVoiceToggle").className = "w-full sm:w-auto flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-nhs-blue hover:bg-nhs-bright text-white font-bold text-sm shadow-card transition-all flex-shrink-0 cursor-pointer";
+      document.getElementById("voiceStatusDescription").textContent = "Microphone stopped. Receptionist ready.";
+    }
+
+    // Mid-Playback Barge-In
     function triggerBargeIn() {
-      if (ws) ws.send(JSON.stringify({ type: "interrupt" }));
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: "barge_in" }));
+      }
+      setOrbMode("idle");
+      document.getElementById("voiceStatusDescription").textContent = "Barge-in triggered: Receptionist speech interrupted & buffer cleared.";
     }
 
-    function playAudio(buffer) {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      audioCtx.decodeAudioData(buffer, (decoded) => {
-        const src = audioCtx.createBufferSource();
-        src.buffer = decoded;
-        src.connect(audioCtx.destination);
-        src.start(0);
-      }, () => {});
-    }
+    // Send Simulated Scenario Query
+    function triggerScenario(text) {
+      appendMessage("patient", text);
+      document.getElementById("voiceStatusDescription").textContent = `Query sent: "${text}"`;
+      setOrbMode("listening");
 
-    function toggleMicrophone() {
-      const btn = document.getElementById("btnVoice");
-      const label = document.getElementById("voiceLabel");
-      if (!isMicOn) {
-        navigator.mediaDevices.getUserMedia({ audio: true }).then(() => {
-          isMicOn = true;
-          btn.classList.add("bg-emergency-red");
-          btn.classList.remove("bg-nhs-blue");
-          label.textContent = "Mute Voice";
-          sphereMode = "listening";
-        }).catch((err) => {
-          alert("Microphone info: " + err.message + "\nYou can test all clinical scenarios using the quick scenario pills!");
-        });
-      } else {
-        isMicOn = false;
-        btn.classList.remove("bg-emergency-red");
-        btn.classList.add("bg-nhs-blue");
-        label.textContent = "Enable Voice";
-        sphereMode = "idle";
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: "user_text", text: text }));
       }
     }
 
-    window.addEventListener("load", initWS);
+    // Custom Text Input Send
+    function sendCustomText() {
+      const input = document.getElementById("customTextInput");
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = "";
+      triggerScenario(text);
+    }
   </script>
 </body>
 </html>
