@@ -1,8 +1,8 @@
 # TriagePulse-AI
 
-**A low-latency, safety-gated voice receptionist for GP surgery triage & booking.**
+**A low-latency, safety-gated voice receptionist for NHS GP surgery triage & appointment booking.**
 
-Built as a technical demo ahead of QuantumLoopAI's Round 4 (Technical Deep-Dive), targeting the same problem space as their flagship product **EMMA** (AI voice receptionist for NHS GP surgeries).
+Architected for autonomous 8:00 AM telephone rush management in UK primary care, operating under strict sub-800ms conversational turn SLAs with deterministic clinical hazard mitigation.
 
 ---
 
@@ -83,6 +83,14 @@ Measured across 50 simulated conversation turns (`python eval/test_latency.py`):
 - **Barge-in / User Interruption**: The VAD actively monitors user voice frames during system playback; as soon as speech is detected, the TTS stream is cancelled immediately and client buffers are flushed.
 - **Silence timeout vs crosstalk**: Dynamic lead and silence frame counters distinguish between ambient background noise and deliberate conversational speech.
 - **Provider outage resilience**: If live cloud providers (Deepgram/Groq/Cartesia) encounter downtime or missing API keys, high-fidelity local simulation engines ensure the gateway stays operational.
+
+### 6. DCB0129 Clinical Risk Management Alignment
+In accordance with NHS Digital clinical risk management principles (DCB0129 for manufacturers and DCB0160 for health organisations):
+- **Hazard H1 (Missed Life-Threatening Emergency)**: Mitigated by the pre-LLM Tier 1 Deterministic Gate (<0.5ms regex/trie scan on cumulative speech frames, bypassing generative AI entirely).
+- **Hazard H2 (Hallucinated Clinical or Dosage Advice)**: Mitigated by the Grounding Gate, which audits LLM responses against indexed NICE/GP policies and halts ungrounded medical advice.
+- **Hazard H3 (User Interrupted During Safety Directive)**: Mitigated by mid-playback barge-in priority handling that immediately recalculates dialogue state.
+- **Hazard H4 (Stale Practice Policy Retrieval)**: Mitigated by isolated, versioned markdown policy stores with transparent provenance tracking.
+*Note: This repository demonstrates the architectural controls required for a DCB0129 Clinical Safety Case; formal compliance requires organizational CSO appointment and external clinical audit before live clinical deployment.*
 
 ---
 
