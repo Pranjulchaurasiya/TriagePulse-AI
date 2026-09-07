@@ -1373,12 +1373,28 @@
     function runPreset(type) {
       if (!isConnected) toggleCall();
 
+      let text = "";
       if (type === "emergency") {
-        const text = "I'm having severe heavy chest pressure spreading into my left arm, and feeling short of breath.";
-        appendMessage("caller", text);
-        setSystemMode("reasoning");
-        setPipelineStep(2);
+        text = "I'm having severe heavy chest pressure spreading into my left arm, and feeling short of breath.";
+      } else if (type === "booking") {
+        text = "I'd like to book an appointment with Dr. Patel for my recurring migraines.";
+      } else if (type === "prescription") {
+        text = "Can I please request a repeat prescription for Atorvastatin 20mg?";
+      }
+      if (!text) return;
 
+      appendMessage("caller", text);
+      setSystemMode("reasoning");
+      setPipelineStep(2);
+
+      // If live WebSocket is connected, dispatch to backend
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: "text_input", text }));
+        return;
+      }
+
+      // Offline simulation fallback only when disconnected
+      if (type === "emergency") {
         setTimeout(() => {
           triggerSafetyIntercept(text);
           setSystemMode("speaking");
@@ -1388,11 +1404,6 @@
           speakVoiceOutput(emMsg);
         }, 400);
       } else if (type === "booking") {
-        const text = "I'd like to book an appointment with Dr. Patel for my recurring migraines.";
-        appendMessage("caller", text);
-        setSystemMode("reasoning");
-        setPipelineStep(3);
-
         setTimeout(() => {
           setSystemMode("speaking");
           setPipelineStep(5);
@@ -1403,11 +1414,6 @@
           switchRecordTab('emis', document.querySelectorAll('.rec-tab')[0]);
         }, 700);
       } else if (type === "prescription") {
-        const text = "Can I please request a repeat prescription for Atorvastatin 20mg?";
-        appendMessage("caller", text);
-        setSystemMode("reasoning");
-        setPipelineStep(3);
-
         setTimeout(() => {
           setSystemMode("speaking");
           setPipelineStep(5);
