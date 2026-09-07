@@ -4,11 +4,12 @@ Measures p50, p90, p95, and p99 stage timings across simulated speech turns, ver
 
 from __future__ import annotations
 import asyncio
-import json
+import os
 import statistics
-import time
-from typing import Dict, List
 import sys
+import time
+from typing import Dict, List, Any
+import numpy as np
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -88,12 +89,9 @@ async def run_single_turn_benchmark(
 
 
 def compute_percentile(data: List[float], percentile: float) -> float:
-    size = len(data)
-    if size == 0:
+    if not data:
         return 0.0
-    sorted_data = sorted(data)
-    idx = int((percentile / 100.0) * size)
-    return round(sorted_data[min(idx, size - 1)], 2)
+    return round(float(np.percentile(data, percentile)), 2)
 
 
 async def run_benchmark(num_turns: int = 50) -> Dict[str, Dict[str, float]]:
@@ -153,9 +151,12 @@ async def run_benchmark(num_turns: int = 50) -> Dict[str, Dict[str, float]]:
         print("[SUCCESS] Sub-800ms voice-in -> voice-out requirement satisfied!")
     else:
         print("[FAILURE] p95 latency exceeds 800ms threshold.")
+        sys.exit(1)
 
     return summary
 
 
 if __name__ == "__main__":
-    asyncio.run(run_benchmark(num_turns=50))
+    summary = asyncio.run(run_benchmark(num_turns=50))
+    if summary["e2e"]["p95"] >= 800.0:
+        sys.exit(1)
