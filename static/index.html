@@ -699,12 +699,73 @@
       background: #FFF5F5;
       border-color: #FEB2B2;
       color: var(--triage-p1);
+      box-shadow: 0 0 8px rgba(197, 48, 48, 0.25);
     }
     .btn-mic-toggle .mic-pulse-dot {
       width: 6px;
       height: 6px;
       border-radius: 50%;
       background: currentColor;
+    }
+    .btn-mic-toggle.recording .mic-pulse-dot {
+      animation: pulse-mic 1.2s infinite;
+    }
+    @keyframes pulse-mic {
+      0% { transform: scale(0.9); opacity: 0.8; }
+      50% { transform: scale(1.4); opacity: 1; }
+      100% { transform: scale(0.9); opacity: 0.8; }
+    }
+
+    .btn-handsfree-toggle {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-line);
+      border-radius: 4px;
+      padding: 0 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .btn-handsfree-toggle:hover {
+      background: var(--bg-sunken);
+      border-color: var(--sage-deep);
+    }
+    .btn-handsfree-toggle.active {
+      background: var(--sage-light);
+      border-color: var(--sage-border);
+      color: var(--sage-deep);
+    }
+    .btn-handsfree-toggle .handsfree-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #A0AEC0;
+    }
+    .btn-handsfree-toggle.active .handsfree-dot {
+      background: var(--sage-deep);
+      box-shadow: 0 0 6px var(--sage-deep);
+      animation: pulse-handsfree 1.8s infinite;
+    }
+    @keyframes pulse-handsfree {
+      0% { transform: scale(0.9); opacity: 0.7; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(0.9); opacity: 0.7; }
+    }
+
+    [data-theme="dark"] .btn-mic-toggle.recording {
+      background: rgba(229, 62, 62, 0.2);
+      border-color: #E53E3E;
+      color: #FC8181;
+    }
+    [data-theme="dark"] .btn-handsfree-toggle.active {
+      background: rgba(78, 135, 110, 0.2);
+      border-color: #4E876E;
+      color: #81E6D9;
     }
     .chat-input-row input:focus {
       border-color: var(--sage-deep);
@@ -1026,8 +1087,12 @@
 
         <div class="chat-input-row">
           <form onsubmit="handleUserInput(event)">
-            <input type="text" id="consult-input" placeholder="Type or click Speak to talk into your microphone..." autocomplete="off"/>
-            <button type="button" class="btn-mic-toggle" id="btn-mic" onclick="toggleVoiceInput()" title="Click to speak into microphone">
+            <input type="text" id="consult-input" placeholder="Type or speak naturally hands-free..." autocomplete="off"/>
+            <button type="button" class="btn-handsfree-toggle active" id="btn-handsfree" onclick="toggleHandsFreeMode()" title="Hands-Free Two-Way Mode Active (Auto-Listens after AI speaks)">
+              <span class="handsfree-dot"></span>
+              <span id="handsfree-text">Hands-Free: ON</span>
+            </button>
+            <button type="button" class="btn-mic-toggle" id="btn-mic" onclick="toggleVoiceInput()" title="Microphone Status">
               <span class="mic-pulse-dot"></span>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
               <span id="mic-text">Speak</span>
@@ -1278,16 +1343,26 @@
         setSystemMode("idle");
         setPipelineStep(-1);
         document.getElementById("redflag-alert-banner").style.display = "none";
-        if (ws) { ws.close(); ws = null; } if (window.speechSynthesis) window.speechSynthesis.cancel(); if (isListening && speechRecognition) { speechRecognition.stop(); isListening = false; updateMicButtonState(false); }
+        if (typeof autoListenTimer !== "undefined") clearTimeout(autoListenTimer);
+        if (ws) { ws.close(); ws = null; }
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        if (isListening && speechRecognition) {
+          try { speechRecognition.stop(); } catch(e) {}
+          isListening = false;
+          updateMicButtonState(false);
+        }
       } else {
         isConnected = true;
         triageSessionCount++;
         document.getElementById("metric-calls").textContent = triageSessionCount;
         btn.className = "btn-call-connect active";
         text.textContent = "Disconnect Line";
-        setSystemMode("listening");
         setPipelineStep(1);
         connectWebSocket();
+
+        // Welcome patient aloud and trigger hands-free auto-listening once greeting finishes
+        const greeting = "Good morning, St. Jude Medical Practice. I am the TriagePulse AI clinical assistant. How may I direct your care or assist with your appointment enquiry today?";
+        speakVoiceOutput(greeting);
       }
     }
 
@@ -1469,10 +1544,13 @@
 
     
     // ══════════════════════════════════════════════════════════════════════
-    // BROWSER MICROPHONE (STT) & VOICE AUDIO PLAYBACK (TTS)
+    // BROWSER MICROPHONE (STT) & VOICE AUDIO PLAYBACK (TTS) - HANDS-FREE
     // ══════════════════════════════════════════════════════════════════════
     let speechRecognition = null;
     let isListening = false;
+    let handsFreeMode = true;
+    let isAiSpeaking = false;
+    let autoListenTimer = null;
 
     // Initialize Web Speech API for native browser microphone input
     const SpeechAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1486,6 +1564,7 @@
         isListening = true;
         updateMicButtonState(true);
         setSystemMode("listening");
+        setPipelineStep(0);
       };
 
       speechRecognition.onresult = (event) => {
@@ -1501,7 +1580,12 @@
         const inputField = document.getElementById("consult-input");
         if (finalText) {
           inputField.value = finalText;
-          // When final sentence recognized, submit query
+          // When final sentence recognized, stop listening and submit query
+          if (speechRecognition && isListening) {
+            try { speechRecognition.stop(); } catch (e) {}
+            isListening = false;
+            updateMicButtonState(false);
+          }
           submitSpokenUtterance(finalText);
         } else if (interimText) {
           inputField.value = interimText;
@@ -1510,17 +1594,80 @@
 
       speechRecognition.onerror = (event) => {
         console.warn("Speech recognition notice:", event.error);
-        isListening = false;
-        updateMicButtonState(false);
         if (event.error === "not-allowed") {
+          isListening = false;
+          handsFreeMode = false;
+          updateMicButtonState(false);
+          updateHandsFreeButtonState(false);
           alert("Microphone permission was not granted. Please allow microphone access in your browser settings to speak.");
+        } else if (event.error === "no-speech") {
+          // Normal silence timeout; handled in onend to re-arm if call is active
+        } else {
+          isListening = false;
+          updateMicButtonState(false);
         }
       };
 
       speechRecognition.onend = () => {
         isListening = false;
-        updateMicButtonState(false);
+        // If in hands-free mode and connected, and AI is NOT speaking and not currently reasoning, keep line open
+        if (handsFreeMode && isConnected && !isAiSpeaking && systemMode === "listening") {
+          clearTimeout(autoListenTimer);
+          autoListenTimer = setTimeout(() => {
+            if (handsFreeMode && isConnected && !isAiSpeaking) {
+              startListeningAuto();
+            }
+          }, 300);
+        } else {
+          updateMicButtonState(false);
+        }
       };
+    }
+
+    function startListeningAuto() {
+      if (!speechRecognition || !isConnected || isAiSpeaking || isListening) return;
+      try {
+        speechRecognition.start();
+        isListening = true;
+        updateMicButtonState(true);
+        setSystemMode("listening");
+        setPipelineStep(0);
+      } catch(err) {
+        // If already started or transitioning, ignore
+      }
+    }
+
+    function toggleHandsFreeMode() {
+      handsFreeMode = !handsFreeMode;
+      updateHandsFreeButtonState(handsFreeMode);
+      if (!handsFreeMode) {
+        clearTimeout(autoListenTimer);
+        if (isListening && speechRecognition) {
+          try { speechRecognition.stop(); } catch(e) {}
+          isListening = false;
+          updateMicButtonState(false);
+          setSystemMode("idle");
+        }
+      } else {
+        if (isConnected && !isAiSpeaking && !isListening) {
+          startListeningAuto();
+        }
+      }
+    }
+
+    function updateHandsFreeButtonState(active) {
+      const btn = document.getElementById("btn-handsfree");
+      const label = document.getElementById("handsfree-text");
+      if (!btn || !label) return;
+      if (active) {
+        btn.classList.add("active");
+        label.textContent = "Hands-Free: ON";
+        btn.title = "Hands-Free Two-Way Mode Active (Auto-Listens after AI speaks)";
+      } else {
+        btn.classList.remove("active");
+        label.textContent = "Push-to-Talk";
+        btn.title = "Push-to-Talk Mode Active (Click Speak each time)";
+      }
     }
 
     function toggleVoiceInput() {
@@ -1530,16 +1677,14 @@
       }
 
       if (isListening) {
-        speechRecognition.stop();
+        clearTimeout(autoListenTimer);
+        try { speechRecognition.stop(); } catch(e) {}
         isListening = false;
         updateMicButtonState(false);
+        setSystemMode("idle");
       } else {
         if (!isConnected) toggleCall();
-        try {
-          speechRecognition.start();
-        } catch(err) {
-          console.warn("Could not start speech recognition:", err);
-        }
+        startListeningAuto();
       }
     }
 
@@ -1603,9 +1748,19 @@
       }
     }
 
-    // Voice Playback Synthesis (Hearing Assistant Speak Aloud)
+    // Voice Playback Synthesis (Hearing Assistant Speak Aloud) with Auto-Listen Turn-Taking
     function speakVoiceOutput(text) {
       if (!("speechSynthesis" in window)) return;
+
+      // Immediately mute STT while AI speaks to prevent acoustic self-echo
+      isAiSpeaking = true;
+      clearTimeout(autoListenTimer);
+      if (speechRecognition && isListening) {
+        try { speechRecognition.stop(); } catch(e) {}
+        isListening = false;
+        updateMicButtonState(false);
+      }
+
       window.speechSynthesis.cancel(); // Abort previous turn for instant barge-in
 
       const cleanText = text.replace(/[*_#]/g, "").trim();
@@ -1619,11 +1774,35 @@
       if (ukVoice) utterance.voice = ukVoice;
 
       utterance.onstart = () => {
+        isAiSpeaking = true;
         setSystemMode("speaking");
         setPipelineStep(5);
       };
       utterance.onend = () => {
+        isAiSpeaking = false;
         setSystemMode("idle");
+
+        // CONTINUOUS TURN-TAKING: Automatically re-arm mic ~400ms after AI finishes speaking
+        if (handsFreeMode && isConnected) {
+          clearTimeout(autoListenTimer);
+          autoListenTimer = setTimeout(() => {
+            if (isConnected && handsFreeMode && !isAiSpeaking) {
+              startListeningAuto();
+            }
+          }, 400);
+        }
+      };
+      utterance.onerror = () => {
+        isAiSpeaking = false;
+        setSystemMode("idle");
+        if (handsFreeMode && isConnected) {
+          clearTimeout(autoListenTimer);
+          autoListenTimer = setTimeout(() => {
+            if (isConnected && handsFreeMode && !isAiSpeaking) {
+              startListeningAuto();
+            }
+          }, 300);
+        }
       };
       window.speechSynthesis.speak(utterance);
     }
