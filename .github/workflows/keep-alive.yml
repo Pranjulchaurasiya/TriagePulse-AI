@@ -2,22 +2,38 @@ name: Keep Render Service Warm
 
 on:
   schedule:
-    # Runs every 14 minutes to prevent Render free-tier idle spin-down (sleeps at 15m)
-    - cron: '*/14 * * * *'
+    # Scheduled trigger every 3 hours
+    - cron: '0 */3 * * *'
   workflow_dispatch:
 
+concurrency:
+  group: keep-alive-render
+  cancel-in-progress: true
+
 jobs:
-  ping-health:
-    name: Ping Health Endpoint
+  ping-loop:
+    name: Continuous Keep-Alive Loop (Every 8m)
     runs-on: ubuntu-latest
+    timeout-minutes: 240
     steps:
-      - name: Ping TriagePulse-AI Gateway
+      - name: Run 8-Minute Ping Loop
         run: |
-          echo "Pinging https://triagepulse-ai.onrender.com/api/health..."
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://triagepulse-ai.onrender.com/api/health)
-          echo "Received HTTP Status: $STATUS"
-          if [ "$STATUS" -eq 200 ]; then
-            echo "Render service is awake and healthy."
-          else
-            echo "Warning: Received unexpected status $STATUS"
-          fi
+          echo "Starting continuous keep-alive ping loop..."
+          # Run for 12,600 seconds (3.5 hours)
+          END_TIME=$((SECONDS + 12600))
+          PING_INTERVAL=480 # 8 minutes (Render sleeps at 15 minutes)
+          
+          while [ $SECONDS -lt $END_TIME ]; do
+            echo "[$(date -u)] Pinging https://triagepulse-ai.onrender.com/api/health..."
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 60 https://triagepulse-ai.onrender.com/api/health || echo "ERR")
+            echo "[$(date -u)] Response Code: $STATUS"
+            
+            REMAINING=$((END_TIME - SECONDS))
+            if [ $REMAINING -le $PING_INTERVAL ]; then
+              echo "Cycle completed. Ready for next scheduled trigger."
+              break
+            fi
+            
+            echo "Sleeping 8 minutes until next ping... ($REMAINING seconds remaining in this runner)"
+            sleep $PING_INTERVAL
+          done
