@@ -771,7 +771,12 @@
       border-color: var(--sage-deep);
       background: var(--bg-surface);
     }
-    .chat-input-row button {
+    .chat-input-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chat-input-row button, .btn-send-msg {
       background: var(--sage-deep);
       color: #FFFFFF;
       border: none;
@@ -780,6 +785,16 @@
       font-size: 12px;
       font-weight: 600;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s ease;
+    }
+    .btn-send-msg:hover {
+      background: var(--sage-dark);
+    }
+    button, .btn-test-action, .btn-call-connect, .btn-theme-toggle, .btn-handsfree-toggle, .btn-mic-toggle, .rec-tab, .btn-send-msg {
+      touch-action: manipulation;
     }
 
     /* Right: Clinical Records Ledger */
@@ -907,6 +922,349 @@
       color: var(--text-muted);
       display: flex;
       gap: 8px;
+    }
+
+    /* ═══════════════════ 7. RESPONSIVE MOBILE ADAPTATION ═══════════════════ */
+    
+    /* Tablet & Small Desktop (<= 1024px) */
+    @media (max-width: 1024px) {
+      #navbar {
+        padding: 0 20px;
+      }
+      .pillars-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+      }
+      #hero-container {
+        padding: 36px 20px 24px;
+      }
+      #workspace-container {
+        padding: 0 20px;
+      }
+      #telemetry-footer {
+        padding: 14px 20px;
+      }
+    }
+
+    /* Tablet Portrait & Mobile Landscape (<= 860px) */
+    @media (max-width: 860px) {
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+      .chat-section {
+        border-right: none;
+        border-bottom: 1px solid var(--border-line);
+      }
+      .chat-body-scroll {
+        height: 340px;
+      }
+      .records-content-scroll {
+        height: 340px;
+      }
+      .status-capsule {
+        display: none; /* Hide verbose secondary capsules to prevent navbar crowding */
+      }
+    }
+
+    /* Mobile Phones (<= 640px) */
+    @media (max-width: 640px) {
+      /* 1. Legal Disclaimer Header */
+      #disclaimer-header {
+        padding: 8px 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        font-size: 10px;
+      }
+      #disclaimer-header > div:last-child {
+        font-size: 9px !important;
+        line-height: 1.35;
+      }
+      .disclaimer-left {
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      /* 2. Top Navbar */
+      #navbar {
+        padding: 0 16px;
+        height: 58px;
+      }
+      .brand-block {
+        gap: 8px;
+      }
+      .pulse-logo-icon {
+        width: 28px;
+        height: 28px;
+      }
+      .pulse-logo-icon svg {
+        width: 16px;
+        height: 16px;
+      }
+      .brand-name {
+        font-size: 14px;
+      }
+      .brand-sub {
+        display: none; /* Keep header clean on small screens */
+      }
+      .nav-status-indicators {
+        gap: 8px;
+      }
+      .btn-call-connect {
+        padding: 7px 12px;
+        font-size: 11.5px;
+        border-radius: 5px;
+        gap: 6px;
+      }
+      .btn-theme-toggle {
+        width: 32px;
+        height: 32px;
+      }
+
+      /* 3. Hero Section */
+      #hero-container {
+        padding: 24px 14px 20px;
+      }
+      .hero-heading {
+        font-size: 26px;
+        line-height: 1.25;
+        margin-bottom: 10px;
+        letter-spacing: -0.015em;
+      }
+      .hero-description {
+        font-size: 13.5px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+        padding: 0 4px;
+      }
+
+      /* Red-Flag Banner */
+      #redflag-alert-banner {
+        padding: 10px 12px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+      .redflag-text {
+        font-size: 11.5px;
+      }
+
+      /* Acoustic Voice Meter */
+      .meter-showcase-frame {
+        height: 220px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+      }
+      #acoustic-canvas {
+        width: 210px;
+        height: 210px;
+        max-width: 100%;
+        max-height: 100%;
+      }
+      .meter-name {
+        font-size: 15px;
+      }
+      .meter-sub {
+        font-size: 11px;
+      }
+      .meter-status-chip {
+        font-size: 9px;
+        padding: 2px 8px;
+      }
+
+      /* Benchmark Strip - 2x2 Clean Grid on Mobile */
+      .benchmark-strip {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px 8px;
+        padding: 14px 12px;
+      }
+      .stat-metric {
+        font-size: 18px;
+      }
+      .stat-title {
+        font-size: 10.5px;
+      }
+      .stat-source {
+        font-size: 9px;
+      }
+      .benchmark-footnote {
+        font-size: 10px;
+        margin-bottom: 24px;
+        padding: 0 4px;
+      }
+
+      /* 4. Four Pillars */
+      #architecture-section {
+        padding: 16px 14px;
+      }
+      .section-headline-serif {
+        font-size: 22px;
+        margin-bottom: 20px;
+      }
+      .pillars-container {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 28px;
+      }
+      .pillar-box {
+        padding: 14px;
+      }
+      .btn-test-action {
+        padding: 10px 12px;
+        min-height: 42px;
+        font-size: 12px;
+      }
+
+      /* 5. Clinical Workspace */
+      #workspace-container {
+        padding: 0 14px;
+        margin-bottom: 32px;
+      }
+      .chat-header {
+        padding: 12px 14px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+      .chat-header-title {
+        font-size: 13.5px;
+      }
+      .chat-header-meta {
+        font-size: 10px;
+      }
+      .chat-body-scroll {
+        height: 300px;
+        padding: 14px 12px;
+        gap: 10px;
+      }
+      .msg-text-bubble {
+        max-width: 94%;
+        font-size: 12px;
+        padding: 8px 12px;
+      }
+
+      /* Chat Input Form - Stacked Mobile Friendly Layout */
+      .chat-input-row {
+        padding: 10px 12px;
+      }
+      .chat-input-row form {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .chat-input-row input {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 13px;
+        min-height: 42px;
+      }
+      .chat-input-controls {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        width: 100%;
+      }
+      .btn-handsfree-toggle {
+        flex: 1;
+        justify-content: center;
+        min-height: 40px;
+        padding: 0 8px;
+        font-size: 11px;
+      }
+      .btn-mic-toggle {
+        flex: 1;
+        justify-content: center;
+        min-height: 40px;
+        padding: 0 10px;
+        font-size: 11px;
+      }
+      .btn-send-msg {
+        flex: 0 0 auto;
+        min-height: 40px;
+        padding: 0 16px;
+        font-size: 12px;
+      }
+
+      /* Clinical Records Ledger */
+      .records-tabs-bar {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .rec-tab {
+        padding: 10px 6px;
+        font-size: 11px;
+        white-space: nowrap;
+      }
+      .records-content-scroll {
+        height: 300px;
+        padding: 14px 12px;
+      }
+      .ehr-record-card {
+        padding: 12px;
+      }
+      .ehr-row {
+        font-size: 10.5px;
+      }
+
+      /* 6. Footer Telemetry & Pipeline Nodes */
+      #telemetry-footer {
+        padding: 14px 14px 20px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+      .telemetry-pipeline-nodes {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 6px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        scrollbar-width: thin;
+      }
+      .pipeline-chip {
+        flex-shrink: 0;
+        padding: 4px 6px;
+        font-size: 9.5px;
+      }
+      .pipeline-arrow {
+        flex-shrink: 0;
+      }
+      .footer-audit-note {
+        flex-wrap: wrap;
+        gap: 4px 8px;
+        font-size: 9.5px;
+        line-height: 1.4;
+        justify-content: center;
+        text-align: center;
+      }
+    }
+
+    /* Small Mobile Phones (<= 380px) */
+    @media (max-width: 380px) {
+      .hero-heading {
+        font-size: 23px;
+      }
+      .btn-call-connect {
+        padding: 6px 10px;
+        font-size: 10.5px;
+      }
+      .brand-name {
+        font-size: 13px;
+      }
+      .benchmark-strip {
+        grid-template-columns: 1fr;
+      }
+      .btn-handsfree-toggle {
+        font-size: 10px;
+        padding: 0 4px;
+      }
+      .btn-mic-toggle {
+        font-size: 10px;
+        padding: 0 6px;
+      }
     }
   </style>
 </head>
@@ -1088,16 +1446,18 @@
         <div class="chat-input-row">
           <form onsubmit="handleUserInput(event)">
             <input type="text" id="consult-input" placeholder="Type or speak naturally hands-free..." autocomplete="off"/>
-            <button type="button" class="btn-handsfree-toggle active" id="btn-handsfree" onclick="toggleHandsFreeMode()" title="Hands-Free Two-Way Mode Active (Auto-Listens after AI speaks)">
-              <span class="handsfree-dot"></span>
-              <span id="handsfree-text">Hands-Free: ON</span>
-            </button>
-            <button type="button" class="btn-mic-toggle" id="btn-mic" onclick="toggleVoiceInput()" title="Microphone Status">
-              <span class="mic-pulse-dot"></span>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-              <span id="mic-text">Speak</span>
-            </button>
-            <button type="submit">Send</button>
+            <div class="chat-input-controls">
+              <button type="button" class="btn-handsfree-toggle active" id="btn-handsfree" onclick="toggleHandsFreeMode()" title="Hands-Free Two-Way Mode Active (Auto-Listens after AI speaks)">
+                <span class="handsfree-dot"></span>
+                <span id="handsfree-text">Hands-Free: ON</span>
+              </button>
+              <button type="button" class="btn-mic-toggle" id="btn-mic" onclick="toggleVoiceInput()" title="Microphone Status">
+                <span class="mic-pulse-dot"></span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                <span id="mic-text">Speak</span>
+              </button>
+              <button type="submit" class="btn-send-msg">Send</button>
+            </div>
           </form>
         </div>
       </div>
