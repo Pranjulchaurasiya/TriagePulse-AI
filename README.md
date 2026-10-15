@@ -13,7 +13,7 @@
 
 Architected specifically to solve the high-concurrency 8:00 AM telephone rush in UK primary care, operating under a strict **sub-800ms conversational turn SLA** with zero-LLM deterministic emergency interception and token-level clinical hallucination gating.
 
-🌐 **Live Interactive Console**: [https://triagepulse-ai.onrender.com](https://triagepulse-ai.onrender.com)
+🌐 **Live Interactive Console**: [https://triagepulse-ai.onrender.com]([https://triagepulse-ai.onrender.com](https://triagepulse-ai-zilj.onrender.com/))
 
 ---
 
