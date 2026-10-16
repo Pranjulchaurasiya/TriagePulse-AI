@@ -7,7 +7,8 @@
 [![FHIR Interoperability](https://img.shields.io/badge/Interoperability-HL7%20FHIR%20R4%20UK%20Core-orange.svg?style=flat)](reasoning/booking_extractor.py)
 [![VoIP Telephony](https://img.shields.io/badge/VoIP-ITU--T%20G.711%20A--law%20SIP-blueviolet.svg?style=flat)](perception/sip_bridge.py)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Render-brightgreen?style=flat&logo=render&logoColor=white)](https://triagepulse-ai-zilj.onrender.com)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Render-brightgreen?style=flat&logo=render&logoColor=white)[triagepulse-ai.onrender.com](https://triagepulse-ai.onrender.com)
+
 
 **Autonomous clinical voice reception, deterministic safety triage, and HL7 FHIR scheduling for NHS GP surgeries.**
 
